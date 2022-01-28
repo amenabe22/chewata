@@ -1,7 +1,8 @@
 <template>
   <div>
     <button
-    v-if="!hideBall"
+      @click="$emit('ballClicked')"
+      v-if="!hideBall"
       style="
         position: fixed;
         width: 60px;
@@ -27,16 +28,15 @@
         color: #fff;
         text-align: center;
       "
-    >
-    </nav>
+    ></nav>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
-    props:{
-      hideBall:Boolean
-    }
-})
+  props: {
+    hideBall: Boolean,
+  },
+});
 </script>

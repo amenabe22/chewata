@@ -1,6 +1,7 @@
-<template>
+ <template>
   <div>
     <navbar />
+    <light-gallery :showModal="showModal" @close="showModal = false" />
     <div class="mt-16 bg-green-400 h-1/2 w-full">
       <div
         class="
@@ -18,13 +19,13 @@
           flex
           lg:mx-80
           xl:mx-80
-          mx-10
+          md:mx-10
           pt-20
         "
       >
         <div class="flex flex-row">
           <vote-clickers :dark="true" color="#92daac" class="mt-5" />
-          <div class="xl:w-3/4 lg:w-3/5 md:w-3/5">
+          <div class="xl:w-3/4 w-full lg:w-3/5 md:w-3/5">
             <p class="pt-5">Karlson</p>
             <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
               Did you know crocodiles could grow up to 15 feet? But most just
@@ -86,7 +87,7 @@
         </button>
       </div>
       <!-- comments section -->
-      <div class="md:w-2/5 lg:w-2/5 xl:w-2/6 bg-white">
+      <div class="md:w-2/3 sm:w-full lg:w-2/5 w-full xl:w-2/6 bg-white">
         <p
           class="text-2xl px-6 pt-5 font-semibold tracking-wider text-gray-500"
         >
@@ -99,7 +100,19 @@
         />
       </div>
       <!-- comments section end -->
-      <div style="width: 13%" class="flex flex-row justify-center gap-10 mt-2">
+      <div
+        style="width: 13%"
+        class="
+          xl:block
+          md:block
+          flex-row
+          justify-center
+          gap-10
+          mt-2
+          hidden
+          md:hidden
+        "
+      >
         <div class="mt-2 hidden lg:block xl:block md:block">
           <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
             Related Chewata
@@ -112,9 +125,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import CommentTile from "../components/CommentTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
+import LightGallery from "../components/LightGallery.vue";
 import Navbar from "../components/Navbar.vue";
 import RelatedItems from "../components/RelatedItems.vue";
 import UserAvatar from "../components/UserAvatar.vue";
@@ -128,7 +142,22 @@ export default defineComponent({
     CommentTile,
     UserAvatar,
     RelatedItems,
+    LightGallery,
   },
-  setup() {},
+  data: () => ({
+    showModal: false,
+    showSide: true,
+  }),
+  created() {
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth;
+    });
+  },
+  computed: {
+    windowWidth() {
+      return this.windowWidth;
+    },
+  },
 });
 </script>
+

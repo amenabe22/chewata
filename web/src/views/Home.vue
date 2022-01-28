@@ -1,29 +1,49 @@
 <template>
   <div class="w-full">
-    <transition name="modal" v-if="showModal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-container">
-            <div class="modal-header">
-              <slot name="header"> default header </slot>
-            </div>
-
-            <div class="modal-body">
-              <slot name="body"> default body </slot>
-            </div>
-
-            <div class="modal-footer">
-              <slot name="footer">
-                default footer
-                <button class="modal-default-button" @click="showModal = false">
-                  OK
-                </button>
-              </slot>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <dialog-modal :show="showMainDialog" @close="showMainDialog = false">
+      <p class="text-5xl text-white">አዲስ ጨዋታ</p>
+      <button
+        class="
+          bg-green-600
+          rounded-lg
+          mt-5
+          font-black
+          text-white
+          p-16
+          text-2xl
+        "
+      >
+        <p>Meme / Story</p>
+      </button>
+      <button
+        class="
+          bg-yellow-600
+          rounded-lg
+          mt-3
+          font-black
+          text-white
+          px-20
+          py-2
+          text-2xl
+        "
+      >
+        <p>Sport Rant</p>
+      </button>
+      <button
+        class="
+          bg-red-600
+          rounded-lg
+          mt-3
+          font-black
+          text-white
+          px-20
+          py-2
+          text-2xl
+        "
+      >
+        <p>Random Shit</p>
+      </button>
+    </dialog-modal>
     <navbar />
     <div class="flex flex-row justify-center gap-10 mt-24">
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
@@ -134,13 +154,14 @@
         </div>
       </div>
     </div>
-    <ground-meda />
+    <ground-meda @ballClicked="showMainDialog = true" />
   </div>
 </template>
 
 <script lang="ts">
 // import { ref } from "@vue/reactivity";
 import { defineComponent } from "vue";
+import DialogModal from "../components/DialogModal.vue";
 import FeedTile from "../components/FeedTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
@@ -153,9 +174,11 @@ export default defineComponent({
     GroundMeda,
     VoteClickers,
     FeedTile,
+    DialogModal,
   },
   data: () => ({
     showModal: false,
+    showMainDialog: false,
   }),
   methods: {
     clicked() {
@@ -216,7 +239,7 @@ export default defineComponent({
  * these styles.
  */
 
-.modal-enter {
+.modal-enter-from {
   opacity: 0;
 }
 
@@ -224,8 +247,8 @@ export default defineComponent({
   opacity: 0;
 }
 
-.modal-enter .modal-container,
-.modal-leave-active .modal-container {
+.modal-enter-from .modal-container,
+.modal-leave-from-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
