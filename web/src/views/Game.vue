@@ -121,13 +121,14 @@
         </div>
       </div>
     </div>
-    <ground-meda :hideBall="true" />
+    <comment-meda :hide="false" />
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import CommentMeda from "../components/CommentMeda.vue";
 import CommentTile from "../components/CommentTile.vue";
-import GroundMeda from "../components/GroundMeda.vue";
+// import GroundMeda from "../components/GroundMeda.vue";
 import LightGallery from "../components/LightGallery.vue";
 import Navbar from "../components/Navbar.vue";
 import RelatedItems from "../components/RelatedItems.vue";
@@ -137,12 +138,13 @@ import VoteClickers from "../components/VoteClickers.vue";
 export default defineComponent({
   components: {
     Navbar,
-    GroundMeda,
+    // GroundMeda,
     VoteClickers,
     CommentTile,
     UserAvatar,
     RelatedItems,
     LightGallery,
+    CommentMeda,
   },
   data: () => ({
     showModal: false,

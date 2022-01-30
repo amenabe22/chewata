@@ -14,7 +14,7 @@
         border-radius: 50px;
         text-align: center;
       "
-      class="shadow-2xl hover:animate-bounce hidden xl:block lg:block md:block"
+      class="shadow-2xl hover:animate-bounce  xl:block lg:block md:block"
     >
       <img class="shadow-2xl" src="../assets/soccer-ball.png" alt="" />
     </button>

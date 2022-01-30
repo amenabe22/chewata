@@ -3,8 +3,8 @@
     <dialog-modal :show="showMainDialog" @close="closeDialog">
       <div>
         <transition name="slide-fade">
-          <div v-if="!showForm" class="w-96">
-            <p class="text-5xl text-white">አዲስ ጨዋታ</p>
+          <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96">
+            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">አዲስ ጨዋታ</p>
             <button
               @click="animateForm"
               class="
@@ -15,7 +15,9 @@
                 font-black
                 text-white
                 p-16
-                text-2xl
+                xl:text-2xl
+                lg:text-2xl
+                text-xl
               "
             >
               <p>Meme / Story</p>
@@ -29,8 +31,12 @@
                 font-black
                 text-white
                 px-20
-                py-2
-                text-2xl
+                py-4
+                lg:py-2
+                xl:py-2
+                text-xl
+                xl:text-2xl
+                lg:text-2xl
               "
             >
               <p>Sport Rant</p>
@@ -44,8 +50,12 @@
                 font-black
                 text-white
                 px-20
-                py-2
-                text-2xl
+                py-4
+                lg:py-2
+                xl:py-2
+                text-xl
+                xl:text-2xl
+                lg:text-2xl
               "
             >
               <p>Random Shit</p>
@@ -53,8 +63,8 @@
           </div>
         </transition>
         <transition name="slide-form">
-          <div v-if="showFormx" class="w-96">
-            <p class="text-5xl text-white text-center px-1">አዲስ ጨዋታ</p>
+          <div v-if="showFormx" class="lg:w-96 xl:w-96 md:lg:w-96">
+            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Post Here</p>
 
             <textarea
               class="
@@ -92,8 +102,12 @@
                 text-white
                 w-full
                 px-20
-                py-2
-                text-2xl
+                py-4
+                lg:py-2
+                xl:py-2
+                text-xl
+                xl:text-2xl
+                lg:text-2xl
               "
             >
               <p>Post</p>
@@ -108,8 +122,12 @@
                 text-white
                 w-full
                 px-20
-                py-2
-                text-2xl
+                py-4
+                lg:py-2
+                xl:py-2
+                text-xl
+                xl:text-2xl
+                lg:text-2xl
               "
             >
               <p>Cancel</p>
@@ -261,7 +279,7 @@ export default defineComponent({
       this.showFormx = false;
       setTimeout(() => {
         this.showForm = false;
-      }, 300);
+      }, 250);
     },
     closeDialog() {
       this.showForm = false;
@@ -272,7 +290,7 @@ export default defineComponent({
       this.showForm = true;
       setTimeout(() => {
         this.showFormx = true;
-      }, 320);
+      }, 250);
     },
     clicked() {
       this.$router.push({ path: "/game" });
