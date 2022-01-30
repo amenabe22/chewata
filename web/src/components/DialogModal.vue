@@ -70,10 +70,11 @@ export default defineComponent({
 
 .pop-enter-active,
 .pop-leave-active
-    transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.4s linear
+    transition: all 0.2s cubic-bezier(0, 0, 0.97, 1)
 
 .pop-enter-from,
 .pop-leave-to
     opacity: 0
-    transform: scale(0.3) translateY(-50%)
+    transform: translateY(220px)
+
 </style>

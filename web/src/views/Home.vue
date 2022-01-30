@@ -1,48 +1,122 @@
 <template>
   <div class="w-full">
-    <dialog-modal :show="showMainDialog" @close="showMainDialog = false">
-      <p class="text-5xl text-white">አዲስ ጨዋታ</p>
-      <button
-        class="
-          bg-green-600
-          rounded-lg
-          mt-5
-          font-black
-          text-white
-          p-16
-          text-2xl
-        "
-      >
-        <p>Meme / Story</p>
-      </button>
-      <button
-        class="
-          bg-yellow-600
-          rounded-lg
-          mt-3
-          font-black
-          text-white
-          px-20
-          py-2
-          text-2xl
-        "
-      >
-        <p>Sport Rant</p>
-      </button>
-      <button
-        class="
-          bg-red-600
-          rounded-lg
-          mt-3
-          font-black
-          text-white
-          px-20
-          py-2
-          text-2xl
-        "
-      >
-        <p>Random Shit</p>
-      </button>
+    <dialog-modal :show="showMainDialog" @close="closeDialog">
+      <div>
+        <transition name="slide-fade">
+          <div v-if="!showForm" class="w-96">
+            <p class="text-5xl text-white">አዲስ ጨዋታ</p>
+            <button
+              @click="animateForm"
+              class="
+                bg-green-600
+                rounded-lg
+                mt-5
+                w-full
+                font-black
+                text-white
+                p-16
+                text-2xl
+              "
+            >
+              <p>Meme / Story</p>
+            </button>
+            <button
+              class="
+                w-full
+                bg-yellow-600
+                rounded-lg
+                mt-3
+                font-black
+                text-white
+                px-20
+                py-2
+                text-2xl
+              "
+            >
+              <p>Sport Rant</p>
+            </button>
+            <button
+              class="
+                w-full
+                bg-red-600
+                rounded-lg
+                mt-3
+                font-black
+                text-white
+                px-20
+                py-2
+                text-2xl
+              "
+            >
+              <p>Random Shit</p>
+            </button>
+          </div>
+        </transition>
+        <transition name="slide-form">
+          <div v-if="showFormx" class="w-96">
+            <p class="text-5xl text-white text-center px-1">አዲስ ጨዋታ</p>
+
+            <textarea
+              class="
+                form-control
+                block
+                w-full
+                h-44
+                resize-none
+                border-none
+                px-3
+                my-5
+                text-xl
+                py-1.5
+                font-normal
+                bg-white bg-clip-padding
+                rounded
+                transition
+                ease-in-out
+                m-0
+                focus:text-gray-700
+                focus:bg-gray-50
+                focus:border-blue-600
+                focus:outline-none
+              "
+              id="exampleFormControlTextarea1"
+              rows="3"
+              placeholder="Your message"
+            ></textarea>
+            <button
+              class="
+                bg-green-600
+                rounded-lg
+                mt-3
+                font-black
+                text-white
+                w-full
+                px-20
+                py-2
+                text-2xl
+              "
+            >
+              <p>Post</p>
+            </button>
+            <button
+              @click="cancelPost"
+              class="
+                bg-red-600
+                rounded-lg
+                mt-3
+                font-black
+                text-white
+                w-full
+                px-20
+                py-2
+                text-2xl
+              "
+            >
+              <p>Cancel</p>
+            </button>
+          </div>
+        </transition>
+      </div>
     </dialog-modal>
     <navbar />
     <div class="flex flex-row justify-center gap-10 mt-24">
@@ -179,8 +253,27 @@ export default defineComponent({
   data: () => ({
     showModal: false,
     showMainDialog: false,
+    showForm: false,
+    showFormx: false,
   }),
   methods: {
+    cancelPost() {
+      this.showFormx = false;
+      setTimeout(() => {
+        this.showForm = false;
+      }, 300);
+    },
+    closeDialog() {
+      this.showForm = false;
+      this.showFormx = false;
+      this.showMainDialog = false;
+    },
+    animateForm() {
+      this.showForm = true;
+      setTimeout(() => {
+        this.showFormx = true;
+      }, 320);
+    },
     clicked() {
       this.$router.push({ path: "/game" });
     },
@@ -251,5 +344,29 @@ export default defineComponent({
 .modal-leave-from-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.slide-fade-enter-active {
+  transition: all 0.1s;
+}
+.slide-fade-leave-active {
+  transition: all 0.29s cubic-bezier(0, 0, 0.97, 1);
+}
+.slide-fade-enter-from, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateY(-220px);
+  opacity: 0;
+}
+
+.slide-form-enter-active {
+  transition: all 0.1s;
+}
+.slide-form-leave-active {
+  transition: all 0.23s cubic-bezier(0, 0, 0.97, 1);
+}
+.slide-form-enter-from, .slide-form-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateY(220px);
+  opacity: 0;
 }
 </style>
