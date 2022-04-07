@@ -82,5 +82,8 @@ import NotificationTile from "../components/NotificationTile.vue";
 export default defineComponent({
   components: { Navbar, NotificationTile },
   setup() {},
+  data: () => ({
+    showModal: false,
+  }),
 });
 </script>

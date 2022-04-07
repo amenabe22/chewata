@@ -15,13 +15,14 @@
     >
       <div class="flex">
         <img
-          src="../assets/soccer-ball.png"
+          src="../assets/final.svg"
           alt=""
-          class="w-10 h-10 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"
+          style="-webkit-transform: scaleX(-1); transform: scaleX(-1)"
+          class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"
         />
 
         <router-link to="/">
-          <p class="text-white font-black text-4xl tracking-widest p-2">ጨዋታ</p>
+          <p class="text-white font-black text-3xl tracking-widest pt-4 pr-5">ጨዋታ</p>
         </router-link>
         <div
           class="

@@ -63,5 +63,8 @@ export default defineComponent({
   props: {
     hide: Boolean,
   },
+  data: () => ({
+    hideBall: false,
+  }),
 });
 </script>

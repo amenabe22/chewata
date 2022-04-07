@@ -156,7 +156,7 @@ export default defineComponent({
     });
   },
   computed: {
-    windowWidth() {
+    windowWidth():any {
       return this.windowWidth;
     },
   },

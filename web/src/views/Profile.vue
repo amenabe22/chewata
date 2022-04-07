@@ -33,7 +33,10 @@
           bg-ima
         "
       >
-        <div class="flex flex-row pb-50 md:mt-0 lg:mt-0 xl:mt-0 mt-10" style="back">
+        <div
+          class="flex flex-row pb-50 md:mt-0 lg:mt-0 xl:mt-0 mt-10"
+          style="back"
+        >
           <vote-clickers :dark="true" color="#92daac" class="mt-5" />
           <div class="xl:w-3/4 lg:w-3/5 md:w-3/5">
             <p class="pt-5">Cool Dude</p>
@@ -167,5 +170,8 @@ import UserAvatar from "../components/UserAvatar.vue";
 export default defineComponent({
   components: { Navbar, UserAvatar, CommentTile, FeedTile },
   setup() {},
+  data: () => ({
+    showModal: false,
+  }),
 });
 </script>
