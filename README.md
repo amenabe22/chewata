@@ -1,2 +1,2 @@
 # chewata
-Cool Looking FootBall app inspired my DevRant
+Cool Looking FootBall app inspired from DevRant
