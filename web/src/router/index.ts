@@ -6,26 +6,32 @@ import {
   RouteLocationNormalized
 } from 'vue-router'
 
+import Home from '../views/Home.vue'
+import Game from '../views/Game.vue'
+import Profile from '../views/Profile.vue'
+import Notification from '../views/Notification.vue'
+
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Landing',
-    component: import('../views/Home.vue')
+    component: Home
   },
   {
     path: '/game',
     name: 'Game',
-    component: import('../views/Game.vue')
+    component: Game
   },
   {
-    path:"/user",
-    name:"User",
-    component: import('../views/Profile.vue')
+    path: "/user",
+    name: "User",
+    component: Profile
   },
   {
-    path:"/notification",
-    name:"Notification",
-    component: import('../views/Notification.vue')
+    path: "/notification",
+    name: "Notification",
+    component: Notification
   }
 ]
 
