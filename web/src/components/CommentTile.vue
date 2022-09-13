@@ -8,35 +8,19 @@
           <div></div>
           <div>
             <p
-              class="
-                text-xl text-gray-500
-                px-2
-                pt-1
-                font-semibold
-                tracking-wider
-                font-sans
-              "
+              class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
               Samuna
             </p>
             <div
-              class="
-                mx-2
-                w-1/2
-                text-center
-                font-black
-                text-sm
-                rounded-md
-                text-white
-                bg-green-500
-              "
+              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
             >
               1099
             </div>
           </div>
         </div>
         <p
-          class="py-2 mb-2 tracking-wide text-gray-600 text-lg xl:text-xl lg:text-xl"
+          class="py-2 mb-2 tracking-wide text-gray-600 text-lg"
           v-text="text"
         ></p>
 

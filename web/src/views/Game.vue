@@ -1,27 +1,10 @@
- <template>
+<template>
   <div>
     <navbar />
     <light-gallery :showModal="showModal" @close="showModal = false" />
     <div class="mt-16 bg-green-400 h-1/2 w-full">
       <div
-        class="
-          text-white
-          font-semibold
-          xl:text-4xl
-          lg:text-4xl
-          md:text-3xl
-          text-2xl
-          xl:tracking-wider
-          lg:tracking-wider
-          md:tracking-wider
-          tracking-normal
-          font-sans
-          flex
-          lg:mx-80
-          xl:mx-80
-          md:mx-10
-          pt-20
-        "
+        class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex lg:mx-80 xl:mx-80 md:mx-10 pt-20"
       >
         <div class="flex flex-row">
           <vote-clickers :dark="true" color="#92daac" class="mt-5" />
@@ -44,28 +27,12 @@
           <user-avatar />
           <div>
             <p
-              class="
-                text-xl text-gray-500
-                px-2
-                pt-1
-                font-semibold
-                tracking-wider
-                font-sans
-              "
+              class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
               Samuna
             </p>
             <div
-              class="
-                mx-2
-                w-1/2
-                text-center
-                font-black
-                text-sm
-                rounded-md
-                text-white
-                bg-green-500
-              "
+              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
             >
               1099
             </div>
@@ -102,16 +69,7 @@
       <!-- comments section end -->
       <div
         style="width: 13%"
-        class="
-          xl:block
-          md:block
-          flex-row
-          justify-center
-          gap-10
-          mt-2
-          hidden
-          md:hidden
-        "
+        class="xl:block md:block flex-row justify-center gap-10 mt-2 hidden md:hidden"
       >
         <div class="mt-2 hidden lg:block xl:block md:block">
           <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
@@ -156,10 +114,9 @@ export default defineComponent({
     });
   },
   computed: {
-    windowWidth():any {
+    windowWidth(): any {
       return this.windowWidth;
     },
   },
 });
 </script>
-

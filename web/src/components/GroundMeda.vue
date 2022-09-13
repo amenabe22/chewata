@@ -3,18 +3,7 @@
     <button
       @click="$emit('ballClicked')"
       v-if="!hideBall"
-      style="
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 42px;
-        right: 50%;
-        background-color: #0c9;
-        color: #fff;
-        border-radius: 50px;
-        text-align: center;
-      "
-      class="shadow-2xl hover:animate-bounce  xl:block lg:block md:block"
+      class="shadow-2xl xl:block lg:block md:block ball"
     >
       <img class="shadow-2xl" src="../assets/soccer-ball.png" alt="" />
     </button>
@@ -40,3 +29,18 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.ball {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 35px;
+  right: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0c9;
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+}
+</style>

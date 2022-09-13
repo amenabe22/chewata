@@ -4,37 +4,25 @@
     style="box-sizing: content-box"
   >
     <div
-      class="
-        flex flex-row
-        text-center
-        md:text-left
-        xl:text-left
-        lg:text-left
-        justify-between
-      "
+      class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between"
     >
       <div class="flex">
-        <img
-          src="../assets/final.svg"
-          alt=""
-          style="-webkit-transform: scaleX(-1); transform: scaleX(-1)"
-          class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"
-        />
-
         <router-link to="/">
-          <p class="text-white font-black text-3xl tracking-widest pt-4 pr-5">ጨዋታ</p>
+          <div class="flex flex-row">
+            <img
+              src="../assets/final.svg"
+              alt=""
+              style="-webkit-transform: scaleX(-1); transform: scaleX(-1)"
+              class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"
+            />
+
+            <p class="text-white font-black text-3xl tracking-widest pt-4 pr-5">
+              ጨዋታ
+            </p>
+          </div>
         </router-link>
         <div
-          class="
-            lg:flex
-            hidden
-            md:flex
-            xl:flex
-            flex-row
-            pt-5
-            font-light
-            text-xl text-white
-          "
+          class="lg:flex hidden md:flex xl:flex flex-row pt-5 font-light text-xl text-white"
         >
           <p v-for="x in 5" :key="x" class="px-2">Item</p>
         </div>

@@ -1,62 +1,25 @@
 <template>
   <div class="w-full">
     <dialog-modal :show="showMainDialog" @close="closeDialog">
-      <div>
+      <div class="mx-2">
         <transition name="slide-fade">
           <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96">
-            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">አዲስ ጨዋታ</p>
+            <router-link to="/">
+              <p class="text-4xl xl:text-5xl lg:text-5xl text-white">አዲስ ጨዋታ</p>
+            </router-link>
             <button
               @click="animateForm"
-              class="
-                bg-green-600
-                rounded-lg
-                mt-5
-                w-full
-                font-black
-                text-white
-                p-16
-                xl:text-2xl
-                lg:text-2xl
-                text-xl
-              "
+              class="bg-green-600 rounded-lg mt-5 w-full font-black text-white p-16 xl:text-2xl lg:text-2xl text-xl"
             >
               <p>Meme / Story</p>
             </button>
             <button
-              class="
-                w-full
-                bg-yellow-600
-                rounded-lg
-                mt-3
-                font-black
-                text-white
-                px-20
-                py-4
-                lg:py-2
-                xl:py-2
-                text-xl
-                xl:text-2xl
-                lg:text-2xl
-              "
+              class="w-full bg-yellow-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Sport Rant</p>
             </button>
             <button
-              class="
-                w-full
-                bg-red-600
-                rounded-lg
-                mt-3
-                font-black
-                text-white
-                px-20
-                py-4
-                lg:py-2
-                xl:py-2
-                text-xl
-                xl:text-2xl
-                lg:text-2xl
-              "
+              class="w-full bg-red-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Random Shit</p>
             </button>
@@ -67,68 +30,19 @@
             <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Post Here</p>
 
             <textarea
-              class="
-                form-control
-                block
-                w-full
-                h-44
-                resize-none
-                border-none
-                px-3
-                my-5
-                text-xl
-                py-1.5
-                font-normal
-                bg-white bg-clip-padding
-                rounded
-                transition
-                ease-in-out
-                m-0
-                focus:text-gray-700
-                focus:bg-gray-50
-                focus:border-blue-600
-                focus:outline-none
-              "
+              class="form-control block w-full h-44 resize-none border-none px-3 my-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
               id="exampleFormControlTextarea1"
               rows="3"
               placeholder="Your message"
             ></textarea>
             <button
-              class="
-                bg-green-600
-                rounded-lg
-                mt-3
-                font-black
-                text-white
-                w-full
-                px-20
-                py-4
-                lg:py-2
-                xl:py-2
-                text-xl
-                xl:text-2xl
-                lg:text-2xl
-              "
+              class="bg-green-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Post</p>
             </button>
             <button
               @click="cancelPost"
-              class="
-                bg-red-600
-                rounded-lg
-                mt-3
-                font-black
-                text-white
-                w-full
-                px-20
-                py-4
-                lg:py-2
-                xl:py-2
-                text-xl
-                xl:text-2xl
-                lg:text-2xl
-              "
+              class="bg-red-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Cancel</p>
             </button>
@@ -155,9 +69,7 @@
         </button>
       </div>
       <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white">
-        <p
-          class="text-2xl px-6 pt-5 font-semibold tracking-wider text-gray-500"
-        >
+        <p class="text-2xl px-6 font-semibold tracking-wider text-gray-500">
           Feed
         </p>
 
@@ -179,32 +91,27 @@
               didn't work but didn't realise the lever in front of the camera
               was to move the privacy shutter off and on."
           />
-          <div>
-            <div class="mb-3 flex flex-row justify-end">
-              <button class="px-2 mx-2">
-                <div class="flex">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-7 w-7 text-green-500 mt-1"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
-                    />
-                    <path
-                      d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
-                    />
-                  </svg>
-                  <p class="text-green-500 mt-1 text-xl">2</p>
-                </div>
-              </button>
-            </div>
-            <div
-              class="border-t border-gray-200 mx-20"
-              style="width: 90%"
-            ></div>
+          <div class="mb-3 flex flex-row justify-end">
+            <button class="px-2 mx-2">
+              <div class="flex">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-7 w-7 text-green-500 mt-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
+                  />
+                  <path
+                    d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
+                  />
+                </svg>
+                <p class="text-green-500 mt-1 text-xl">2</p>
+              </div>
+            </button>
           </div>
+          <div class="border-t border-gray-200 w-full"></div>
         </div>
         <div class="mb-32"></div>
       </div>
@@ -218,27 +125,10 @@
           <div
             v-for="x in 13"
             :key="x"
-            class="
-              rounded-md
-              border-2
-              px-1
-              hover:border-green-500
-              duration-300
-              transition
-              ease-in-out
-              delay-75
-            "
+            class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75"
           >
             <p
-              class="
-                text-gray-500 text-center text-sm
-                hover:text-green-600
-                cursor-pointer
-                duration-300
-                transition
-                ease-in-out
-                delay-75
-              "
+              class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75"
             >
               Soccer
             </p>

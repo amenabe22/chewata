@@ -39,7 +39,6 @@ export default defineComponent({
     width: fit-content
     height: fit-content
     max-width: 22em
-    padding: 2rem
     border-radius: 1rem
     z-index: 999
     transform: none
@@ -76,5 +75,4 @@ export default defineComponent({
 .pop-leave-to
     opacity: 0
     transform: translateY(220px)
-
 </style>
