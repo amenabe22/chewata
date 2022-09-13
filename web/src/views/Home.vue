@@ -72,25 +72,13 @@
         <p class="text-2xl px-6 font-semibold tracking-wider text-gray-500">
           Feed
         </p>
-
-        <feed-tile
-          pic="https://img.devrant.com/devrant/rant/r_5062886_BL7qm.jpg"
-          text="This shit funny Af 🤣"
-        />
         <div
-          v-for="x in 10"
-          :key="x"
+          v-for="(post, ix) in posts"
+          :key="ix"
           class="mt-4 cursor-pointer"
           @click="clicked"
         >
-          <feed-tile
-            text="Hired a new BI developer. She tested reasonably ok in SQL, and
-              certainly showed good strengths in visualising data, plus had a
-              good attitude in the interview. We hired her. She broke her laptop
-              the first day. We got her another then she complained the camera
-              didn't work but didn't realise the lever in front of the camera
-              was to move the privacy shutter off and on."
-          />
+          <feed-tile :post="post" />
           <div class="mb-3 flex flex-row justify-end">
             <button class="px-2 mx-2">
               <div class="flex">
@@ -148,6 +136,17 @@ import FeedTile from "../components/FeedTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebase.config";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+} from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 export default defineComponent({
   name: "HomePage",
@@ -163,7 +162,29 @@ export default defineComponent({
     showMainDialog: false,
     showForm: false,
     showFormx: false,
+    posts: [] as Array<any>,
   }),
+  async mounted() {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // const docRef = doc(db, "posts", "");
+    const q = query(collection(db, "posts"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      // console.log(doc.id, " => ", doc.data());
+      this.posts.push(doc.data());
+    });
+
+    // console.log("loading", docSnap);
+    // if (docSnap.exists()) {
+    //   console.log("Document data:", docSnap.data());
+    // } else {
+    //   // doc.data() will be undefined in this case
+    //   console.log("No such document!");
+    // }
+  },
   methods: {
     cancelPost() {
       this.showFormx = false;

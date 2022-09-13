@@ -7,9 +7,9 @@
     <div class="mx-3">
       <p
         class="py-2 mb-2 tracking-wide text-gray-600 text-lg"
-        v-text="text"
+        v-text="post.content"
       ></p>
-      <img v-if="pic" :src="pic" alt="" style="object-fit: contain" />
+      <img v-if="post.cover" :src="post.cover" alt="" style="object-fit: contain" />
     </div>
   </router-link>
 </template>
@@ -20,9 +20,6 @@ import VoteClickers from "./VoteClickers.vue";
 export default defineComponent({
   components: { VoteClickers },
   setup() {},
-  props: {
-    pic: String,
-    text: String,
-  },
+  props: ["post"],
 });
 </script>
