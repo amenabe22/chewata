@@ -3,14 +3,14 @@
     <div
       :class="{ 'hover:bg-green-500': !color }"
       :style="{ 'background-color': color ?? '' }"
-      class="duration-300 transition ease-in-out delay-100 font-semibold text-lg text-center text-white cursor-pointer bg-gray-400 rounded-t-full px-2 mx-3"
+      class="duration-300 transition w-8 h-6 ease-in-out delay-100 font-semibold text-lg text-center text-white cursor-pointer bg-gray-400 rounded-t-full"
     >
       ++
     </div>
     <p class="text-center py-1 text-lg" :class="{ 'text-white': dark }">10</p>
     <div
       :style="{ 'background-color': color ?? '' }"
-      class="duration-300 transition ease-in-out delay-100 font-semibold text-lg text-center text-white hover:bg-green-500 cursor-pointer bg-gray-400 rounded-b-full px-2 mx-3"
+      class="duration-300 transition w-8 h-6 ease-in-out delay-100 font-semibold text-lg text-center text-white hover:bg-green-500 cursor-pointer bg-gray-400 rounded-b-full"
     >
       - -
     </div>

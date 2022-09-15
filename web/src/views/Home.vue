@@ -137,8 +137,8 @@
           Sign Up
         </button>
       </div>
-      <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white">
-        <p class="text-2xl px-6 font-semibold tracking-wider text-gray-500">
+      <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
+        <p class="text-2xl font-semibold tracking-wider text-gray-500">
           Feed
         </p>
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
@@ -307,11 +307,12 @@ export default defineComponent({
         id: uuid.v4(),
         content: this.content,
         cover: cover,
+        user: this.$store.state.user.uid,
         createdAt: new Date().toISOString(),
         likes: 0,
       }).finally(() => {
         this.loadingPost = false;
-        this.$store.commit("SET_MAIN_POP", false)
+        this.$store.commit("SET_MAIN_POP", false);
       });
       await this.loadFeed();
     },

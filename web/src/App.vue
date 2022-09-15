@@ -54,15 +54,8 @@ export default defineComponent({
       this.$router.push("/");
     },
     logout() {
-      signOut(getAuth()).then(
-        () => {
-          this.cleanStates();
-          window.location.reload();
-        },
-        function (error: any) {
-          alert("Error on logout");
-        }
-      );
+      this.cleanStates();
+      window.location.reload();
     },
   },
 });

@@ -34,24 +34,56 @@ import { defineComponent } from "vue";
 import DialogModal from "./DialogModal.vue";
 import {
   GoogleAuthProvider,
-  GithubAuthProvider,
+  FacebookAuthProvider,
   getAuth,
   signInWithPopup,
 } from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "@firebase/firestore";
+import { db } from "../firebase.config";
 
 export default defineComponent({
   components: { DialogModal },
   props: { loginPopup: Boolean },
   methods: {
     loginFb() {},
-    loginG() {
+    async loginG() {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
+      await signInWithPopup(auth, provider)
         .then(async (result: any) => {
           this.$store.commit("SET_LOGGEDIN", true);
           this.$store.commit("SET_USER", result.user);
           this.$emit("loggedin");
+          const userRef = doc(collection(db, "users"));
+          const q = query(
+            collection(db, "users"),
+            where("id", "==", result.user.uid)
+          );
+          const users = await getDocs(q);
+          if (users.empty) {
+            await setDoc(userRef, {
+              id: result.user.uid,
+              name: result.user.displayName,
+              photoURL: result.user.photoURL,
+              email: result.user.email,
+              createdAt: result.user.reloadUserInfo
+                ? result.user.reloadUserInfo.createdAt
+                : "",
+              totalLikes: 0,
+            });
+          }
+          console.log("done");
+          this.$store.commit("SET_LOGIN_POP", false);
+          this.$store.commit("SET_MAIN_POP", false);
+
           //   await this.socialLogin(result.user.accessToken, "go");
         })
         .catch((error) => {

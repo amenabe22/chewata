@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div clas>
     <light-gallery :showModal="showModal" @close="showModal = false" />
     <div class="bg-green-400 h-1/2 w-full">
       <div
-        class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex lg:mx-80 xl:mx-80 md:mx-10 pt-20"
+        class="text-white p-2 font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex  xl:mx-52 md:mx-10 pt-20"
       >
-        <div class="flex flex-row" v-if="post">
+        <div class="flex flex-row ga-4" v-if="post">
           <vote-clickers :dark="true" color="#92daac" class="mt-5" />
-          <div class="flex flex-col gap-4 w-full">
+          <div class="flex flex-col gap-4 w-full px-2">
             <p class="pt-5">Karlson</p>
             <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
               {{ post.content }}
@@ -19,18 +19,15 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-row justify-center gap-2 mt-2">
-      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
-          Degafi
-        </h1>
-        <div class="flex flex-row">
-          <user-avatar />
+    <div class="flex flex-row justify-center p-2 gap-2 mt-2">
+      <div class="w-1/5 mt-2 hidden lg:block xl:block md:block mr-5">
+        <div class="flex flex-row" v-if="$store.state.loggedIn">
+          <user-avatar :img="$store.state.user.photoURL" />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              Samuna
+              {{ $store.state.user.displayName }}
             </p>
             <div
               class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
@@ -40,7 +37,7 @@
           </div>
         </div>
 
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-wide mt-8">
+        <h1 class="text-gray-500 text-2xl font-semibold tracking-wide mt-3">
           Support Us
         </h1>
         <p class="font-normal text-gray-400 text-lg">
@@ -55,28 +52,29 @@
         </button>
       </div>
       <!-- comments section -->
-      <div class="md:w-2/3 sm:w-full lg:w-2/5 w-full xl:w-2/6 bg-white">
-        <p
-          class="text-2xl px-6 pt-5 font-semibold tracking-wider text-gray-500"
-        >
+      <div class="md:w-2/3 sm:w-full lg:w-1/2 w-full xl:w-2/6 bg-white mb-20">
+        <p class="text-2xl pt-5 font-semibold tracking-wider text-gray-500">
           Comments
         </p>
-        <comment-tile
-          text="Dont know when devRant became NatGeo Wild Trivia ..."
-          v-for="x in 10"
-          :key="x"
-        />
+        <div v-if="comments.length">
+          <comment-tile
+            text="Dont know when devRant became NatGeo Wild Trivia ..."
+            v-for="(com, ix) in comments"
+            :key="ix"
+            :comment="com"
+          />
+        </div>
       </div>
       <!-- comments section end -->
       <div
         style="width: 13%"
-        class="xl:block md:block flex-row justify-center gap-10 mt-2 hidden md:hidden"
+        class="xl:block md:block flex-row justify-center gap-10 mt-2 mx-2 hidden md:hidden"
       >
         <div class="mt-2 hidden lg:block xl:block md:block">
           <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
             Related Chewata
           </h1>
-          <related-items v-for="x in 5" :key="x" />
+          <related-items v-for="x in 2" :key="x" />
         </div>
       </div>
     </div>
@@ -126,16 +124,36 @@ export default defineComponent({
     }
     this.loading = false;
   },
+  methods: {
+    async loadComments() {
+      const q = query(
+        collection(db, "comments"),
+        where("post", "==", this.$route.params.id)
+      );
+      const snapshotData = await getDocs(q);
+      snapshotData.forEach(async (c) => {
+        const comment = c.data();
+        const uq = query(
+          collection(db, "users"),
+          where("id", "==", comment["user"])
+        );
+        const user = await getDocs(uq);
+        this.comments.push({ comment: comment, user: user.docs[0].data() });
+      });
+    },
+  },
   data: () => ({
+    comments: [] as any,
     loading: false,
     post: null as any,
     showModal: false,
     showSide: true,
   }),
-  created() {
+  async created() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
+    await this.loadComments();
   },
   computed: {
     windowWidth(): any {
