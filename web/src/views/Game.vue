@@ -1,19 +1,20 @@
 <template>
   <div>
-    <navbar />
     <light-gallery :showModal="showModal" @close="showModal = false" />
-    <div class="mt-16 bg-green-400 h-1/2 w-full">
+    <div class="bg-green-400 h-1/2 w-full">
       <div
         class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex lg:mx-80 xl:mx-80 md:mx-10 pt-20"
       >
-        <div class="flex flex-row">
+        <div class="flex flex-row" v-if="post">
           <vote-clickers :dark="true" color="#92daac" class="mt-5" />
-          <div class="xl:w-3/4 w-full lg:w-3/5 md:w-3/5">
+          <div class="flex flex-col gap-4 w-full">
             <p class="pt-5">Karlson</p>
-            <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
-              Did you know crocodiles could grow up to 15 feet? But most just
-              have 4.
+            <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
+              {{ post.content }}
             </p>
+            <div class="mr-3 mb-3">
+              <img :src="post.cover" v-if="post.cover" />
+            </div>
           </div>
         </div>
       </div>
@@ -86,12 +87,21 @@
 import { defineComponent, ref } from "vue";
 import CommentMeda from "../components/CommentMeda.vue";
 import CommentTile from "../components/CommentTile.vue";
-// import GroundMeda from "../components/GroundMeda.vue";
 import LightGallery from "../components/LightGallery.vue";
 import Navbar from "../components/Navbar.vue";
 import RelatedItems from "../components/RelatedItems.vue";
 import UserAvatar from "../components/UserAvatar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase.config";
 
 export default defineComponent({
   components: {
@@ -104,7 +114,21 @@ export default defineComponent({
     LightGallery,
     CommentMeda,
   },
+  async mounted() {
+    this.loading = true;
+    const q = query(
+      collection(db, "posts"),
+      where("id", "==", this.$route.params.id)
+    );
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.docs.length) {
+      this.post = querySnapshot.docs[0].data();
+    }
+    this.loading = false;
+  },
   data: () => ({
+    loading: false,
+    post: null as any,
     showModal: false,
     showSide: true,
   }),

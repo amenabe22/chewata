@@ -1,6 +1,5 @@
  <template>
   <div>
-    <navbar />
     <div class="flex flex-row justify-center gap-10 mt-24">
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">

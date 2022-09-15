@@ -21,25 +21,39 @@
             </p>
           </div>
         </router-link>
-        <div
-          class="lg:flex hidden md:flex xl:flex flex-row pt-5 font-light text-xl text-white"
-        >
-          <p v-for="x in 5" :key="x" class="px-2">Item</p>
-        </div>
       </div>
-      <div class="rounded-xl mb-4 mt-2 bg-transparent mx-10">
-        <router-link to="/notification" class="ont-black">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-8 w-8 m-2 text-white"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+      <div class="flex flex-row mx-2">
+        <div
+          class="rounded-xl mb-4 mt-2 bg-transparent"
+          v-if="$store.state.loggedIn"
+        >
+          <router-link to="/notification" class="ont-black">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-8 w-8 m-2 text-white"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+              />
+            </svg>
+          </router-link>
+        </div>
+        <div v-else>
+          <button
+            @click="$emit('clickedLogin')"
+            class="p- bg-white rounded-xl mx-5 mt-3 py-2 px-3 ring-2 hover:bg-green-100 ring-green-500"
           >
-            <path
-              d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-            />
-          </svg>
-        </router-link>
+            Login
+          </button>
+        </div>
+        <div v-if="$store.state.user" class="p-3 cursor-pointer" @click="$emit('profileClicked')">
+          <img
+            :src="$store.state.user.photoURL"
+            class="w-10 h-10 rounded-full ring-2 ring-green-600"
+          />
+        </div>
       </div>
     </div>
   </nav>

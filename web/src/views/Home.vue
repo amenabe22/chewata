@@ -1,41 +1,99 @@
 <template>
   <div class="w-full">
-    <dialog-modal :show="showMainDialog" @close="closeDialog">
-      <div class="mx-2">
+    <login-popup
+      @loggedin="$store.commit('SET_LOGIN_POP', false)"
+      @close="$store.commit('SET_LOGIN_POP', false)"
+      :loginPopup="$store.state.loginPopup"
+    ></login-popup>
+    <dialog-modal :show="$store.state.showMainDialog" @close="closeDialog">
+      <div class="mx-2 relative">
+        <div
+          v-if="loadingPost"
+          class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
+        >
+          <div class="flex flex-col mt-32 justify-center items-center">
+            <p class="text-xl font-black text-white tracking-wider">
+              Loading...
+            </p>
+            <loader :dark="true"></loader>
+          </div>
+        </div>
+
         <transition name="slide-fade">
-          <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96">
-            <router-link to="/">
-              <p class="text-4xl xl:text-5xl lg:text-5xl text-white">አዲስ ጨዋታ</p>
+          <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96 z-0">
+            <router-link
+              to="/"
+              :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
+            >
+              <p
+                class="text-4xl xl:text-5xl lg:text-5xl text-white"
+                :class="{ 'opacity-40': loadingPost }"
+              >
+                አዲስ ጨዋታ
+              </p>
             </router-link>
             <button
+              style="opacity: 12px"
               @click="animateForm"
               class="bg-green-600 rounded-lg mt-5 w-full font-black text-white p-16 xl:text-2xl lg:text-2xl text-xl"
             >
-              <p>Meme / Story</p>
+              <p
+                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
+                :class="{ 'opacity-40': loadingPost }"
+              >
+                Meme / Story
+              </p>
             </button>
             <button
               class="w-full bg-yellow-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
-              <p>Sport Rant</p>
+              <p
+                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
+                :class="{ 'opacity-40': loadingPost }"
+              >
+                Sport Rant
+              </p>
             </button>
             <button
               class="w-full bg-red-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
-              <p>Random Shit</p>
+              <p
+                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
+                :class="{ 'opacity-40': loadingPost }"
+              >
+                Random Shit
+              </p>
             </button>
           </div>
         </transition>
         <transition name="slide-form">
-          <div v-if="showFormx" class="lg:w-96 xl:w-96 md:lg:w-96">
+          <div
+            v-if="showFormx"
+            class="lg:w-96 xl:w-96 md:lg:w-96 relative"
+            :style="{ filter: loadingPost ? 'blur(2px)' : '' }"
+            :class="{ 'opacity-70': loadingPost }"
+          >
             <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Post Here</p>
 
             <textarea
-              class="form-control block w-full h-44 resize-none border-none px-3 my-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+              class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
               id="exampleFormControlTextarea1"
               rows="3"
-              placeholder="Your message"
+              v-model="content"
+              placeholder="Your post starts here ..."
             ></textarea>
+            <div
+              class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
+            >
+              <input type="file" @change="uploaded" class="hidden" ref="file" />
+              <p>5000</p>
+              <button @click="clickFileRef">
+                <span v-if="!filename">Attach Img/Gif</span>
+                <span v-else>{{ filename }}</span>
+              </button>
+            </div>
             <button
+              @click="post"
               class="bg-green-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Post</p>
@@ -50,20 +108,31 @@
         </transition>
       </div>
     </dialog-modal>
-    <navbar />
     <div class="flex flex-row justify-center gap-10 mt-24">
-      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
+      <div
+        v-if="$store.state.loggedIn"
+        class="w-1/6 mt-2 hidden lg:block xl:block md:block"
+      >
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
-          Join DevRant
+          Welcome to Chewata
+        </h1>
+        <p class="font-normal text-gray-400 text-lg">
+          you can start posting by clicking the ball icon and just go around and
+          like and enjoy.
+        </p>
+      </div>
+      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
+        <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
+          Join Chewata
         </h1>
 
         <p class="font-normal text-gray-400 text-lg">
           Do all the things like ++ or -- rants, post your own rants, comment on
-          others' rants and build your customized dev avatar
+          others' rants and just have fun.
         </p>
         <button
           class="rounded-xl tracking-widest border-2 mt-2 p-2"
-          @click="showModal = true"
+          @click="$store.commit('SET_LOGIN_POP', true)"
         >
           Sign Up
         </button>
@@ -72,11 +141,15 @@
         <p class="text-2xl px-6 font-semibold tracking-wider text-gray-500">
           Feed
         </p>
+        <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
+          <loader></loader>
+        </div>
         <div
+          v-else
           v-for="(post, ix) in posts"
           :key="ix"
           class="mt-4 cursor-pointer"
-          @click="clicked"
+          @click="clicked(post)"
         >
           <feed-tile :post="post" />
           <div class="mb-3 flex flex-row justify-end">
@@ -124,7 +197,7 @@
         </div>
       </div>
     </div>
-    <ground-meda @ballClicked="showMainDialog = true" />
+    <ground-meda @ballClicked="menuClicked" />
   </div>
 </template>
 
@@ -136,17 +209,20 @@ import FeedTile from "../components/FeedTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "../firebase.config";
+import { db } from "../firebase.config";
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
+  orderBy,
   query,
   setDoc,
 } from "firebase/firestore";
-import { getFirestore } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import Loader from "../components/Loader.vue";
+import { uuid } from "vue-uuid";
+import LoginPopup from "../components/LoginPopup.vue";
+import AccountPopup from "../components/AccountPopup.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -156,46 +232,63 @@ export default defineComponent({
     VoteClickers,
     FeedTile,
     DialogModal,
+    Loader,
+    LoginPopup,
+    AccountPopup,
   },
   data: () => ({
+    loadingFeed: false,
     showModal: false,
+    loginPopup: false,
+    content: "",
     showMainDialog: false,
     showForm: false,
+    loadingPost: false,
     showFormx: false,
+    filename: null as any,
+    file: null as any,
     posts: [] as Array<any>,
   }),
   async mounted() {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // const docRef = doc(db, "posts", "");
-    const q = query(collection(db, "posts"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      // console.log(doc.id, " => ", doc.data());
-      this.posts.push(doc.data());
-    });
-
-    // console.log("loading", docSnap);
-    // if (docSnap.exists()) {
-    //   console.log("Document data:", docSnap.data());
-    // } else {
-    //   // doc.data() will be undefined in this case
-    //   console.log("No such document!");
-    // }
+    await this.loadFeed();
   },
   methods: {
+    menuClicked() {
+      console.log(this.$store.state.loggedIn, "Dawg");
+      if (this.$store.state.loggedIn) {
+        this.$store.commit("SET_MAIN_POP", true);
+      } else {
+        this.$store.commit("SET_LOGIN_POP", true);
+      }
+    },
+    async loadFeed() {
+      this.posts = [];
+      this.loadingFeed = true;
+      const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        this.posts.push(doc.data());
+      });
+      this.loadingFeed = false;
+    },
+    clickFileRef() {
+      (this.$refs.file as any).click();
+    },
+    uploaded(e: any) {
+      this.file = e.target.files;
+      this.filename = e.target.files[0].name;
+    },
     cancelPost() {
       this.showFormx = false;
       setTimeout(() => {
         this.showForm = false;
       }, 250);
     },
+
     closeDialog() {
       this.showForm = false;
       this.showFormx = false;
-      this.showMainDialog = false;
+      this.$store.commit("SET_MAIN_POP", false);
     },
     animateForm() {
       this.showForm = true;
@@ -203,8 +296,40 @@ export default defineComponent({
         this.showFormx = true;
       }, 250);
     },
-    clicked() {
-      this.$router.push({ path: "/game" });
+    clicked(post: any) {
+      this.$router.push({ path: `/game/${post.id}` });
+    },
+
+    async savePost(cover: any = null) {
+      console.log("Cover", cover);
+      const postsRef = doc(collection(db, "posts"));
+      await setDoc(postsRef, {
+        id: uuid.v4(),
+        content: this.content,
+        cover: cover,
+        createdAt: new Date().toISOString(),
+        likes: 0,
+      }).finally(() => {
+        this.loadingPost = false;
+        this.$store.commit("SET_MAIN_POP", false)
+      });
+      await this.loadFeed();
+    },
+    async post() {
+      this.loadingPost = true;
+      if (this.file) {
+        const storage = getStorage();
+        const storageRef = ref(storage, this.filename);
+
+        // 'file' comes from the Blob or File API
+        await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
+          const url = await getDownloadURL(snapshot.ref);
+          await this.savePost(url);
+          console.log("Uploaded a blob or file!", url);
+        });
+        return;
+      }
+      await this.savePost(null);
     },
   },
 });
