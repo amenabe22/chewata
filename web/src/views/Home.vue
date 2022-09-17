@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full">
+  <div class="w-full" ref="scrollComponent">
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
     <dialog-modal :show="$store.state.showMainDialog" @close="closeDialog">
-      <div class="mx-2 relative">
+      <div class="mx-2 relative w-full">
         <div
           v-if="loadingPost"
           class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
@@ -69,7 +69,7 @@
         <transition name="slide-form">
           <div
             v-if="showFormx"
-            class="lg:w-96 xl:w-96 md:lg:w-96 relative"
+            class="w-full relative"
             :style="{ filter: loadingPost ? 'blur(2px)' : '' }"
             :class="{ 'opacity-70': loadingPost }"
           >
@@ -85,7 +85,13 @@
             <div
               class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
             >
-              <input type="file" @change="uploaded" class="hidden" ref="file" />
+              <input
+                type="file"
+                @change="uploaded"
+                class="hidden"
+                ref="file"
+                accept="image/png, image/gif, image/jpeg"
+              />
               <p>5000</p>
               <button @click="clickFileRef">
                 <span v-if="!filename">Attach Img/Gif</span>
@@ -138,14 +144,12 @@
         </button>
       </div>
       <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
-        <p class="text-2xl font-semibold tracking-wider text-gray-500">
-          Feed
-        </p>
+        <p class="text-2xl font-semibold tracking-wider text-gray-500">Feed</p>
+
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
           <loader></loader>
         </div>
         <div
-          v-else
           v-for="(post, ix) in posts"
           :key="ix"
           class="mt-4 cursor-pointer"
@@ -174,7 +178,9 @@
           </div>
           <div class="border-t border-gray-200 w-full"></div>
         </div>
-        <div class="mb-32"></div>
+        <div v-if="loadComplete">
+          <p>No More Posts</p>
+        </div>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <h1
@@ -216,13 +222,17 @@ import {
   getDocs,
   orderBy,
   query,
+  limit,
   setDoc,
+  startAfter,
+  limitToLast,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Loader from "../components/Loader.vue";
 import { uuid } from "vue-uuid";
 import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
+import InfiniteScroll from "infinite-loading-vue3";
 
 export default defineComponent({
   name: "HomePage",
@@ -235,26 +245,58 @@ export default defineComponent({
     Loader,
     LoginPopup,
     AccountPopup,
+    InfiniteScroll,
   },
   data: () => ({
     loadingFeed: false,
     showModal: false,
     loginPopup: false,
     content: "",
+    message: "",
+    noResult: false,
+    page: 1,
+    invalidImage: false,
     showMainDialog: false,
     showForm: false,
     loadingPost: false,
     showFormx: false,
+    loadComplete: false,
+    limit: 3,
+    loaded: false,
     filename: null as any,
     file: null as any,
     posts: [] as Array<any>,
+    lastSnapshot: null as any,
   }),
   async mounted() {
     await this.loadFeed();
+    // handle infintie scroll
+    window.addEventListener("scroll", this.handleScroll);
   },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+
   methods: {
+    async handleScroll(e: any) {
+      let element = this.$refs.scrollComponent as any;
+      if (!this.loadComplete) {
+        if (
+          Math.round(element.getBoundingClientRect().bottom) <=
+          window.innerHeight
+        ) {
+          const newItems: any = await this.loadFeed();
+          if (!newItems) {
+            this.noResult = true;
+            this.message = "No result found";
+            this.loadComplete = true;
+            alert("loadded them all");
+            return;
+          }
+        }
+      }
+    },
     menuClicked() {
-      console.log(this.$store.state.loggedIn, "Dawg");
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
       } else {
@@ -262,19 +304,64 @@ export default defineComponent({
       }
     },
     async loadFeed() {
-      this.posts = [];
       this.loadingFeed = true;
-      const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        this.posts.push(doc.data());
-      });
+      let picturesRef: any = null;
+      picturesRef = query(
+        collection(db, "posts"),
+        orderBy("createdAt", "desc"),
+        limit(3)
+      );
+      if (this.lastSnapshot) {
+        picturesRef = query(
+          collection(db, "posts"),
+          orderBy("createdAt", "desc"),
+          startAfter(this.lastSnapshot),
+          limit(3)
+        );
+      }
+
+      const picturesSnap = await getDocs(picturesRef);
+      this.lastSnapshot = picturesSnap.docs[picturesSnap.docs.length - 1];
+      const result = picturesSnap.docs.map((p) => p.data());
+      this.posts.push(...result);
       this.loadingFeed = false;
+      return result.length;
     },
     clickFileRef() {
       (this.$refs.file as any).click();
     },
+    checkFile(e: any) {
+      /// get list of files
+      var file_list = e.target.files;
+      let txt = "";
+      let error = false;
+      /// go through the list of files
+      const file = file_list[0];
+      var sFileName = file.name;
+      var sFileExtension = sFileName
+        .split(".")
+        [sFileName.split(".").length - 1].toLowerCase();
+      var iFileSize = file.size;
+      var iConvert = (file.size / 1048576).toFixed(2);
+
+      /// OR together the accepted extensions and NOT it. Then OR the size cond.
+      /// It's easier to see this way, but just a suggestion - no requirement.
+      const allowed = ["webp", "jpg", "jpeg", "png", "gif"];
+      if (!allowed.includes(sFileExtension) || iFileSize > 2485760) {
+        /// 10 mb
+        txt +=
+          "Please make sure your file is in image format and less than 2 MB.\n\n";
+        error = true;
+        this.invalidImage = true;
+      }
+      return { txt, error };
+    },
     uploaded(e: any) {
+      const { txt, error }: any = this.checkFile(e);
+      if (error) {
+        alert(txt);
+        return;
+      }
       this.file = e.target.files;
       this.filename = e.target.files[0].name;
     },
@@ -284,7 +371,6 @@ export default defineComponent({
         this.showForm = false;
       }, 250);
     },
-
     closeDialog() {
       this.showForm = false;
       this.showFormx = false;
@@ -301,7 +387,6 @@ export default defineComponent({
     },
 
     async savePost(cover: any = null) {
-      console.log("Cover", cover);
       const postsRef = doc(collection(db, "posts"));
       await setDoc(postsRef, {
         id: uuid.v4(),
@@ -317,6 +402,10 @@ export default defineComponent({
       await this.loadFeed();
     },
     async post() {
+      if (this.invalidImage) {
+        alert("Invalid file size and format: make sure it's below 2mb");
+        return;
+      }
       this.loadingPost = true;
       if (this.file) {
         const storage = getStorage();
@@ -326,7 +415,6 @@ export default defineComponent({
         await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
           const url = await getDownloadURL(snapshot.ref);
           await this.savePost(url);
-          console.log("Uploaded a blob or file!", url);
         });
         return;
       }
@@ -335,7 +423,6 @@ export default defineComponent({
   },
 });
 </script>
-
 <style scoped>
 .modal-mask {
   position: fixed;

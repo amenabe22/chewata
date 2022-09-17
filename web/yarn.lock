@@ -1656,6 +1656,11 @@
     "parent-module" "^1.0.0"
     "resolve-from" "^4.0.0"
 
+"infinite-loading-vue3@^1.0.1":
+  "integrity" "sha512-3akMDvIMUv2Vsyt/HY+peLGVg3R/vozrLEv8Hz3EmoB/GQX2fdjzTmMKUPKrytBizAbA36UKI0yRJ2Ej3w8Ebw=="
+  "resolved" "https://registry.npmjs.org/infinite-loading-vue3/-/infinite-loading-vue3-1.0.1.tgz"
+  "version" "1.0.1"
+
 "inflight@^1.0.4":
   "integrity" "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA=="
   "resolved" "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz"
@@ -2669,6 +2674,11 @@
     "vscode-pug-languageservice" "0.29.8"
     "vscode-typescript-languageservice" "0.29.8"
 
+"vue-load-image@^1.1.0":
+  "integrity" "sha512-OYlK7FBSYY6ksxWwty5oeXmPWbvMaZS6fuVcLtEmsGAeH/7dN0ZxicJyb9R+kCO0gCk1fqFJmo4ovqAOn5hupw=="
+  "resolved" "https://registry.npmjs.org/vue-load-image/-/vue-load-image-1.1.0.tgz"
+  "version" "1.1.0"
+
 "vue-router@^4.0.12":
   "integrity" "sha512-wAO6zF9zxA3u+7AkMPqw9LjoUCjSxfFvINQj3E/DceTt6uEz1XZLraDhdg2EYmvVwTBSGlLYsUw8bDmx0754Mw=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.0.14.tgz"
@@ -2692,7 +2702,7 @@
     "@types/uuid" "^8.3.4"
     "uuid" "^8.3.2"
 
-"vue@^3.0.2", "vue@^3.2.0", "vue@^3.2.25", "vue@>= 3.0.0", "vue@>= 3.0.0 < 4", "vue@3.2.31":
+"vue@^3", "vue@^3.0.2", "vue@^3.0.5", "vue@^3.2.0", "vue@^3.2.25", "vue@>= 3.0.0", "vue@>= 3.0.0 < 4", "vue@3.2.31":
   "integrity" "sha512-odT3W2tcffTiQCy57nOT93INw1auq5lYLLYtWpPYQQYQOOdHiqFct9Xhna6GJ+pJQaF67yZABraH47oywkJgFw=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.2.31.tgz"
   "version" "3.2.31"

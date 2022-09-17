@@ -32,6 +32,13 @@
         />
       </div>
     </div>
+    <img
+      v-if="comment.comment.cover"
+      :src="comment.comment.cover"
+      alt=""
+      style="object-fit: contain"
+    />
+
     <a href="" class="px-20 font-black text-gray-400">Reply</a>
     <hr class="mt-2" />
   </div>

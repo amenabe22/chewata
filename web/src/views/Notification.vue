@@ -1,4 +1,4 @@
- <template>
+<template>
   <div>
     <div class="flex flex-row justify-center gap-10 mt-24">
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
@@ -19,15 +19,13 @@
       </div>
       <!-- start of notifs -->
       <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white">
-        <p
-          class="text-2xl px-6 pt-5 font-semibold tracking-wider text-gray-500"
-        >
+        <p class="text-2xl pt-5 font-semibold tracking-wider text-gray-500">
           Notifications
         </p>
         <notification-tile
-          text="Dont know when devRant became NatGeo Wild Trivia ..."
-          v-for="x in 10"
-          :key="x"
+          v-for="(not, ix) in notifications"
+          :text="not.annotation"
+          :key="ix"
         />
       </div>
       <!-- end of notifs -->
@@ -42,27 +40,10 @@
           <div
             v-for="x in 13"
             :key="x"
-            class="
-              rounded-md
-              border-2
-              px-1
-              hover:border-green-500
-              duration-300
-              transition
-              ease-in-out
-              delay-75
-            "
+            class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75"
           >
             <p
-              class="
-                text-gray-500 text-center text-sm
-                hover:text-green-600
-                cursor-pointer
-                duration-300
-                transition
-                ease-in-out
-                delay-75
-              "
+              class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75"
             >
               Soccer
             </p>
@@ -83,6 +64,11 @@ export default defineComponent({
   setup() {},
   data: () => ({
     showModal: false,
+    notifications: [
+      {
+        annotation: "Amar ++'d your comment!",
+      },
+    ] as any,
   }),
 });
 </script>

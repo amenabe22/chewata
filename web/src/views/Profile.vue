@@ -13,132 +13,61 @@
       }"
     >
       <div
-        class="
-          text-white
-          font-semibold
-          xl:text-4xl
-          lg:text-4xl
-          md:text-3xl
-          text-2xl
-          xl:tracking-wider
-          lg:tracking-wider
-          md:tracking-wider
-          tracking-normal
-          font-sans
-          flex
-          lg:mx-80
-          xl:mx-80
-          mx-10
-          pt-20
-          bg-ima
-        "
+        class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
-        <div
-          class="flex flex-row pb-50 md:mt-0 lg:mt-0 xl:mt-0 mt-10"
-          style="back"
-        >
-          <vote-clickers :dark="true" color="#92daac" class="mt-5" />
-          <div class="xl:w-3/4 lg:w-3/5 md:w-3/5">
-            <p class="pt-5">Cool Dude</p>
-            <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
-              If you treat me like an option, I’ll leave you like a choice.
-            </p>
-          </div>
+        <div class="flex flex-col gap-4 w-full items-start px-2">
+          <p class="pt-5">Cool Dude</p>
+          <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
+            If you treat me like an option, I’ll leave you like a choice.
+          </p>
         </div>
       </div>
     </div>
-    <div class="flex flex-row justify-center gap-2 mt-2">
-      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
-          Degafi
-        </h1>
-        <div class="flex flex-row">
-          <user-avatar />
+    <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
+      <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
+        <div class="flex flex-row" v-if="$store.state.loggedIn">
+          <user-avatar :img="$store.state.user.photoURL" />
           <div>
             <p
-              class="
-                text-xl text-gray-500
-                px-2
-                pt-1
-                font-semibold
-                tracking-wider
-                font-sans
-              "
+              class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              Samuna
+              {{ $store.state.user.displayName }}
             </p>
             <div
-              class="
-                mx-2
-                w-1/2
-                text-center
-                font-black
-                text-sm
-                rounded-md
-                text-white
-                bg-green-500
-              "
+              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
             >
               1099
             </div>
           </div>
         </div>
-
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-wide mt-8">
-          Support Us
-        </h1>
-        <p class="font-normal text-gray-400 text-lg">
-          Do all the things like ++ or -- rants, post your own rants, comment on
-          others' rants and build your customized dev avatar
-        </p>
         <button
-          class="rounded-xl tracking-widest border-2 mt-2 p-2"
+          class="rounded-xl tracking-widest border-2 mt-10 p-2"
+          v-if="!$store.state.loggedIn"
           @click="showModal = true"
         >
           Sign Up
         </button>
       </div>
       <!-- comments section -->
-      <div class="md:w-2/5 lg:w-2/5 xl:w-2/6 bg-white">
-        <div class="flex flex-row">
+      <div class="bg-white col-span-5">
+        <div class="flex flex-row pt-3">
           <button
-            class="
-              text-2xl
-              px-2
-              pt-5
-              font-semibold
-              tracking-wider
-              text-gray-400
-            "
+            class="text-2xl px-2 font-semibold tracking-wider text-gray-400"
           >
             Posts
           </button>
           <button
-            class="
-              text-2xl
-              px-2
-              pt-5
-              font-semibold
-              tracking-wider
-              text-gray-400
-            "
+            class="text-2xl px-2 font-semibold tracking-wider text-gray-400"
           >
             Comments
           </button>
           <button
-            class="
-              text-2xl
-              px-2
-              pt-5
-              font-semibold
-              tracking-wider
-              text-gray-400
-            "
+            class="text-2xl px-2 font-semibold tracking-wider text-gray-400"
           >
             Favourites
           </button>
         </div>
-        <feed-tile
+        <!-- <feed-tile
           pic="https://img.devrant.com/devrant/rant/r_4913002_e2Y73.jpg"
           text="From the window of my new office I see a lot of chicks."
         />
@@ -147,15 +76,7 @@
 All jobs required experience in stuff I never seen/heard before (back then I didn’t know most job listings were copy pasted by people who knew less than me)."
           v-for="x in 3"
           :key="x"
-        />
-      </div>
-      <!-- comments section end -->
-      <div style="width: 13%" class="flex flex-row justify-center gap-10 mt-2">
-        <div class="mt-2 hidden lg:block xl:block md:block">
-          <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
-            Related Chewata
-          </h1>
-        </div>
+        /> -->
       </div>
     </div>
   </div>
