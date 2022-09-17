@@ -24,7 +24,7 @@
               :class="{ 'opacity-70': loadingPost }"
             >
               <textarea
-                class="form-control w-72 p-3 rounded-b-none block  h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+                class="form-control w-72 p-3 rounded-b-none block h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
                 id="exampleFormControlTextarea1"
                 rows="3"
                 v-model="content"
@@ -229,19 +229,17 @@ export default defineComponent({
         likes = await getDocs(voteQuery);
         user = await getDocs(uq);
       }
-      console.log(post.user, "wha");
-      console.log(user.docs[0].data(), "usr");
       // this.comments.push({ comment: comment, user: user.docs[0].data() });
       // console.log(likes.docs[0].data(), "likes!");
-      this.postRef = querySnapshot.docs[0].ref;
+      if (this.$store.state.loggedIn) this.postRef = querySnapshot.docs[0].ref;
       this.initialVote = post.likes;
       // alert(this.initialVote)
-      if (this.$store.state.user) {
+      if (this.$store.state.loggedIn) {
         const voted = likes.docs.length ? likes.docs[0].data().voted : null;
         const vote = likes.docs.length ? likes.docs[0].data().vote : null;
         this.post = {
           p: post,
-          user: user.docs[0].data(),
+          user: user ? user.docs[0].data() : null,
           vote,
           voted,
         };
@@ -253,7 +251,7 @@ export default defineComponent({
       } else {
         this.post = {
           p: post,
-          user: user.docs[0].data(),
+          user: user ? user.docs[0].data() : null,
           vote: null,
           voted: null,
         };

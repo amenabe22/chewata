@@ -60,7 +60,9 @@ export default defineComponent({
   }),
   props: ["post", "count"],
   async created() {
-    this.fetchVotes();
+    if (this.$store.state.loggedIn) {
+      this.fetchVotes();
+    }
     this.initialVote = this.post.likes;
     await this.setRef();
   },
