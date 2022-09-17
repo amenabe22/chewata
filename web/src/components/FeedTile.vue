@@ -4,9 +4,9 @@
     class="flex flex-row mt-4 hover:bg-gray-50 cursor-pointer"
   >
     <vote-clickers :count="post.likes" />
-    <div class="mx-3 pt-2">
+    <div class="mx-3">
       <p
-        class="py-2 tracking-wide text-gray-600 text-lg"
+        class="tracking-wide text-gray-600 text-lg"
         v-text="post.content"
       ></p>
       <vue-load-image>

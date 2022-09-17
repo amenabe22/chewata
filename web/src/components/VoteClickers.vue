@@ -6,7 +6,7 @@
       :class="{
         'hover:bg-green-500': !color,
         'w-8 h-6 text-lg': !large,
-        'bg-green-100 text-green-400': !vote && voted,
+        'bg-green-200 text-green-400': !vote && voted,
         'bg-green-500 text-white': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
         'w-10 h-8 text-xl p-1': large,
@@ -16,8 +16,8 @@
       ++
     </div>
     <p
-      class="text-center py-1 text-lg"
-      :class="{ 'text-white': dark, 'text-gray-600': !dark }"
+      class="text-center text-lg"
+      :class="{ 'text-white': dark, 'text-gray-600': !dark, 'py-1': large }"
     >
       {{ count }}
     </p>

@@ -149,13 +149,12 @@
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
           <loader></loader>
         </div>
-        <div
-          v-for="(post, ix) in posts"
-          :key="ix"
-          class="mt-4 cursor-pointer"
-          @click="clicked(post)"
-        >
-          <post-tile :post="post"></post-tile>
+        <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
+          <post-tile
+            :postRef="postRef"
+            :post="post"
+            @clicked="clicked(post)"
+          ></post-tile>
           <div class="mb-3 flex flex-row justify-end">
             <button class="px-2 mx-2">
               <div class="flex">

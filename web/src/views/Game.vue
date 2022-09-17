@@ -1,33 +1,30 @@
 <template>
   <div>
     <dialog-modal :show="showCommentForm" @close="showCommentForm = false">
-      <div class="relative w-full">
-        <transition name="slide-fade">
-          <div class="w-full z-0">
-            <div
-              v-if="loadingPost"
-              class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
-            >
-              <div
-                class="flex flex-col mt-32 justify-center items-center w-full"
-              >
-                <p class="text-xl font-black text-white tracking-wider w-full">
-                  Loading...
-                </p>
-                <game-loader></game-loader>
-              </div>
+      <div class="relative">
+        <div class="w-full z-0">
+          <div
+            v-if="loadingPost"
+            class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
+          >
+            <div class="flex flex-col mt-32 justify-center items-center w-full">
+              <p class="text-xl font-black text-white tracking-wider w-full">
+                Loading...
+              </p>
+              <game-loader></game-loader>
             </div>
-            <router-link to="/">
-              <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Comment</p>
-            </router-link>
-            <div></div>
+          </div>
+          <router-link to="/">
+            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Comment</p>
+          </router-link>
+          <transition name="slide-fade">
             <div
-              class="lg:w-96 xl:w-96 md:lg:w-96 relative"
+              class="w-full relative"
               :style="{ filter: loadingPost ? 'blur(2px)' : '' }"
               :class="{ 'opacity-70': loadingPost }"
             >
               <textarea
-                class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+                class="form-control w-72 p-3 rounded-b-none block  h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
                 id="exampleFormControlTextarea1"
                 rows="3"
                 v-model="content"
@@ -56,8 +53,8 @@
                 <p>Post</p>
               </button>
             </div>
-          </div>
-        </transition>
+          </transition>
+        </div>
       </div>
     </dialog-modal>
     <div class="bg-green-400 h-1/2 w-full">
@@ -449,28 +446,14 @@ export default defineComponent({
         });
       }
       if (vote) {
-        // if (this.lastDecremented && this.post.voted) {
-        //   this.post.p.likes = this.post.p.likes + 2;
-        // } else {
-        //   this.post.p.likes++;
-        // }
         this.post.p.likes++;
-        // this.initialVote = this.post.likes - 1;
         updateDoc(this.postRef, {
           likes: this.post.p.likes,
         });
         if (this.lastIncremented == null) this.lastIncremented = true;
       } else {
-        console.log("down", this.post.p.likes - 1);
-        // this.post.p.likes--;
-        // if (this.lastIncremented && this.post.voted) {
-        //   this.post.p.likes = this.post.p.likes - 2;
-        // } else {
-        //   this.post.p.likes--;
-        // }
         this.post.p.likes--;
 
-        // this.initialVote = this.post.likes + 1;
         updateDoc(this.postRef, {
           likes: this.post.p.likes,
         });
