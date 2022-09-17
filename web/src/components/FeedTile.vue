@@ -3,7 +3,7 @@
     :to="`/game/${post.id}`"
     class="flex flex-row mt-4 hover:bg-gray-50 cursor-pointer"
   >
-    <vote-clickers />
+    <vote-clickers :count="post.likes" />
     <div class="mx-3 pt-2">
       <p
         class="py-2 tracking-wide text-gray-600 text-lg"
@@ -34,6 +34,6 @@ import Loader from "./Loader.vue";
 export default defineComponent({
   components: { VoteClickers, "vue-load-image": VueLoadImage, Loader },
   setup() {},
-  props: ["post"],
+  props: ["post", "count"],
 });
 </script>

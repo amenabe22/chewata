@@ -6,13 +6,13 @@
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
     <dialog-modal :show="$store.state.showMainDialog" @close="closeDialog">
-      <div class="mx-2 relative w-full">
+      <div class="px-2 relative w-full">
         <div
           v-if="loadingPost"
           class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
         >
           <div class="flex flex-col mt-32 justify-center items-center">
-            <p class="text-xl font-black text-white tracking-wider">
+            <p class="text-xl font-bold text-white tracking-wider">
               Loading...
             </p>
             <loader :dark="true"></loader>
@@ -35,7 +35,7 @@
             <button
               style="opacity: 12px"
               @click="animateForm"
-              class="bg-green-600 rounded-lg mt-5 w-full font-black text-white p-16 xl:text-2xl lg:text-2xl text-xl"
+              class="bg-green-600 rounded-lg mt-5 w-full font-bold text-white p-16 xl:text-2xl lg:text-2xl text-xl"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
@@ -45,7 +45,7 @@
               </p>
             </button>
             <button
-              class="w-full bg-yellow-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="w-full bg-yellow-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
@@ -55,7 +55,7 @@
               </p>
             </button>
             <button
-              class="w-full bg-red-600 rounded-lg mt-3 font-black text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="w-full bg-red-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
@@ -100,13 +100,13 @@
             </div>
             <button
               @click="post"
-              class="bg-green-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="bg-green-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Post</p>
             </button>
             <button
               @click="cancelPost"
-              class="bg-red-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="bg-red-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Cancel</p>
             </button>
@@ -143,7 +143,7 @@
           Sign Up
         </button>
       </div>
-      <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
+      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
         <p class="text-2xl font-semibold tracking-wider text-gray-500">Feed</p>
 
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
@@ -155,7 +155,7 @@
           class="mt-4 cursor-pointer"
           @click="clicked(post)"
         >
-          <feed-tile :post="post" />
+          <post-tile :post="post"></post-tile>
           <div class="mb-3 flex flex-row justify-end">
             <button class="px-2 mx-2">
               <div class="flex">
@@ -178,8 +178,39 @@
           </div>
           <div class="border-t border-gray-200 w-full"></div>
         </div>
-        <div v-if="loadComplete">
-          <p>No More Posts</p>
+        <div v-if="loadComplete" class="text-center pb-32 pt-10">
+          <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
+        </div>
+        <div
+          class="flex justify-center my-10"
+          v-if="posts.length && !loadingFeed && !loadComplete"
+        >
+          <button
+            class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"
+            @click="loadFeed"
+          >
+            <span>Load More</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 font-bold"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          class="flex justify-center my-10"
+          v-else-if="loadingFeed && posts.length"
+        >
+          <loader></loader>
         </div>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
@@ -203,7 +234,7 @@
         </div>
       </div>
     </div>
-    <ground-meda @ballClicked="menuClicked" />
+    <ground-meda @ballClicked="menuClicked" v-if="!loadingFeed" />
   </div>
 </template>
 
@@ -226,6 +257,7 @@ import {
   setDoc,
   startAfter,
   limitToLast,
+  where,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Loader from "../components/Loader.vue";
@@ -233,6 +265,7 @@ import { uuid } from "vue-uuid";
 import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
+import PostTile from "../components/PostTile.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -246,6 +279,7 @@ export default defineComponent({
     LoginPopup,
     AccountPopup,
     InfiniteScroll,
+    PostTile,
   },
   data: () => ({
     loadingFeed: false,
@@ -261,7 +295,7 @@ export default defineComponent({
     loadingPost: false,
     showFormx: false,
     loadComplete: false,
-    limit: 3,
+    limit: 10,
     loaded: false,
     filename: null as any,
     file: null as any,
@@ -271,10 +305,10 @@ export default defineComponent({
   async mounted() {
     await this.loadFeed();
     // handle infintie scroll
-    window.addEventListener("scroll", this.handleScroll);
+    // window.addEventListener("scroll", this.handleScroll);
   },
   unmounted() {
-    window.removeEventListener("scroll", this.handleScroll);
+    // window.removeEventListener("scroll", this.handleScroll);
   },
 
   methods: {
@@ -286,11 +320,12 @@ export default defineComponent({
           window.innerHeight
         ) {
           const newItems: any = await this.loadFeed();
+          console.log(newItems, "ss");
           if (!newItems) {
             this.noResult = true;
             this.message = "No result found";
             this.loadComplete = true;
-            alert("loadded them all");
+            console.log("loadded them all");
             return;
           }
         }
@@ -305,26 +340,28 @@ export default defineComponent({
     },
     async loadFeed() {
       this.loadingFeed = true;
-      let picturesRef: any = null;
-      picturesRef = query(
+      let picturesRef = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
-        limit(3)
+        limit(this.limit)
       );
-      if (this.lastSnapshot) {
+
+      if (this.lastSnapshot)
         picturesRef = query(
           collection(db, "posts"),
           orderBy("createdAt", "desc"),
           startAfter(this.lastSnapshot),
-          limit(3)
+          limit(this.limit)
         );
-      }
 
+      // console.log("LAST: ", this.lastSnapshot);
       const picturesSnap = await getDocs(picturesRef);
       this.lastSnapshot = picturesSnap.docs[picturesSnap.docs.length - 1];
-      const result = picturesSnap.docs.map((p) => p.data());
+      let result = picturesSnap.docs.map((p) => p.data());
+      console.log(result, "RESSSSULLTT");
       this.posts.push(...result);
       this.loadingFeed = false;
+      if (!result.length) this.loadComplete = true;
       return result.length;
     },
     clickFileRef() {
@@ -404,6 +441,10 @@ export default defineComponent({
     async post() {
       if (this.invalidImage) {
         alert("Invalid file size and format: make sure it's below 2mb");
+        return;
+      }
+      if (this.content == "") {
+        alert("Message can't be empty");
         return;
       }
       this.loadingPost = true;

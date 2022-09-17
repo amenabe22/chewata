@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-10">
     <button
       @click="$emit('ballClicked')"
       v-if="!hideBall"

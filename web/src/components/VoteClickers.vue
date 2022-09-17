@@ -1,18 +1,39 @@
 <template>
   <div class="my-2">
+    <!-- {{ voted }} | {{ vote }} -->
     <div
-      :class="{ 'hover:bg-green-500': !color }"
-      :style="{ 'background-color': color ?? '' }"
-      class="duration-300 transition w-8 h-6 ease-in-out delay-100 font-semibold text-lg text-center text-white cursor-pointer bg-gray-400 rounded-t-full"
+      @click="$emit('upvoted')"
+      :class="{
+        'hover:bg-green-500': !color,
+        'w-8 h-6 text-lg': !large,
+        'bg-green-100 text-green-400': !vote && voted,
+        'bg-green-500 text-white': vote && voted,
+        'bg-green-100 text-green-400': !voted && !vote,
+        'w-10 h-8 text-xl p-1': large,
+      }"
+      class="duration-300 transition ease-in-out delay-75 font-semibold text-center cursor-pointer rounded-t-full"
     >
       ++
     </div>
-    <p class="text-center py-1 text-lg" :class="{ 'text-white': dark }">10</p>
-    <div
-      :style="{ 'background-color': color ?? '' }"
-      class="duration-300 transition w-8 h-6 ease-in-out delay-100 font-semibold text-lg text-center text-white hover:bg-green-500 cursor-pointer bg-gray-400 rounded-b-full"
+    <p
+      class="text-center py-1 text-lg"
+      :class="{ 'text-white': dark, 'text-gray-600': !dark }"
     >
-      - -
+      {{ count }}
+    </p>
+    <div
+      @click="$emit('downvoted')"
+      :class="{
+        'hover:bg-green-500': !color,
+        'w-8 h-6 text-lg': !large,
+        'bg-green-500 text-green-200': !vote && voted,
+        'bg-green-200 text-green-400': vote && voted,
+        'bg-green-100 text-green-400': !voted && !vote,
+        'w-10 h-8 text-xl p-1': large,
+      }"
+      class="duration-300 text-xl transition ease-in-out delay-75 font-semibold text-center cursor-pointer rounded-b-full"
+    >
+      --
     </div>
   </div>
 </template>
@@ -21,9 +42,6 @@ import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
   setup() {},
-  props: {
-    color: String,
-    dark: Boolean,
-  },
+  props: ["count", "vote", "voted", "large", "color", "dark"],
 });
 </script>

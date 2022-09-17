@@ -23,7 +23,6 @@
 import { defineComponent } from "vue";
 import LoginPopup from "./components/LoginPopup.vue";
 import Navbar from "./components/Navbar.vue";
-import { getAuth, signOut } from "firebase/auth";
 import AccountPopup from "./components/AccountPopup.vue";
 
 export default defineComponent({

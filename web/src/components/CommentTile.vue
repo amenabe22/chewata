@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-row mt-4 gap-3 hover:bg-gray-50">
-      <vote-clickers />
+      <vote-clickers :count="comment.comment.likes" />
       <div>
         <div class="flex flex-row mt-2">
           <user-avatar :img="comment.user.photoURL" />
@@ -38,8 +38,24 @@
       alt=""
       style="object-fit: contain"
     />
-
-    <a href="" class="px-20 font-black text-gray-400">Reply</a>
+    <div v-if="$store.state.user">
+      <button
+        href=""
+        v-if="$store.state.user.uid != comment.user.id"
+        class="px-20 font-black text-gray-400"
+        @click="$emit('replyClicked')"
+      >
+        Reply
+      </button>
+    </div>
+    <button
+      href=""
+      v-else
+      class="px-20 font-black text-gray-400"
+      @click="$emit('replyClicked')"
+    >
+      Reply
+    </button>
     <hr class="mt-2" />
   </div>
 </template>

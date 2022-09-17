@@ -13,7 +13,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/vue-fontawesome": "^3.0.1",
-    "firebase": "^9.9.4",
+    "firebase": "^9.10.0",
     "infinite-loading-vue3": "^1.0.1",
     "vue": "^3.2.25",
     "vue-load-image": "^1.1.0",

@@ -1,8 +1,8 @@
 <template>
-  <div clas>
+  <div>
     <dialog-modal :show="showCommentForm" @close="showCommentForm = false">
-      <div class="mx-2 relative w-96">
-        <transition name="slide-fade w-96">
+      <div class="relative w-full">
+        <transition name="slide-fade">
           <div class="w-full z-0">
             <div
               v-if="loadingPost"
@@ -64,8 +64,18 @@
       <div
         class="text-white p-2 font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
-        <div class="flex flex-row ga-4" v-if="post">
-          <vote-clickers :dark="true" color="#92daac" class="mt-5" />
+        <div class="flex flex-row gap-4" v-if="post">
+          <vote-clickers
+            :voted="post.voted"
+            @upvoted="upvoted"
+            @downvoted="downvoted"
+            :vote="post.vote"
+            :large="true"
+            :count="post.p.likes"
+            :dark="true"
+            color="#92daac"
+            class="mt-5"
+          />
           <div class="flex flex-col gap-4 w-full px-2">
             <p class="pt-5" v-if="post.user">{{ post.user.name }}</p>
             <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
@@ -89,13 +99,13 @@
     <!-- <div class="flex flex-row justify-center p-2 gap-2 mt-2"> -->
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
-        <div class="flex flex-row" v-if="$store.state.loggedIn">
-          <user-avatar :img="$store.state.user.photoURL" />
+        <div class="flex flex-row" v-if="post && post.user">
+          <user-avatar :img="post.user.photoURL" />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ $store.state.user.displayName }}
+              {{ post.user.name }}
             </p>
             <div
               class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
@@ -104,6 +114,13 @@
             </div>
           </div>
         </div>
+        <div class="pt-2 text-gray-400">
+          <p class="text-xl font-semibold text-gray-500">Welcome To Chewata</p>
+          <p class="pr-12">
+            Start commenting and upvoting posts and express yourself!
+          </p>
+        </div>
+
         <button
           class="rounded-xl tracking-widest border-2 mt-10 p-2"
           v-if="!$store.state.loggedIn"
@@ -118,33 +135,26 @@
           <loader></loader>
         </div>
         <p
-          class="text-2xl pt-5 font-semibold tracking-wider text-gray-500"
+          class="text-xl pt-5 font-semibold tracking-wider text-gray-400"
           v-else
         >
           Comments
         </p>
         <div v-if="comments.length">
           <comment-tile
-            text="Dont know when devRant became NatGeo Wild Trivia ..."
+            @replyClicked="replyComment(com)"
             v-for="(com, ix) in sortedArray()"
             :key="ix"
             :comment="com"
           />
         </div>
       </div>
-      <!-- comments section end -->
-      <!-- <div
-        class="xl:block col-span-1 w-full flex-row justify-center gap-10 mt-2 mx-2 hidden md:hidden"
-      >
-        <div class="mt-2 hidden lg:block xl:block md:block">
-          <h1 class="text-gray-500 text-2xl font-semibold tracking-widest pb-2">
-            Related Chewata
-          </h1>
-          <related-items v-for="x in 2" :key="x" />
-        </div>
-      </div> -->
     </div>
-    <comment-meda @ballClicked="ballClicked" :hide="false"></comment-meda>
+    <comment-meda
+      @ballClicked="ballClicked"
+      v-if="post"
+      :hide="false"
+    ></comment-meda>
   </div>
 </template>
 <script lang="ts">
@@ -158,12 +168,14 @@ import UserAvatar from "../components/UserAvatar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
@@ -202,17 +214,54 @@ export default defineComponent({
     );
     const querySnapshot = await getDocs(q);
     let user: any;
+    let likes: any;
     if (querySnapshot.docs.length) {
       const post = querySnapshot.docs[0].data();
-      if (post.user) {
+      if (post.user && this.$store.state.loggedIn) {
+        const vote = false;
         const uq = query(
           collection(db, "users"),
           where("id", "==", post["user"])
         );
+        const voteQuery = query(
+          collection(db, "likes"),
+          where("user", "==", this.$store.state.user.uid),
+          where("type", "==", "post"),
+          where("objectId", "==", this.$route.params.id)
+        );
+        likes = await getDocs(voteQuery);
         user = await getDocs(uq);
       }
+      console.log(post.user, "wha");
+      console.log(user.docs[0].data(), "usr");
       // this.comments.push({ comment: comment, user: user.docs[0].data() });
-      this.post = { p: post, user: post.user ? user.docs[0].data() : null };
+      // console.log(likes.docs[0].data(), "likes!");
+      this.postRef = querySnapshot.docs[0].ref;
+      this.initialVote = post.likes;
+      // alert(this.initialVote)
+      if (this.$store.state.user) {
+        const voted = likes.docs.length ? likes.docs[0].data().voted : null;
+        const vote = likes.docs.length ? likes.docs[0].data().vote : null;
+        this.post = {
+          p: post,
+          user: user.docs[0].data(),
+          vote,
+          voted,
+        };
+        if (voted && vote) {
+          this.initialVote = post.likes - 1;
+        } else if (voted && !vote) {
+          this.initialVote = post.likes + 1;
+        }
+      } else {
+        this.post = {
+          p: post,
+          user: user.docs[0].data(),
+          vote: null,
+          voted: null,
+        };
+      }
+      console.log(this.post, " POST LOADED ");
     }
     this.loading = false;
   },
@@ -223,15 +272,35 @@ export default defineComponent({
     content: "",
     invalidImage: false,
     loading: false,
+    initialVote: 0,
+    postRef: null as any,
+    lastIncremented: null as any,
+    lastDecremented: null as any,
     file: null as any,
     post: null as any,
     loadingComments: false,
     showCommentForm: false,
     showModal: false,
+    replyTarget: null as any,
     showSide: true,
   }),
   methods: {
+    replyComment(com: any) {
+      if (this.$store.state.loggedIn) {
+        this.showCommentForm = true;
+        this.replyTarget = com;
+        this.content = `@${this.replyTarget.user.name}`;
+        this.showCommentForm = true;
+      } else {
+        this.$store.commit("SET_LOGIN_POP", true);
+      }
+    },
     async postComment() {
+      if (this.content == "") {
+        alert("Message can't be empty");
+        return;
+      }
+
       if (this.invalidImage) {
         alert("Invalid file size and format: make sure it's below 2mb");
         return;
@@ -253,13 +322,17 @@ export default defineComponent({
       await this.saveComment(null);
     },
     ballClicked() {
-      this.showCommentForm = true;
+      if (this.$store.state.loggedIn) {
+        this.showCommentForm = true;
+      } else {
+        this.$store.commit("SET_LOGIN_POP", true);
+      }
     },
     sortedArray: function () {
       function compare(a: any, b: any) {
-        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
-          return -1;
         if (new Date(a.comment.createdAt) < new Date(b.comment.createdAt))
+          return -1;
+        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
           return 1;
         return 0;
       }
@@ -337,7 +410,7 @@ export default defineComponent({
         id: uuid.v4(),
         message: this.content,
         cover: cover,
-        replyTo: "",
+        replyTo: this.replyTarget ? this.replyTarget.user.id : "",
         post: this.$route.params.id,
         user: this.$store.state.user.uid,
         createdAt: new Date().toISOString(),
@@ -347,6 +420,118 @@ export default defineComponent({
         this.showCommentForm = false;
       });
       await this.loadComments();
+    },
+    async setVote(vote: any) {
+      const likesRef = doc(collection(db, "likes"));
+      const lq = query(
+        collection(db, "likes"),
+        where("user", "==", this.$store.state.user.uid),
+        where("type", "==", "post"),
+        where("objectId", "==", this.$route.params.id)
+      );
+      const likes = await getDocs(lq);
+      if (likes.docs.length) {
+        likes.forEach((like) =>
+          updateDoc(like.ref, {
+            vote: vote,
+            voted: true,
+          })
+        );
+      } else {
+        await setDoc(likesRef, {
+          id: uuid.v4(),
+          createdAt: new Date().toISOString(),
+          objectId: this.$route.params.id,
+          type: "post",
+          vote: vote,
+          voted: true,
+          user: this.$store.state.user.uid,
+        });
+      }
+      if (vote) {
+        // if (this.lastDecremented && this.post.voted) {
+        //   this.post.p.likes = this.post.p.likes + 2;
+        // } else {
+        //   this.post.p.likes++;
+        // }
+        this.post.p.likes++;
+        // this.initialVote = this.post.likes - 1;
+        updateDoc(this.postRef, {
+          likes: this.post.p.likes,
+        });
+        if (this.lastIncremented == null) this.lastIncremented = true;
+      } else {
+        console.log("down", this.post.p.likes - 1);
+        // this.post.p.likes--;
+        // if (this.lastIncremented && this.post.voted) {
+        //   this.post.p.likes = this.post.p.likes - 2;
+        // } else {
+        //   this.post.p.likes--;
+        // }
+        this.post.p.likes--;
+
+        // this.initialVote = this.post.likes + 1;
+        updateDoc(this.postRef, {
+          likes: this.post.p.likes,
+        });
+        if (this.lastDecremented == null) this.lastDecremented = true;
+      }
+    },
+    async removeVote(vote: any) {
+      // retain initial vote when user removes theirs
+      this.post.p.likes = this.initialVote;
+      updateDoc(this.postRef, {
+        likes: this.initialVote,
+      });
+      this.post.voted = null;
+      this.post.vote = null;
+      const lq = query(
+        collection(db, "likes"),
+        where("user", "==", this.$store.state.user.uid),
+        where("type", "==", "post"),
+        where("objectId", "==", this.$route.params.id)
+      );
+      const likes = await getDocs(lq);
+      if (likes.docs.length) {
+        likes.forEach((like) =>
+          updateDoc(like.ref, {
+            vote: null,
+            voted: null,
+          })
+        );
+      }
+    },
+    async upvoted() {
+      if (this.$store.state.user) {
+        console.log("up", this.post);
+        console.log(this.post.vote, "dawg");
+        if (this.post.vote == true) {
+          this.removeVote(true);
+          return;
+        } else {
+          this.post.voted = true;
+          this.post.vote = true;
+          this.setVote(true);
+          return;
+        }
+      } else {
+        this.$store.commit("SET_LOGIN_POP", true);
+      }
+    },
+    async downvoted() {
+      if (this.$store.state.user) {
+        console.log("down");
+        console.log(this.post.vote, "vote");
+        if (this.post.vote == false) {
+          this.removeVote(false);
+        } else {
+          this.post.voted = true;
+          this.post.vote = false;
+          this.setVote(false);
+        }
+      } else {
+        this.$store.commit("SET_LOGIN_POP", true);
+      }
     },
   },
   async created() {
