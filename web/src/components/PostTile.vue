@@ -3,6 +3,7 @@
     class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2"
   >
     <vote-clickers
+      :readonly="readonly"
       :voted="voteData.voted"
       @upvoted="upvoted"
       @downvoted="downvoted"
@@ -58,12 +59,15 @@ export default defineComponent({
     initialVote: 0,
     postRef: null as any,
   }),
-  props: ["post", "count"],
+  props: ["post", "count", "readonly"],
   async created() {
+    this.initialVote = this.post.likes;
     if (this.$store.state.loggedIn) {
       this.fetchVotes();
     }
-    this.initialVote = this.post.likes;
+
+    console.log("Initial saved", this.initialVote);
+    // ignore
     await this.setRef();
   },
   methods: {
@@ -81,6 +85,13 @@ export default defineComponent({
       this.voteData.vote = vote;
       this.voteData.voted = voted;
       console.log({ vote, voted });
+
+      if (voted && vote) {
+        this.initialVote = this.post.likes - 1;
+      } else if (voted && !vote) {
+        this.initialVote = this.post.likes + 1;
+      }
+
       return { vote, voted } as any;
     },
     async setVote(vote: any) {
@@ -111,13 +122,13 @@ export default defineComponent({
         });
       }
       if (vote) {
-        this.post.likes++;
+        console.log("Got here: ", this.initialVote, "|", this.post.likes);
+        this.post.likes = this.initialVote + 1;
         updateDoc(this.postRef, {
           likes: this.post.likes,
         });
       } else {
-        this.post.likes--;
-
+        this.post.likes = this.initialVote - 1;
         updateDoc(this.postRef, {
           likes: this.post.likes,
         });

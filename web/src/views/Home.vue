@@ -244,7 +244,6 @@ import DialogModal from "../components/DialogModal.vue";
 import FeedTile from "../components/FeedTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
-import VoteClickers from "../components/VoteClickers.vue";
 import { db } from "../firebase.config";
 import {
   collection,
@@ -271,7 +270,6 @@ export default defineComponent({
   components: {
     Navbar,
     GroundMeda,
-    VoteClickers,
     FeedTile,
     DialogModal,
     Loader,

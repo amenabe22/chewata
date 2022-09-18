@@ -8,7 +8,7 @@
       <img class="shadow-2xl" src="../assets/soccer-ball.png" alt="" />
     </button>
     <nav
-      class="bg-gradient-to-t from-green-400 to-tranparent text-white"
+      class="bg-gradient-to-t from-green-200 to-tranparent text-white"
       style="
         position: fixed;
         width: 100%;

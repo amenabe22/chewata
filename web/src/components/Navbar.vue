@@ -1,7 +1,7 @@
 <template>
   <nav
-    class="bg-green-400 h-16 fixed w-full top-0 z-50"
-    style="box-sizing: content-box"
+    class="h-16 fixed w-full top-0 z-50"
+    style="box-sizing: content-box; background: #5fe18c"
   >
     <div
       class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between"
@@ -48,7 +48,11 @@
             Login
           </button>
         </div>
-        <div v-if="$store.state.user" class="p-3 cursor-pointer" @click="$emit('profileClicked')">
+        <div
+          v-if="$store.state.user"
+          class="p-3 cursor-pointer"
+          @click="$emit('profileClicked')"
+        >
           <img
             :src="$store.state.user.photoURL"
             class="w-10 h-10 rounded-full ring-2 ring-green-600"

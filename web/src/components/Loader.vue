@@ -12,8 +12,8 @@ export default defineComponent({
 </script>
 <style scoped>
 .loader {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   display: block;
   margin: 15px auto;
@@ -25,8 +25,8 @@ export default defineComponent({
 }
 
 .loader-dark {
-  width: 30px;
-  height: 30px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   display: block;
   margin: 15px auto;

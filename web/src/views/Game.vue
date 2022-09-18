@@ -24,7 +24,7 @@
               :class="{ 'opacity-70': loadingPost }"
             >
               <textarea
-                class="form-control w-72 p-3 rounded-b-none block h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+                class="form-control p-3 rounded-b-none block h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
                 id="exampleFormControlTextarea1"
                 rows="3"
                 v-model="content"
@@ -57,7 +57,7 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="bg-green-400 h-1/2 w-full">
+    <div class="h-1/2 w-full" style="background: #5fe18c">
       <div
         class="text-white p-2 font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
@@ -214,12 +214,12 @@ export default defineComponent({
     let likes: any;
     if (querySnapshot.docs.length) {
       const post = querySnapshot.docs[0].data();
+      const uq = query(
+        collection(db, "users"),
+        where("id", "==", post["user"])
+      );
       if (post.user && this.$store.state.loggedIn) {
         const vote = false;
-        const uq = query(
-          collection(db, "users"),
-          where("id", "==", post["user"])
-        );
         const voteQuery = query(
           collection(db, "likes"),
           where("user", "==", this.$store.state.user.uid),
@@ -227,8 +227,8 @@ export default defineComponent({
           where("objectId", "==", this.$route.params.id)
         );
         likes = await getDocs(voteQuery);
-        user = await getDocs(uq);
       }
+      user = await getDocs(uq);
       // this.comments.push({ comment: comment, user: user.docs[0].data() });
       // console.log(likes.docs[0].data(), "likes!");
       if (this.$store.state.loggedIn) this.postRef = querySnapshot.docs[0].ref;
@@ -444,13 +444,14 @@ export default defineComponent({
         });
       }
       if (vote) {
-        this.post.p.likes++;
+        console.log(this.initialVote, "init");
+        this.post.p.likes = this.initialVote + 1;
         updateDoc(this.postRef, {
           likes: this.post.p.likes,
         });
         if (this.lastIncremented == null) this.lastIncremented = true;
       } else {
-        this.post.p.likes--;
+        this.post.p.likes = this.initialVote - 1;
 
         updateDoc(this.postRef, {
           likes: this.post.p.likes,

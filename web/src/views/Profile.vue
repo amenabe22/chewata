@@ -67,6 +67,17 @@
             Favourites
           </button>
         </div>
+        <div>
+          <!-- {{ posts }} -->
+          <post-tile
+            :readonly="true"
+            v-for="(post, ix) in posts"
+            :postRef="postRef"
+            :post="post"
+            :key="ix"
+            @clicked="clicked(post)"
+          ></post-tile>
+        </div>
         <!-- <feed-tile
           pic="https://img.devrant.com/devrant/rant/r_4913002_e2Y73.jpg"
           text="From the window of my new office I see a lot of chicks."
@@ -82,17 +93,45 @@ All jobs required experience in stuff I never seen/heard before (back then I did
   </div>
 </template>
 <script lang="ts">
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "@firebase/firestore";
 import { defineComponent } from "vue";
 import CommentTile from "../components/CommentTile.vue";
 import FeedTile from "../components/FeedTile.vue";
 import Navbar from "../components/Navbar.vue";
 import UserAvatar from "../components/UserAvatar.vue";
+import { db } from "../firebase.config";
+import PostTile from "../components/PostTile.vue";
 
 export default defineComponent({
-  components: { Navbar, UserAvatar, CommentTile, FeedTile },
+  components: { Navbar, UserAvatar, CommentTile, FeedTile, PostTile },
   setup() {},
   data: () => ({
     showModal: false,
+    posts: [] as any,
+    limit: 10,
   }),
+  async created() {
+    await this.fetchUserPosts();
+  },
+  methods: {
+    async fetchUserPosts() {
+      console.log();
+      let postQ = query(
+        collection(db, "posts"),
+        where("user", "==", this.$store.state.user.uid),
+        limit(this.limit)
+      );
+      const querySnapshot = await getDocs(postQ);
+      let result = querySnapshot.docs.map((p) => p.data());
+      this.posts.push(...result);
+    },
+  },
 });
 </script>

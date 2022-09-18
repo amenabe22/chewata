@@ -53,7 +53,43 @@ export default defineComponent({
   components: { DialogModal },
   props: { loginPopup: Boolean },
   methods: {
-    loginFb() {},
+    async loginFb() {
+      const auth = getAuth();
+      const provider = new FacebookAuthProvider();
+      await signInWithPopup(auth, provider)
+        .then(async (result: any) => {
+          this.$store.commit("SET_LOGGEDIN", true);
+          this.$store.commit("SET_USER", result.user);
+          this.$emit("loggedin");
+          const userRef = doc(collection(db, "users"));
+          const q = query(
+            collection(db, "users"),
+            where("id", "==", result.user.uid)
+          );
+          const users = await getDocs(q);
+          if (users.empty) {
+            await setDoc(userRef, {
+              id: result.user.uid,
+              name: result.user.displayName,
+              photoURL: result.user.photoURL,
+              email: result.user.email,
+              createdAt: result.user.reloadUserInfo
+                ? result.user.reloadUserInfo.createdAt
+                : "",
+              totalLikes: 0,
+            });
+          }
+          console.log("done");
+          this.$store.commit("SET_LOGIN_POP", false);
+          this.$store.commit("SET_MAIN_POP", false);
+
+          //   await this.socialLogin(result.user.accessToken, "go");
+        })
+        .catch((error) => {
+          // TODO: handle social auth erros here
+          console.warn(error);
+        });
+    },
     async loginG() {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
