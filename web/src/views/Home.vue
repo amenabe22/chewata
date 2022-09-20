@@ -1,5 +1,21 @@
 <template>
   <div class="w-full" ref="scrollComponent">
+    <!-- <Head>
+      <title>Chewata | Fun | Freedom</title>
+      <meta name="description" content="This page is awesome" />
+
+
+      <meta property="og:title" content="Hello Title" />
+      <meta property="og:description" content="This page is awesome" />
+      <meta property="og:image" content="https://picsum.photos/1200/675" />
+
+
+      <meta name="twitter:title" content="Hello Title" />
+      <meta name="twitter:description" content="This page is awesome" />
+      <meta name="twitter:image" content="https://picsum.photos/1200/675" />
+      <meta name="twitter:card" content="summary_large_image" />
+    </Head> -->
+
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
@@ -93,7 +109,7 @@
                 accept="image/png, image/gif, image/jpeg"
               />
               <p>5000</p>
-              <button @click="clickFileRef">
+              <button @click="openUploadModal">
                 <span v-if="!filename">Attach Img/Gif</span>
                 <span v-else>{{ filename }}</span>
               </button>
@@ -150,11 +166,7 @@
           <loader></loader>
         </div>
         <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
-          <post-tile
-            :postRef="postRef"
-            :post="post"
-            @clicked="clicked(post)"
-          ></post-tile>
+          <post-tile :post="post" @clicked="clicked(post)"></post-tile>
           <div class="mb-3 flex flex-row justify-end">
             <button class="px-2 mx-2">
               <div class="flex">
@@ -264,6 +276,9 @@ import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import PostTile from "../components/PostTile.vue";
+import { getToken, getMessaging, onMessage } from "@firebase/messaging";
+import { messaging } from "../firebase.config";
+// import { Head } from "@vueuse/head";
 
 export default defineComponent({
   name: "HomePage",
@@ -277,6 +292,7 @@ export default defineComponent({
     AccountPopup,
     InfiniteScroll,
     PostTile,
+    // Head,
   },
   data: () => ({
     loadingFeed: false,
@@ -284,6 +300,7 @@ export default defineComponent({
     loginPopup: false,
     content: "",
     message: "",
+    uploadedUrl: null,
     noResult: false,
     page: 1,
     invalidImage: false,
@@ -300,6 +317,21 @@ export default defineComponent({
     lastSnapshot: null as any,
   }),
   async mounted() {
+    // const currentToken = await getToken(messaging, {
+    //   vapidKey:
+    //     "BBWn7Fkrmhrj0BkeKLiYcD5VhagQg4zlrW-QtpC0VpuPGiPVTK6nleZMNrmo4U0qUSgM48esnt_hAv1vOSivkUk",
+    // });
+    // console.log("TOKEN", currentToken);
+    console.log("Test");
+    try {
+      onMessage(messaging, (payload: any) => {
+        console.info("Message received : ", payload);
+        // console.log(payload.message);
+      });
+    } catch (e) {
+      console.error("Error : ", e);
+    }
+
     await this.loadFeed();
     // handle infintie scroll
     // window.addEventListener("scroll", this.handleScroll);
@@ -309,6 +341,59 @@ export default defineComponent({
   },
 
   methods: {
+    openUploadModal() {
+      window.cloudinary
+        .openUploadWidget(
+          {
+            cloud_name: "dtabnh5py",
+            upload_preset: "c4o7elzd",
+            sources: [
+              "local",
+              "camera",
+              "image_search",
+              "google_drive",
+              "facebook",
+              "instagram",
+              "dropbox",
+            ],
+            multiple: false,
+            defaultSource: "local",
+            styles: {
+              palette: {
+                window: "#F5F5F5",
+                sourceBg: "#FFFFFF",
+                windowBorder: "#90a0b3",
+                tabIcon: "#0094c7",
+                inactiveTabIcon: "#69778A",
+                menuIcons: "#0094C7",
+                link: "#53ad9d",
+                action: "#8F5DA5",
+                inProgress: "#0194c7",
+                complete: "#53ad9d",
+                error: "#c43737",
+                textDark: "#000000",
+                textLight: "#FFFFFF",
+              },
+              fonts: {
+                default: null,
+                "sans-serif": {
+                  url: null,
+                  active: true,
+                },
+              },
+            },
+          },
+          (error, result) => {
+            if (!error && result && result.event === "success") {
+              this.filename = result.info.original_filename;
+              this.uploadedUrl = result.info.secure_url;
+
+              console.log("Done uploading..: ", result.info);
+            }
+          }
+        )
+        .open();
+    },
     async handleScroll(e: any) {
       let element = this.$refs.scrollComponent as any;
       if (!this.loadComplete) {
@@ -355,7 +440,6 @@ export default defineComponent({
       const picturesSnap = await getDocs(picturesRef);
       this.lastSnapshot = picturesSnap.docs[picturesSnap.docs.length - 1];
       let result = picturesSnap.docs.map((p) => p.data());
-      console.log(result, "RESSSSULLTT");
       this.posts.push(...result);
       this.loadingFeed = false;
       if (!result.length) this.loadComplete = true;
@@ -419,7 +503,6 @@ export default defineComponent({
     clicked(post: any) {
       this.$router.push({ path: `/game/${post.id}` });
     },
-
     async savePost(cover: any = null) {
       const postsRef = doc(collection(db, "posts"));
       await setDoc(postsRef, {
@@ -429,11 +512,13 @@ export default defineComponent({
         user: this.$store.state.user.uid,
         createdAt: new Date().toISOString(),
         likes: 0,
-      }).finally(() => {
+      }).finally(async () => {
+        this.posts = [];
         this.loadingPost = false;
         this.$store.commit("SET_MAIN_POP", false);
+        this.lastSnapshot = null;
+        await this.loadFeed();
       });
-      await this.loadFeed();
     },
     async post() {
       if (this.invalidImage) {
@@ -445,18 +530,18 @@ export default defineComponent({
         return;
       }
       this.loadingPost = true;
-      if (this.file) {
-        const storage = getStorage();
-        const storageRef = ref(storage, this.filename);
+      // if (this.file) {
+      //   const storage = getStorage();
+      //   const storageRef = ref(storage, this.filename);
 
-        // 'file' comes from the Blob or File API
-        await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
-          const url = await getDownloadURL(snapshot.ref);
-          await this.savePost(url);
-        });
-        return;
-      }
-      await this.savePost(null);
+      //   // 'file' comes from the Blob or File API
+      //   await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
+      //     const url = await getDownloadURL(snapshot.ref);
+      //     await this.savePost(url);
+      //   });
+      //   return;
+      // }
+      await this.savePost(this.uploadedUrl);
     },
   },
 });

@@ -13,7 +13,7 @@
       color="#92daac"
       class="mt-5"
     />
-    <div class="mx-3 pt-2 cursor-pointer" @click="$emit('clicked')">
+    <div class="mx-3 pt-2 cursor-pointer w-full" @click="$emit('clicked')">
       <p
         class="px-2 tracking-wide text-gray-600 text-lg"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
@@ -65,8 +65,6 @@ export default defineComponent({
     if (this.$store.state.loggedIn) {
       this.fetchVotes();
     }
-
-    console.log("Initial saved", this.initialVote);
     // ignore
     await this.setRef();
   },
@@ -78,13 +76,16 @@ export default defineComponent({
         where("type", "==", "post"),
         where("objectId", "==", this.post.id)
       );
+      let vote = null;
+      let voted = null;
       const likes = await getDocs(voteQuery);
-      const likesData = likes.docs[0].data();
-      const vote = likes.docs.length ? likesData.vote : null;
-      const voted = likes.docs.length ? likesData.voted : null;
-      this.voteData.vote = vote;
-      this.voteData.voted = voted;
-      console.log({ vote, voted });
+      if (!likes.empty) {
+        const likesData = likes.docs[0].data();
+        vote = likes.docs.length ? likesData.vote : null;
+        voted = likes.docs.length ? likesData.voted : null;
+        this.voteData.vote = vote;
+        this.voteData.voted = voted;
+      }
 
       if (voted && vote) {
         this.initialVote = this.post.likes - 1;
@@ -121,18 +122,35 @@ export default defineComponent({
           user: this.$store.state.user.uid,
         });
       }
+      // update post like
+      await this.updateTotalLikeCount();
       if (vote) {
-        console.log("Got here: ", this.initialVote, "|", this.post.likes);
         this.post.likes = this.initialVote + 1;
-        updateDoc(this.postRef, {
-          likes: this.post.likes,
-        });
       } else {
         this.post.likes = this.initialVote - 1;
-        updateDoc(this.postRef, {
-          likes: this.post.likes,
-        });
       }
+    },
+    async updateTotalLikeCount() {
+      const lq = query(
+        collection(db, "likes"),
+        where("type", "==", "post"),
+        where("objectId", "==", this.post.id)
+      );
+      let total = 0;
+      const likes = await getDocs(lq);
+      const calculated = likes.docs.map((e) => {
+        const data = e.data();
+        const voteNumeric =
+          data.vote === true ? 1 : data.vote === false ? -1 : 0;
+        return {
+          data,
+          voteNumeric,
+        };
+      });
+      calculated.forEach((e) => (total += e.voteNumeric));
+      updateDoc(this.postRef, {
+        likes: total,
+      });
     },
     async setRef() {
       const q = query(collection(db, "posts"), where("id", "==", this.post.id));

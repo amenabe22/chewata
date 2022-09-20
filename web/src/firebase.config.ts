@@ -1,6 +1,16 @@
 import { initializeApp } from "firebase/app";
 import "firebase/firestore";
-import { getFirestore } from "firebase/firestore";
+import { onBackgroundMessage } from "firebase/messaging/sw";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { store } from "./store";
 
 export const config = {
   apiKey: "AIzaSyDQV6SMwJk91fFuZGewlyvJHNcxyYTUxqQ",
@@ -15,4 +25,53 @@ export const config = {
 
 const app = initializeApp(config);
 const db = getFirestore(app);
-export { db };
+const messaging = getMessaging(app);
+
+export const setupFirebase = () => {
+  navigator.serviceWorker
+    .register("/firebase-messaging-sw.js")
+    .then((registration) => {
+      console.log("Registration", registration);
+      // Vue.prototype.$messaging.useServiceWorker(registration)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  getToken(messaging, {
+    vapidKey:
+      "BBWn7Fkrmhrj0BkeKLiYcD5VhagQg4zlrW-QtpC0VpuPGiPVTK6nleZMNrmo4U0qUSgM48esnt_hAv1vOSivkUk",
+  })
+    .then(async (currentToken) => {
+      if (currentToken) {
+        console.log(currentToken);
+        if (store.state.loggedIn) {
+          const uid = store.state.user.uid;
+          const userQry = query(
+            collection(db, "users"),
+            where("id", "==", uid)
+          );
+          const userSnap = await getDocs(userQry);
+          if (!userSnap.empty) {
+            updateDoc(userSnap.docs[0].ref, {
+              pushToken: currentToken,
+            });
+          }
+        }
+        // Send the token to your server and update the UI if necessary
+        // ...
+      } else {
+        // Show permission request UI
+        console.log(
+          "No registration token available. Request permission to generate one."
+        );
+        // ...
+      }
+    })
+    .catch((err) => {
+      console.log("An error occurred while retrieving token. ", err);
+      // ...
+    });
+};
+
+export { db, messaging };

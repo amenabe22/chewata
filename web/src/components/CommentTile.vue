@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="flex flex-row mt-4 gap-3 hover:bg-gray-50">
+    <div class="flex flex-row mt-4 gap-3 hover:bg-gray-50 p-2">
       <vote-clickers
         :voted="voteData.voted"
         @upvoted="upvoted"
+        :readonly="readonly"
         @downvoted="downvoted"
         :vote="voteData.vote"
         :large="false"
@@ -11,7 +12,23 @@
       />
       <div>
         <div class="flex flex-row mt-2">
-          <user-avatar :img="comment.user.photoURL" />
+          <div v-if="$store.state.loggedIn">
+            <user-avatar
+              :img="comment.user.photoURL"
+              :path="
+                $store.state.user.uid == comment.user.id
+                  ? '/user'
+                  : `/user/${comment.user.id}`
+              "
+              :user="comment.user"
+            />
+          </div>
+          <user-avatar
+            :img="comment.user.photoURL"
+            :path="'/'"
+            :user="comment.user"
+            v-else
+          />
           <div></div>
           <div v-if="comment.user">
             <p
@@ -27,16 +44,39 @@
           </div>
         </div>
         <p
-          class="py-2 mb-2 tracking-wide text-gray-600 text-lg"
+          class="pt-2 tracking-wide text-gray-600 text-lg"
           v-text="comment.comment.message"
         ></p>
+        <div v-if="$store.state.user">
+          <button
+            v-if="$store.state.user.uid != comment.user.id"
+            class="font-semibold text-sm text-gray-400"
+            @click="$emit('replyClicked')"
+          >
+            Reply
+          </button>
+        </div>
+        <button
+          v-else
+          class="font-semibold text-sm text-gray-400"
+          @click="$emit('replyClicked')"
+        >
+          Reply
+        </button>
 
-        <img
-          v-if="comment.user.profile"
-          :src="comment.user.profile"
-          alt=""
-          style="object-fit: contain"
-        />
+        <vue-load-image>
+          <template v-slot:image>
+            <img
+              v-if="comment.user.profile"
+              :src="comment.user.profile"
+              alt=""
+              style="object-fit: contain"
+            />
+          </template>
+          <template v-slot:preloader>
+            <loader></loader>
+          </template>
+        </vue-load-image>
       </div>
     </div>
     <img
@@ -45,24 +85,6 @@
       alt=""
       style="object-fit: contain"
     />
-    <div v-if="$store.state.user">
-      <button
-        href=""
-        v-if="$store.state.user.uid != comment.user.id"
-        class="px-20 font-black text-gray-400"
-        @click="$emit('replyClicked')"
-      >
-        Reply
-      </button>
-    </div>
-    <button
-      href=""
-      v-else
-      class="px-20 font-black text-gray-400"
-      @click="$emit('replyClicked')"
-    >
-      Reply
-    </button>
     <hr class="mt-2" />
   </div>
 </template>
@@ -89,7 +111,7 @@ export default defineComponent({
     commentRef: null as any,
     voteData: { vote: null, voted: null } as any,
   }),
-  props: ["comment"],
+  props: ["comment", "readonly"],
   async created() {
     if (this.$store.state.loggedIn) {
       this.fetchVotes();
@@ -158,18 +180,34 @@ export default defineComponent({
           user: this.$store.state.user.uid,
         });
       }
+      this.updateTotalLikeCount();
       if (vote) {
         this.comment.comment.likes = this.initialVote + 1;
-        updateDoc(this.commentRef, {
-          likes: this.comment.comment.likes,
-        });
       } else {
         this.comment.comment.likes = this.initialVote - 1;
-
-        updateDoc(this.commentRef, {
-          likes: this.comment.comment.likes,
-        });
       }
+    },
+    async updateTotalLikeCount() {
+      const lq = query(
+        collection(db, "likes"),
+        where("type", "==", "comment"),
+        where("objectId", "==", this.comment.comment.id)
+      );
+      let total = 0;
+      const likes = await getDocs(lq);
+      const calculated = likes.docs.map((e) => {
+        const data = e.data();
+        const voteNumeric =
+          data.vote === true ? 1 : data.vote === false ? -1 : 0;
+        return {
+          data,
+          voteNumeric,
+        };
+      });
+      calculated.forEach((e) => (total += e.voteNumeric));
+      updateDoc(this.commentRef, {
+        likes: total,
+      });
     },
     async removeVote(vote: any) {
       // retain initial vote when user removes theirs

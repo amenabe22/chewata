@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite-ssg build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -13,16 +13,20 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/vue-fontawesome": "^3.0.1",
+    "@vueuse/head": "^0.7.12",
     "firebase": "^9.10.0",
     "infinite-loading-vue3": "^1.0.1",
     "vue": "^3.2.25",
+    "vue-3-meta": "^2.4.0",
     "vue-load-image": "^1.1.0",
+    "vue-meta": "^3.0.0-alpha.7",
     "vue-router": "^4.0.12",
     "vue-uuid": "^3.0.0",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.7",
     "@types/node": "^17.0.10",
     "@vitejs/plugin-vue": "^2.0.0",
     "autoprefixer": "^10.4.2",
@@ -32,6 +36,7 @@
     "tailwindcss": "^3.0.15",
     "typescript": "^4.4.4",
     "vite": "^2.7.2",
+    "vite-ssg": "^0.20.2",
     "vue-tsc": "^0.29.8"
   }
 }

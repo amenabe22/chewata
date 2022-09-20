@@ -1,5 +1,5 @@
 <template>
-  <router-link class="relative inline-block z-0" to="/user">
+  <router-link class="relative inline-block z-0" :to="path ?? '/user'">
     <img
       class="inline-block object-cover w-12 h-12 rounded-full"
       :src="img"
@@ -17,6 +17,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: ["img"],
+  props: ["img", "user", "path"],
 });
 </script>

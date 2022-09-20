@@ -1,5 +1,20 @@
 <template>
   <div>
+    <Head v-if="post">
+      <title>{{ post.user.name }}</title>
+      <meta name="description" content="This page is awesome" />
+
+      <!-- Social -->
+      <meta property="og:title" content="Hello Title" />
+      <meta property="og:description" content="This page is awesome" />
+      <meta property="og:image" content="https://picsum.photos/1200/675" />
+
+      <!-- Twitter -->
+      <meta name="twitter:title" content="Hello Title" />
+      <meta name="twitter:description" content="This page is awesome" />
+      <meta name="twitter:image" content="https://picsum.photos/1200/675" />
+      <meta name="twitter:card" content="summary_large_image" />
+    </Head>
     <dialog-modal :show="showCommentForm" @close="showCommentForm = false">
       <div class="relative">
         <div class="w-full z-0">
@@ -41,7 +56,7 @@
                   ref="file"
                 />
                 <p>5000</p>
-                <button @click="clickFileRef">
+                <button @click="openUploadModal">
                   <span v-if="!filename">Attach Img/Gif</span>
                   <span v-else>{{ filename }}</span>
                 </button>
@@ -97,7 +112,23 @@
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
         <div class="flex flex-row" v-if="post && post.user">
-          <user-avatar :img="post.user.photoURL" />
+          <div v-if="$store.state.loggedIn">
+            <user-avatar
+              :path="
+                $store.state.user.uid == post.user.id
+                  ? '/user'
+                  : `/user/${post.user.id}`
+              "
+              :img="post.user.photoURL"
+              :user="post.user"
+            />
+          </div>
+          <user-avatar
+            v-else
+            :path="'/'"
+            :img="post.user.photoURL"
+            :user="post.user"
+          />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
@@ -155,11 +186,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import CommentMeda from "../components/CommentMeda.vue";
 import CommentTile from "../components/CommentTile.vue";
 import LightGallery from "../components/LightGallery.vue";
-import Navbar from "../components/Navbar.vue";
 import RelatedItems from "../components/RelatedItems.vue";
 import UserAvatar from "../components/UserAvatar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
@@ -187,11 +217,10 @@ import { uuid } from "vue-uuid";
 import VueLoadImage from "vue-load-image";
 import Loader from "../components/Loader.vue";
 import GameLoader from "../components/GameLoader.vue";
+import { Head } from "@vueuse/head";
 
 export default defineComponent({
   components: {
-    Navbar,
-    // GroundMeda,
     VoteClickers,
     CommentTile,
     UserAvatar,
@@ -201,9 +230,61 @@ export default defineComponent({
     DialogModal,
     GameLoader,
     Loader,
+    Head,
     "vue-load-image": VueLoadImage,
   },
+  // metaInfo() {
+  //   return {
+  //     title: "this.metaTitle DAWG",
+  //     // meta: [
+  //     //   { vmid: 'description', name: 'description', content: this.metaDescription}
+  //     // ]
+  //   }
+  // },
+  // setup() {
+  //   console.log(this.comments, "coms");
+  //   useMeta({ title: "Chewata Forum" });
+  // },
   async mounted() {
+    // useMeta(
+    //   computed(() => ({
+    //     title: this.post ? this.post.user.name : "Chewata Post",
+    //     description: this.post ? this.post.p.content.substr(0, 30) : "",
+    //     // meta: [
+    //     //   {
+    //     //     property: "og:description",
+    //     //     content: this.post ? this.post.p.content.substr(0, 30) : "",
+    //     //   },
+    //     //   {
+    //     //     property: "og:title",
+    //     //     content: this.post ? this.post.user.name : "Chewata Post",
+    //     //   },
+    //     //   {
+    //     //     property: "og:type",
+    //     //     content: "website",
+    //     //   },
+    //     //   {
+    //     //     property: "og:image:width",
+    //     //     content: "800",
+    //     //   },
+    //     //   {
+    //     //     property: "og:image:height",
+    //     //     content: "800",
+    //     //   },
+    //     // ],
+    //     og: {
+    //       image: this.post ? this.getCover() : "",
+    //       description: this.post
+    //         ? this.post.p.content.substr(0, 30)
+    //         : "Chewata App",
+    //       title: this.post ? this.post.user.name : "Chewata Post",
+    //       type: "website",
+    //     },
+    //   }))
+    // );
+    // useMeta({
+    //   title: "Chewata | " + this.content.substr(0, 10),
+    // });
     this.loading = true;
     const q = query(
       collection(db, "posts"),
@@ -256,6 +337,9 @@ export default defineComponent({
           voted: null,
         };
       }
+      // useMeta({
+      //   title: this.post ? this.post.p.content.substr(0, 20) : "Chewata Forum",
+      // });
       console.log(this.post, " POST LOADED ");
     }
     this.loading = false;
@@ -265,6 +349,7 @@ export default defineComponent({
     loadingPost: false,
     filename: "",
     content: "",
+    uploadedUrl: null as any,
     invalidImage: false,
     loading: false,
     initialVote: 0,
@@ -280,6 +365,10 @@ export default defineComponent({
     showSide: true,
   }),
   methods: {
+    getCover() {
+      const defualtcover = "http://yourwebsite.com/images/default-banner.png";
+      return this.post.p.cover ? this.post.p.cover : defualtcover;
+    },
     replyComment(com: any) {
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
@@ -289,6 +378,59 @@ export default defineComponent({
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
       }
+    },
+    openUploadModal() {
+      window.cloudinary
+        .openUploadWidget(
+          {
+            cloud_name: "dtabnh5py",
+            upload_preset: "c4o7elzd",
+            sources: [
+              "local",
+              "camera",
+              "image_search",
+              "google_drive",
+              "facebook",
+              "instagram",
+              "dropbox",
+            ],
+            multiple: false,
+            defaultSource: "local",
+            styles: {
+              palette: {
+                window: "#F5F5F5",
+                sourceBg: "#FFFFFF",
+                windowBorder: "#90a0b3",
+                tabIcon: "#0094c7",
+                inactiveTabIcon: "#69778A",
+                menuIcons: "#0094C7",
+                link: "#53ad9d",
+                action: "#8F5DA5",
+                inProgress: "#0194c7",
+                complete: "#53ad9d",
+                error: "#c43737",
+                textDark: "#000000",
+                textLight: "#FFFFFF",
+              },
+              fonts: {
+                default: null,
+                "sans-serif": {
+                  url: null,
+                  active: true,
+                },
+              },
+            },
+          },
+          (error, result) => {
+            if (!error && result && result.event === "success") {
+              this.filename = result.info.original_filename;
+              this.uploadedUrl = result.info.secure_url;
+
+              console.log("Done uploading..: ", result.info);
+            }
+          }
+        )
+        .open();
     },
     async postComment() {
       if (this.content == "") {
@@ -302,18 +444,18 @@ export default defineComponent({
       }
 
       this.loadingPost = true;
-      if (this.file) {
-        const storage = getStorage();
-        const storageRef = ref(storage, this.filename);
+      // if (this.file) {
+      //   const storage = getStorage();
+      //   const storageRef = ref(storage, this.filename);
 
-        // 'file' comes from the Blob or File API
-        await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
-          const url = await getDownloadURL(snapshot.ref);
-          await this.saveComment(url);
-          console.log("Uploaded a blob or file!", url);
-        });
-        return;
-      }
+      //   // 'file' comes from the Blob or File API
+      //   await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
+      //     const url = await getDownloadURL(snapshot.ref);
+      //     await this.saveComment(url);
+      //     console.log("Uploaded a blob or file!", url);
+      //   });
+      //   return;
+      // }
       await this.saveComment(null);
     },
     ballClicked() {
@@ -331,11 +473,6 @@ export default defineComponent({
           return 1;
         return 0;
       }
-      // .sort(function (x: any, y: any) {
-      //     // console.log(new Date(x.comment.createdAt) < new Date(y.comment.createdAt));
-      //     return new Date(x.comment.createdAt) > new Date(y.comment.createdAt);
-      //   });
-
       return this.comments.sort(compare);
     },
     async loadComments() {
@@ -404,7 +541,7 @@ export default defineComponent({
       await setDoc(commentRef, {
         id: uuid.v4(),
         message: this.content,
-        cover: cover,
+        cover: this.uploadedUrl,
         replyTo: this.replyTarget ? this.replyTarget.user.id : "",
         post: this.$route.params.id,
         user: this.$store.state.user.uid,
@@ -443,21 +580,38 @@ export default defineComponent({
           user: this.$store.state.user.uid,
         });
       }
+      // update post like
+      await this.updateTotalLikeCount();
       if (vote) {
-        console.log(this.initialVote, "init");
         this.post.p.likes = this.initialVote + 1;
-        updateDoc(this.postRef, {
-          likes: this.post.p.likes,
-        });
-        if (this.lastIncremented == null) this.lastIncremented = true;
       } else {
         this.post.p.likes = this.initialVote - 1;
-
-        updateDoc(this.postRef, {
-          likes: this.post.p.likes,
-        });
-        if (this.lastDecremented == null) this.lastDecremented = true;
       }
+    },
+    async updateTotalLikeCount() {
+      const lq = query(
+        collection(db, "likes"),
+        where("type", "==", "post"),
+        where("objectId", "==", this.$route.params.id)
+      );
+      let total = 0;
+      const likes = await getDocs(lq);
+      const calculated = likes.docs.map((e) => {
+        const data = e.data();
+        const voteNumeric =
+          data.vote === true ? 1 : data.vote === false ? -1 : 0;
+        return {
+          data,
+          voteNumeric,
+        };
+      });
+      console.log(calculated, "CALC");
+      calculated.forEach((e) => (total += e.voteNumeric));
+      console.log(total, "TOTAL");
+      // const total =
+      updateDoc(this.postRef, {
+        likes: total,
+      });
     },
     async removeVote(vote: any) {
       // retain initial vote when user removes theirs

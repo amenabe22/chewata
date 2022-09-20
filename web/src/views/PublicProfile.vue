@@ -8,32 +8,36 @@
     <div
       class="mt-16 h-3/4 w-full"
       style="
-        background: #5fe18c
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-      "
+          background: #5fe18c
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        "
     >
       <div
+        v-if="user"
         class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
         <div class="flex flex-col gap-4 w-full items-start px-2">
-          <p class="pt-5">{{ $store.state.user.displayName }}</p>
+          <p class="pt-5">{{ user.name }}</p>
           <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
             If you treat me like an option, I’ll leave you like a choice.
           </p>
         </div>
       </div>
+      <div v-else class="flex items-center justify-center">
+        <game-loader></game-loader>
+      </div>
     </div>
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
-        <div class="flex flex-row" v-if="$store.state.loggedIn">
-          <user-avatar :img="$store.state.user.photoURL" />
+        <div class="flex flex-row" v-if="$store.state.loggedIn && user">
+          <user-avatar :img="user.photoURL" />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ $store.state.user.displayName }}
+              {{ user.name }}
             </p>
             <div
               class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
@@ -79,7 +83,6 @@
 
         <div v-if="activeTab == 'posts'">
           <post-tile
-            :readonly="true"
             v-for="(post, ix) in posts"
             :postRef="postRef"
             :post="post"
@@ -123,10 +126,12 @@
         </div>
         <div v-else>
           <comment-tile
-            :readonly="true"
+            :readonly="false"
             v-for="(com, ix) in sortedArray()"
             :key="ix"
             :comment="com"
+            class="cursor-pointer"
+            @click="$router.push(`/game/${com.comment.post}`)"
           />
 
           <div
@@ -186,9 +191,18 @@ import UserAvatar from "../components/UserAvatar.vue";
 import { db } from "../firebase.config";
 import PostTile from "../components/PostTile.vue";
 import Loader from "../components/Loader.vue";
+import GameLoader from "../components/GameLoader.vue";
 
 export default defineComponent({
-  components: { Navbar, UserAvatar, CommentTile, FeedTile, PostTile, Loader },
+  components: {
+    Navbar,
+    UserAvatar,
+    CommentTile,
+    FeedTile,
+    PostTile,
+    Loader,
+    GameLoader,
+  },
   setup() {},
   data: () => ({
     loading: false,
@@ -197,11 +211,13 @@ export default defineComponent({
     loadComplete: false,
     activeTab: "posts",
     showModal: false,
+    user: null as any,
     comments: [] as any,
     posts: [] as any,
     limit: 10,
   }),
   async created() {
+    await this.loadUserData();
     await this.fetchUserPosts();
     await this.loadComments();
   },
@@ -212,17 +228,27 @@ export default defineComponent({
     clicked(post: any) {
       this.$router.push({ path: `/game/${post.id}` });
     },
+    async loadUserData() {
+      let q = query(
+        collection(db, "users"),
+        where("id", "==", this.$route.params.uid)
+      );
+      const snapshotData = await getDocs(q);
+      if (!snapshotData.empty) {
+        this.user = snapshotData.docs[0].data();
+      }
+    },
     async loadComments() {
       this.loading = true;
       let q = query(
         collection(db, "comments"),
-        where("user", "==", this.$store.state.user.uid),
+        where("user", "==", this.$route.params.uid),
         limit(this.limit)
       );
       if (this.lastCommentSnapshot) {
         q = query(
           collection(db, "comments"),
-          where("user", "==", this.$store.state.user.uid),
+          where("user", "==", this.$route.params.uid),
           startAfter(this.lastCommentSnapshot),
           limit(this.limit)
         );
@@ -258,14 +284,14 @@ export default defineComponent({
       this.loading = true;
       let postQ = query(
         collection(db, "posts"),
-        where("user", "==", this.$store.state.user.uid),
+        where("user", "==", this.$route.params.uid),
         limit(this.limit)
       );
 
       if (this.lastSnapshot)
         postQ = query(
           collection(db, "posts"),
-          where("user", "==", this.$store.state.user.uid),
+          where("user", "==", this.$route.params.uid),
           startAfter(this.lastSnapshot),
           limit(this.limit)
         );

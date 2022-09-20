@@ -4,12 +4,15 @@ import {
   NavigationGuardNext,
   createWebHashHistory,
   RouteLocationNormalized,
+  createWebHistory,
 } from "vue-router";
 
 import Home from "../views/Home.vue";
 import Game from "../views/Game.vue";
 import Profile from "../views/Profile.vue";
+import PublicProfile from "../views/PublicProfile.vue";
 import Notification from "../views/Notification.vue";
+import Privacy from "../views/Privacy.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -28,6 +31,16 @@ const routes: RouteRecordRaw[] = [
     component: Profile,
   },
   {
+    path: "/privacy",
+    name: "Privacy",
+    component: Privacy,
+  },
+  {
+    path: "/user/:uid",
+    name: "UserPublic",
+    component: PublicProfile,
+  },
+  {
     path: "/notification",
     name: "Notification",
     component: Notification,
@@ -35,7 +48,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes,
   scrollBehavior() {
     window.scrollTo(0, 0);
@@ -58,7 +71,6 @@ router.beforeEach(
       next({ name: "login" });
       return;
     }
-
     next();
   }
 );

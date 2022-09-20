@@ -24,13 +24,28 @@ import { defineComponent } from "vue";
 import LoginPopup from "./components/LoginPopup.vue";
 import Navbar from "./components/Navbar.vue";
 import AccountPopup from "./components/AccountPopup.vue";
+import { Head, useHead } from "@vueuse/head";
 
 export default defineComponent({
-  components: { LoginPopup, Navbar, AccountPopup },
+  components: { LoginPopup, Navbar, AccountPopup, Head },
   data: () => ({
     loginPopup: false,
     profileClicked: false,
   }),
+  mounted() {
+    useHead({
+      title: "Website Title",
+      meta: [
+        {
+          name: "description",
+          content: "Website description",
+        },
+      ],
+    });
+  },
+  // setup() {
+  //   useMeta({ title: "Chewata" });
+  // },
   methods: {
     menuClicked() {
       if (this.$store.state.loggedIn) {
