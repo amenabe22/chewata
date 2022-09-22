@@ -2,6 +2,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import express, { Express } from "express";
 import { apolloServerSetup } from "./apollo";
+import path from "path";
 
 export async function startApolloServer() {
   // Same ApolloServer initialization as before
@@ -13,6 +14,15 @@ export async function startApolloServer() {
   const app = express();
   app.use(cookieParser());
 
+  app.get("/", function (req, res) {
+    // save html files in the `views` folder...
+    res.sendfile(__dirname + "/templates/index.html");
+  });
+  app.get("/firebase-messaging-sw.js", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "assets/", "firebase-messaging-sw.js"));
+  });
+  app.use("/", express.static(__dirname));
+  // app.use("/static", express.static("static")!);
   server.applyMiddleware({
     app,
 
