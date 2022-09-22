@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full" ref="scrollComponent">
+  <div class="w-full">
     <!-- <Head>
       <title>Chewata | Fun | Freedom</title>
       <meta name="description" content="This page is awesome" />
@@ -165,8 +165,13 @@
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
           <loader></loader>
         </div>
+
         <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
-          <post-tile :post="post" @clicked="clicked(post)"></post-tile>
+          <post-tile
+            :compKey="post.postId"
+            :post="post"
+            @clicked="clicked(post)"
+          ></post-tile>
           <div class="mb-3 flex flex-row justify-end">
             <button class="px-2 mx-2">
               <div class="flex">
@@ -192,7 +197,7 @@
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
         </div>
-        <div
+        <!-- <div
           class="flex justify-center my-10"
           v-if="posts.length && !loadingFeed && !loadComplete"
         >
@@ -216,7 +221,7 @@
               />
             </svg>
           </button>
-        </div>
+        </div> -->
         <div
           class="flex justify-center my-10"
           v-else-if="loadingFeed && posts.length"
@@ -303,6 +308,7 @@ export default defineComponent({
     uploadedUrl: null,
     noResult: false,
     page: 1,
+    totalCount: 0,
     invalidImage: false,
     showMainDialog: false,
     showForm: false,
@@ -315,7 +321,7 @@ export default defineComponent({
     file: null as any,
     pagination: {
       page: 1,
-      pageSize: 10,
+      pageSize: 3,
     },
     posts: [] as Array<any>,
     lastSnapshot: null as any,
@@ -327,6 +333,7 @@ export default defineComponent({
     // });
     // console.log("TOKEN", currentToken);
     console.log("Test");
+    // window.addEventListener("scroll", this.handleScroll);
     try {
       onMessage(messaging, (payload: any) => {
         console.info("Message received : ", payload);
@@ -338,12 +345,11 @@ export default defineComponent({
 
     await this.loadFeed();
     // handle infintie scroll
-    // window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
   },
   unmounted() {
-    // window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("scroll", this.handleScroll);
   },
-
   methods: {
     openUploadModal() {
       window.cloudinary
@@ -351,15 +357,7 @@ export default defineComponent({
           {
             cloud_name: "dtabnh5py",
             upload_preset: "c4o7elzd",
-            sources: [
-              "local",
-              "camera",
-              "image_search",
-              "google_drive",
-              "facebook",
-              "instagram",
-              "dropbox",
-            ],
+            sources: ["local"],
             multiple: false,
             defaultSource: "local",
             styles: {
@@ -400,24 +398,36 @@ export default defineComponent({
         .open();
     },
     async handleScroll(e: any) {
-      let element = this.$refs.scrollComponent as any;
-      if (!this.loadComplete) {
-        if (
-          Math.round(element.getBoundingClientRect().bottom) <=
-          window.innerHeight
-        ) {
-          const newItems: any = await this.loadFeed();
-          console.log(newItems, "ss");
-          if (!newItems) {
-            this.noResult = true;
-            this.message = "No result found";
-            this.loadComplete = true;
-            console.log("loadded them all");
-            return;
-          }
+      if (
+        window.scrollY + window.innerHeight >=
+        document.body.scrollHeight - 50
+      ) {
+        if (this.totalCount) {
+          this.pagination.page++;
+          const totalCount = await this.loadFeed();
+          console.log("load more", totalCount);
         }
       }
     },
+    // async handleScroll(e: any) {
+    //   let element = this.$refs.scrollComponent as any;
+    //   if (!this.loadComplete) {
+    //     if (
+    //       Math.round(element.getBoundingClientRect().bottom) <=
+    //       window.innerHeight
+    //     ) {
+    //       const newItems: any = await this.loadFeed();
+    //       console.log(newItems, "ss");
+    //       if (!newItems) {
+    //         this.noResult = true;
+    //         this.message = "No result found";
+    //         this.loadComplete = true;
+    //         console.log("loadded them all");
+    //         return;
+    //       }
+    //     }
+    //   }
+    // },
     menuClicked() {
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
@@ -425,11 +435,16 @@ export default defineComponent({
         this.$store.commit("SET_LOGIN_POP", true);
       }
     },
+    async loadMoreFeed() {
+      this.page++;
+      console.log(this.page);
+      await this.loadFeed();
+    },
     async loadFeed() {
       this.loadingFeed = true;
       const {
         data: {
-          getPosts: { data },
+          getPosts: { data, total },
         },
       } = await this.$apollo
         .query({
@@ -442,7 +457,11 @@ export default defineComponent({
         .finally(() => {
           this.loadingFeed = false;
         });
-      this.posts = JSON.parse(JSON.stringify(data));
+      this.totalCount = data.length;
+      const posts = JSON.parse(JSON.stringify(data));
+      posts.forEach((p: any) => {
+        this.posts.push(p);
+      });
     },
     clickFileRef() {
       (this.$refs.file as any).click();

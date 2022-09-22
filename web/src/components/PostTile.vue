@@ -19,19 +19,19 @@
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
         v-text="post.content"
       ></p>
-      <!-- <vue-load-image>
-        <template v-slot:image> -->
-      <img
-        v-if="post.cover"
-        :src="post.cover"
-        alt=""
-        style="object-fit: contain"
-      />
-      <!-- </template>
+      <vue-load-image :key="compKey">
+        <template v-slot:image>
+          <img
+            v-if="post.cover"
+            :src="post.cover"
+            alt=""
+            style="object-fit: contain"
+          />
+        </template>
         <template v-slot:preloader>
           <loader></loader>
         </template>
-      </vue-load-image> -->
+      </vue-load-image>
     </div>
   </div>
 </template>
@@ -60,6 +60,7 @@ export default defineComponent({
     initialVote: 0,
     postRef: null as any,
   }),
+  props: ["compKey"],
   props: ["post", "count", "readonly"],
   async created() {
     this.initialVote = this.post.likes;
@@ -83,7 +84,6 @@ export default defineComponent({
         voted: getPostVote.voted,
       };
       const voteFlag = this.voteData.vote == 1 ?? false;
-
 
       if (this.voteData.voted && voteFlag) {
         this.initialVote = this.post.likes - 1;

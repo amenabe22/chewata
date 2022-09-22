@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Post } from "../entity/Post";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "../entity/User";
+import { Comment } from "../entity/Comment";
 
 export type MyContext = {
   req: Request & { session: any };
@@ -42,4 +43,28 @@ export class PostsPaginatedResponse {
 
   @Field(() => [Post])
   data: Array<Post>;
+}
+
+@ObjectType()
+export class CommentsPaginatedType {
+  @Field()
+  page: number;
+
+  @Field()
+  per_page: number;
+
+  @Field(() => Number)
+  pre_page: number | null;
+
+  @Field(() => Number)
+  next_page: number | null;
+
+  @Field(() => Number)
+  total: number;
+
+  @Field(() => Number)
+  total_pages: number;
+
+  @Field(() => [Comment])
+  data: Array<Comment>;
 }

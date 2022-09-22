@@ -1,4 +1,4 @@
-import { CommentInput } from "../inputs";
+import { CommentInput, PaginationInputType } from "../inputs";
 import { Comment } from "../entity/Comment";
 import { AppDataSource } from "../data-source";
 import {
@@ -10,13 +10,51 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { isAuthed } from "../decorators";
-import { MyContext, VoteType } from "../types";
+import { CommentsPaginatedType, MyContext, VoteType } from "../types";
 import { Post } from "../entity/Post";
 import { User } from "../entity/User";
 import { Likes } from "../entity/Likes";
+import { paginator } from "../utils/paginator";
 
 @Resolver(Comment)
 export class CommentResolver {
+  @Query(() => CommentsPaginatedType)
+  @UseMiddleware(isAuthed)
+  async userPublicComments(
+    @Arg("pagination") pagination: PaginationInputType,
+    @Arg("user") uid: string
+  ) {
+    console.log(uid);
+    const comments = await AppDataSource.manager.find(Comment, {
+      where: { user: { userId: uid } },
+      order: { createdAt: "DESC" },
+    });
+    console.log(comments, "COMS");
+    let paginResponse = paginator(
+      comments,
+      pagination.page,
+      pagination.pageSize
+    );
+    return paginResponse;
+  }
+
+  @Query(() => CommentsPaginatedType)
+  @UseMiddleware(isAuthed)
+  async userComments(
+    @Arg("pagination") pagination: PaginationInputType,
+    @Ctx() { user }: MyContext
+  ) {
+    const comments = await AppDataSource.manager.find(Comment, {
+      where: { user: { id: user.id } },
+      order: { createdAt: "DESC" },
+    });
+    let paginResponse = paginator(
+      comments,
+      pagination.page,
+      pagination.pageSize
+    );
+    return paginResponse;
+  }
   @Query(() => VoteType)
   @UseMiddleware(isAuthed)
   async getCommentVote(
@@ -27,7 +65,7 @@ export class CommentResolver {
       where: { comment: { commentId: comment }, user: { id: user.id } },
     });
     if (!like) {
-      throw Error("Invalid input");
+      return { vote: 0, voted: false };
     }
     return { vote: like.value, voted: like.value != 0 };
   }
@@ -60,17 +98,20 @@ export class CommentResolver {
       cover: input.cover,
       message: input.message,
       post: post,
-      user: user,
       isReply: input.isReply,
       reply_to: replyTarget,
+      user,
     });
     await AppDataSource.manager.save(comment);
     return comment;
   }
 
-  @Query(() => [Comment])
-  async getPostComments(@Arg("post") post: string) {
-    const comments = AppDataSource.manager.find(Comment, {
+  @Query(() => CommentsPaginatedType)
+  async getPostComments(
+    @Arg("post") post: string,
+    @Arg("pagination") pagination: PaginationInputType
+  ): Promise<CommentsPaginatedType> {
+    const comments = await AppDataSource.manager.find(Comment, {
       where: {
         post: { postId: post },
       },
@@ -78,6 +119,11 @@ export class CommentResolver {
         createdAt: "DESC",
       },
     });
-    return comments;
+    const paginatedResponse = paginator(
+      comments,
+      pagination.page,
+      pagination.pageSize
+    );
+    return paginatedResponse;
   }
 }

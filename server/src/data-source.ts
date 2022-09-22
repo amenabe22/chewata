@@ -1,4 +1,5 @@
-import { DataSource } from "typeorm";
+import 'dotenv/config'
+import { DataSource, Db } from "typeorm";
 import { Post } from "./entity/Post";
 import { User } from "./entity/User";
 import { Comment } from "./entity/Comment";
@@ -6,11 +7,11 @@ import { Likes } from "./entity/Likes";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: "postgres",
-  password: "postgres",
-  database: "chewata",
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT as any,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS as any,
+  database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
   entities: [User, Post, Comment, Likes],

@@ -94,7 +94,7 @@ export class UserResolver {
     }
     return user;
   }
-
+  // remove jwt cookie
   @Mutation(() => Boolean)
   @UseMiddleware(isAuthed)
   async logout(@Ctx() { res }: MyContext) {

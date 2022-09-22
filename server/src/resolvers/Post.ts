@@ -17,13 +17,40 @@ export class PostResolver {
     return users;
   }
 
+  @Query(() => PostsPaginatedResponse)
+  @UseMiddleware(isAuthed)
+  async userPublicPosts(
+    @Arg("pagination") pagination: PaginationInputType,
+    @Arg("user") uid: string
+  ) {
+    const posts = await AppDataSource.manager.find(Post, {
+      where: { user: { userId: uid } },
+      order: { createdAt: "DESC" },
+    });
+    let paginResponse = paginator(posts, pagination.page, pagination.pageSize);
+    return paginResponse;
+  }
+
+  @Query(() => PostsPaginatedResponse)
+  @UseMiddleware(isAuthed)
+  async userPosts(
+    @Arg("pagination") pagination: PaginationInputType,
+    @Ctx() { user }: MyContext
+  ) {
+    const posts = await AppDataSource.manager.find(Post, {
+      where: { user: { id: user.id } },
+      order: { createdAt: "DESC" },
+    });
+    let paginResponse = paginator(posts, pagination.page, pagination.pageSize);
+    return paginResponse;
+  }
+
   @Mutation(() => Post, { nullable: true })
   @UseMiddleware(isAuthed)
   async addPost(
     @Arg("input") input: PostInputType,
     @Ctx() { user }: MyContext
   ) {
-    console.log(user, "User DATA");
     const post = AppDataSource.manager.create(Post, {
       cover: input.cover,
       content: input.content,

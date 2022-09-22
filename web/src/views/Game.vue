@@ -1,20 +1,5 @@
 <template>
   <div>
-    <Head v-if="post">
-      <title>{{ post.user.name }}</title>
-      <meta name="description" content="This page is awesome" />
-
-      <!-- Social -->
-      <meta property="og:title" content="Hello Title" />
-      <meta property="og:description" content="This page is awesome" />
-      <meta property="og:image" content="https://picsum.photos/1200/675" />
-
-      <!-- Twitter -->
-      <meta name="twitter:title" content="Hello Title" />
-      <meta name="twitter:description" content="This page is awesome" />
-      <meta name="twitter:image" content="https://picsum.photos/1200/675" />
-      <meta name="twitter:card" content="summary_large_image" />
-    </Head>
     <dialog-modal :show="showCommentForm" @close="showCommentForm = false">
       <div class="relative">
         <div class="w-full z-0">
@@ -74,7 +59,7 @@
     </dialog-modal>
     <div class="h-1/2 w-full" style="background: #5fe18c">
       <div
-        class="text-white p-2 font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
+        class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
         <div class="flex flex-row gap-4" v-if="post">
           <vote-clickers
@@ -88,20 +73,46 @@
             color="#92daac"
             class="mt-5"
           />
-          <div class="flex flex-col gap-4 w-full px-2">
-            <p class="pt-5">{{ post.user.fullName }}</p>
-            <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
-              {{ post.content }}
-            </p>
-            <div class="mr-3 mb-3">
-              <vue-load-image>
-                <template v-slot:image>
-                  <img :src="post.cover" v-if="post.cover" />
-                </template>
-                <template v-slot:preloader>
-                  <game-loader></game-loader>
-                </template>
-              </vue-load-image>
+          <div class="flex flex-row justify-start items-start">
+            <div class="flex flex-col gap-4 w-full px-2">
+              <p class="pt-5">{{ post.user.fullName }}</p>
+              <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
+                {{ post.content }}
+              </p>
+              <div class="mr-3 mb-3">
+                <vue-load-image>
+                  <template v-slot:image>
+                    <img :src="post.cover" v-if="post.cover" />
+                  </template>
+                  <template v-slot:preloader>
+                    <game-loader></game-loader>
+                  </template>
+                </vue-load-image>
+              </div>
+            </div>
+            <div
+              class="absolute right-0 mr-5 mt-5"
+              v-if="$store.state.loggedIn"
+            >
+              <button
+                class="bg-green-300 rounded-full"
+                v-if="$store.state.user.userId == post.user.userId"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-12 text-green-800 h-12 p-2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -240,6 +251,7 @@ export default defineComponent({
     "vue-load-image": VueLoadImage,
   },
   async mounted() {
+    window.addEventListener("scroll", this.handleScroll);
     this.loading = true;
     console.log(this.$store.state);
     if (this.$store.state.loggedIn) {
@@ -269,6 +281,9 @@ export default defineComponent({
     }
     this.loading = false;
   },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
   data: () => ({
     comments: [] as any,
     loadingPost: false,
@@ -288,9 +303,24 @@ export default defineComponent({
     showModal: false,
     replyTarget: null as any,
     showSide: true,
+    totalCount: 0,
+    pagination: { page: 1, pageSize: 2 },
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
+    async handleScroll(e: any) {
+      if (
+        window.scrollY + window.innerHeight >=
+        document.body.scrollHeight - 50
+      ) {
+        if (this.totalCount) {
+          this.pagination.page++;
+          const totalCount = await this.loadComments();
+          console.log("load more", totalCount);
+        }
+        // loadMorePosts();
+      }
+    },
     getCover() {
       const defualtcover = "http://yourwebsite.com/images/default-banner.png";
       return this.post.cover ? this.post.cover : defualtcover;
@@ -403,20 +433,25 @@ export default defineComponent({
     },
     async loadComments() {
       this.loadingComments = true;
-      this.comments = [];
       const {
-        data: { getPostComments },
+        data: {
+          getPostComments: { data },
+        },
       } = await this.$apollo
         .query({
           query: POST_COMMENTS,
+          fetchPolicy: "network-only",
           variables: {
             post: this.$route.params.id,
+            pagination: this.pagination,
           },
         })
         .finally(() => {
           this.loadingComments = false;
         });
-      this.comments = JSON.parse(JSON.stringify(getPostComments));
+      const comments = JSON.parse(JSON.stringify(data));
+      this.totalCount = comments.length;
+      this.comments.push(...comments);
     },
     clickFileRef() {
       (this.$refs.file as any).click();

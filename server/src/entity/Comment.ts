@@ -41,7 +41,7 @@ export class Comment {
   likes: number;
 
   @Field(() => Post, { nullable: true })
-  @ManyToOne(() => Post, { onDelete: "CASCADE" })
+  @ManyToOne(() => Post, { onDelete: "CASCADE", eager: true })
   @JoinColumn({ name: "post" })
   post: Post;
 

@@ -98,40 +98,15 @@
           <div v-if="loadComplete" class="text-center pb-32 pt-10">
             <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
           </div>
-          <div
-            class="flex justify-center my-10"
-            v-if="posts.length && !loading && !loadComplete"
-          >
-            <button
-              class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"
-              @click="fetchUserPosts"
-            >
-              <span>Load More</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5 font-bold"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-                />
-              </svg>
-            </button>
-          </div>
         </div>
         <div v-else>
           <comment-tile
             :readonly="false"
-            v-for="(com, ix) in sortedArray()"
+            v-for="(com, ix) in comments"
             :key="ix"
             :comment="com"
+            @click="$router.push(`/game/${com.post.postId}`)"
             class="cursor-pointer"
-            @click="$router.push(`/game/${com.comment.post}`)"
           />
 
           <div
@@ -142,31 +117,6 @@
           </div>
           <div v-if="loadComplete" class="text-center pb-32 pt-10">
             <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
-          </div>
-          <div
-            class="flex justify-center my-10"
-            v-if="posts.length && !loading && !loadComplete"
-          >
-            <button
-              class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"
-              @click="loadComments()"
-            >
-              <span>Load More</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5 font-bold"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-                />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
@@ -192,7 +142,11 @@ import { db } from "../firebase.config";
 import PostTile from "../components/PostTile.vue";
 import Loader from "../components/Loader.vue";
 import GameLoader from "../components/GameLoader.vue";
-import { USER_PUBLIC } from "../queries";
+import {
+  USER_PUBLIC,
+  USER_PUBLIC_COMMENTS,
+  USER_PUBLIC_POSTS,
+} from "../queries";
 
 export default defineComponent({
   components: {
@@ -213,16 +167,50 @@ export default defineComponent({
     activeTab: "posts",
     showModal: false,
     user: null as any,
+    totalCountPost: 0,
+    totalCountComments: 0,
+    paginationP: {
+      page: 1,
+      pageSize: 2,
+    },
+    paginationC: {
+      page: 1,
+      pageSize: 4,
+    },
     comments: [] as any,
     posts: [] as any,
     limit: 10,
   }),
   async created() {
     await this.loadUserData();
-    // await this.fetchUserPosts();
-    // await this.loadComments();
+    await this.fetchUserPosts();
+    await this.loadComments();
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+
   methods: {
+    async handleScroll(e: any) {
+      if (
+        window.scrollY + window.innerHeight >=
+        document.body.scrollHeight - 50
+      ) {
+        console.log("there");
+        if (this.totalCountPost) {
+          this.paginationP.page++;
+          await this.fetchUserPosts();
+          console.log("load more");
+        } else if (this.totalCountComments) {
+          this.paginationC.page++;
+          const totalCount = await this.loadComments();
+          console.log("load more", totalCount);
+        }
+      }
+    },
     setTab(tab: any) {
       this.activeTab = tab;
     },
@@ -241,69 +229,46 @@ export default defineComponent({
     },
     async loadComments() {
       this.loading = true;
-      let q = query(
-        collection(db, "comments"),
-        where("user", "==", this.$route.params.uid),
-        limit(this.limit)
-      );
-      if (this.lastCommentSnapshot) {
-        q = query(
-          collection(db, "comments"),
-          where("user", "==", this.$route.params.uid),
-          startAfter(this.lastCommentSnapshot),
-          limit(this.limit)
-        );
-      }
-      const snapshotData = await getDocs(q);
-      this.lastCommentSnapshot =
-        snapshotData.docs[snapshotData.docs.length - 1];
-      snapshotData.forEach(async (c) => {
-        const comment = c.data();
-        let uq = query(
-          collection(db, "users"),
-          where("id", "==", comment["user"])
-        );
-        const user = await getDocs(uq);
-        await this.comments.push({
-          comment: comment,
-          user: user.docs[0].data(),
+      const {
+        data: {
+          userPublicComments: { data, total },
+        },
+      } = await this.$apollo
+        .query({
+          query: USER_PUBLIC_COMMENTS,
+          variables: {
+            pagination: this.paginationC,
+            user: this.$route.params.uid,
+          },
+        })
+        .finally(() => {
+          this.loading = false;
         });
-      });
-      this.loading = false;
-    },
-    sortedArray: function () {
-      function compare(a: any, b: any) {
-        if (new Date(a.comment.createdAt) < new Date(b.comment.createdAt))
-          return -1;
-        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
-          return 1;
-        return 0;
-      }
-      return this.comments.sort(compare);
+      const comments = JSON.parse(JSON.stringify(data));
+      this.totalCountComments = this.comments.length;
+      this.comments.push(...comments);
     },
     async fetchUserPosts() {
       this.loading = true;
-      let postQ = query(
-        collection(db, "posts"),
-        where("user", "==", this.$route.params.uid),
-        limit(this.limit)
-      );
-
-      if (this.lastSnapshot)
-        postQ = query(
-          collection(db, "posts"),
-          where("user", "==", this.$route.params.uid),
-          startAfter(this.lastSnapshot),
-          limit(this.limit)
-        );
-
-      const querySnapshot = await getDocs(postQ);
-      this.lastSnapshot = querySnapshot.docs[querySnapshot.docs.length - 1];
-      let result = querySnapshot.docs.map((p) => p.data());
-      this.posts.push(...result);
-      this.loading = false;
-      if (!result.length) this.loadComplete = true;
-      return result.length;
+      const {
+        data: {
+          userPublicPosts: { data },
+        },
+      } = await this.$apollo
+        .query({
+          query: USER_PUBLIC_POSTS,
+          fetchPolicy: "network-only",
+          variables: {
+            pagination: this.paginationP,
+            user: this.$route.params.uid,
+          },
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+      const post = JSON.parse(JSON.stringify(data));
+      this.totalCountPost = post.length;
+      this.posts.push(...post);
     },
   },
 });

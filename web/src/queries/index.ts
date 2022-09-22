@@ -47,23 +47,28 @@ export const POST = gql`
 `;
 
 export const POST_COMMENTS = gql`
-  query getPostComments($post: String!) {
-    getPostComments(post: $post) {
-      id
-      commentId
-      message
-      isReply
-      cover
-      likes
-      user {
+  query getPostComments($post: String!, $pagination: PaginationInputType!) {
+    getPostComments(post: $post, pagination: $pagination) {
+      page
+      per_page
+      total
+      data {
         id
-        userId
-        fullName
-        photo
-        totalLikes
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          userId
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
         createdAt
       }
-      createdAt
     }
   }
 `;
@@ -173,15 +178,123 @@ export const LOGOUT = gql`
   }
 `;
 
-
-export const USER_PUBLIC = gql`query userPublic($user: String!) {
-  userPublic(user: $user) {
-    id
-    userId
-    fullName
-    photo
-    totalLikes
-    createdAt
+export const USER_PUBLIC = gql`
+  query userPublic($user: String!) {
+    userPublic(user: $user) {
+      id
+      userId
+      fullName
+      photo
+      totalLikes
+      createdAt
+    }
   }
-}
-`
+`;
+
+export const USER_POSTS = gql`
+  query userPosts($pagination: PaginationInputType!) {
+    userPosts(pagination: $pagination) {
+      page
+      total
+      total_pages
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const USER_COMMENTS = gql`
+  query userComments($pagination: PaginationInputType!) {
+    userComments(pagination: $pagination) {
+      page
+      per_page
+      total
+      data {
+        id
+        post {
+          postId
+        }
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const USER_PUBLIC_POSTS = gql`
+  query userPublicPosts($pagination: PaginationInputType!, $user: String!) {
+    userPublicPosts(pagination: $pagination, user: $user) {
+      page
+      total
+      total_pages
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const USER_PUBLIC_COMMENTS = gql`
+  query userPublicComments($pagination: PaginationInputType!, $user: String!) {
+    userPublicComments(pagination: $pagination, user: $user) {
+      page
+      per_page
+      total
+      data {
+        id
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
+        post {
+          postId
+        }
+        createdAt
+      }
+    }
+  }
+`;

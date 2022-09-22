@@ -3485,6 +3485,11 @@
   "resolved" "https://registry.npmjs.org/vue-demi/-/vue-demi-0.13.11.tgz"
   "version" "0.13.11"
 
+"vue-infinite-scroll@^2.0.2":
+  "integrity" "sha512-n+YghR059YmciANGJh9SsNWRi1YZEBVlODtmnb/12zI+4R72QZSWd+EuZ5mW6auEo/yaJXgxzwsuhvALVnm73A=="
+  "resolved" "https://registry.npmjs.org/vue-infinite-scroll/-/vue-infinite-scroll-2.0.2.tgz"
+  "version" "2.0.2"
+
 "vue-load-image@^1.1.0":
   "integrity" "sha512-OYlK7FBSYY6ksxWwty5oeXmPWbvMaZS6fuVcLtEmsGAeH/7dN0ZxicJyb9R+kCO0gCk1fqFJmo4ovqAOn5hupw=="
   "resolved" "https://registry.npmjs.org/vue-load-image/-/vue-load-image-1.1.0.tgz"

@@ -21,7 +21,7 @@
               class="text-white rounded-full flex items-center justify-center gap-3 w-full bg-gradient-to-r from-red-500 via-red-600 to-red-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium py-2.5 text-center mr-2 mb-2"
             >
               <fa :icon="['fab', 'fa-google']" class="text-3xl"></fa>
-              <p>Sign in with Google || {{ loadingAuth }}</p>
+              <p>Sign in with Google</p>
             </button>
           </div>
         </router-link>

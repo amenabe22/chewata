@@ -7,7 +7,7 @@
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "build": "tsc",
     "watch": "tsc -w",
-    "dev": "nodemon dist/server.js",
+    "dev": "cross-env nodemon dist/server.js",
     "start": "node dist/server.js",
     "start2": "ts-node src/index.ts"
   },
@@ -19,6 +19,7 @@
     "apollo-server-express": "^3.10.2",
     "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
+    "cross-env": "^7.0.3",
     "express": "^4.18.1",
     "firebase-admin": "^11.0.1",
     "graphql": "^15.3.0",

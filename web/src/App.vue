@@ -64,7 +64,7 @@ export default defineComponent({
       await this.$apollo.mutate({ mutation: LOGOUT });
       signOut(auth)
         .then(() => {
-          window.location.reload();
+          window.location.assign("/");
           // Sign-out successful.
         })
         .catch((error) => {
