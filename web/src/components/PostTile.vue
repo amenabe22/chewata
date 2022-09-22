@@ -7,7 +7,7 @@
       :voted="voteData.voted"
       @upvoted="upvoted"
       @downvoted="downvoted"
-      :vote="voteData.vote"
+      :vote="voteData.vote == 1 ?? false"
       :large="false"
       :count="post.likes"
       color="#92daac"
@@ -19,19 +19,19 @@
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
         v-text="post.content"
       ></p>
-      <vue-load-image>
-        <template v-slot:image>
-          <img
-            v-if="post.cover"
-            :src="post.cover"
-            alt=""
-            style="object-fit: contain"
-          />
-        </template>
+      <!-- <vue-load-image>
+        <template v-slot:image> -->
+      <img
+        v-if="post.cover"
+        :src="post.cover"
+        alt=""
+        style="object-fit: contain"
+      />
+      <!-- </template>
         <template v-slot:preloader>
           <loader></loader>
         </template>
-      </vue-load-image>
+      </vue-load-image> -->
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ import {
 } from "@firebase/firestore";
 import { db } from "../firebase.config";
 import { uuid } from "vue-uuid";
+import { GET_POST_VOTES, SET_VOTE } from "../queries";
 
 export default defineComponent({
   components: { VoteClickers, "vue-load-image": VueLoadImage, Loader },
@@ -63,135 +64,76 @@ export default defineComponent({
   async created() {
     this.initialVote = this.post.likes;
     if (this.$store.state.loggedIn) {
-      this.fetchVotes();
+      await this.fetchVotes();
     }
     // ignore
-    await this.setRef();
+    // await this.setRef();
   },
   methods: {
     async fetchVotes() {
-      const voteQuery = query(
-        collection(db, "likes"),
-        where("user", "==", this.$store.state.user.uid),
-        where("type", "==", "post"),
-        where("objectId", "==", this.post.id)
-      );
-      let vote = null;
-      let voted = null;
-      const likes = await getDocs(voteQuery);
-      if (!likes.empty) {
-        const likesData = likes.docs[0].data();
-        vote = likes.docs.length ? likesData.vote : null;
-        voted = likes.docs.length ? likesData.voted : null;
-        this.voteData.vote = vote;
-        this.voteData.voted = voted;
-      }
+      const {
+        data: { getPostVote },
+      } = await this.$apollo.query({
+        query: GET_POST_VOTES,
+        fetchPolicy: "network-only",
+        variables: { post: this.post.postId },
+      });
+      this.voteData = {
+        vote: getPostVote.vote,
+        voted: getPostVote.voted,
+      };
+      const voteFlag = this.voteData.vote == 1 ?? false;
 
-      if (voted && vote) {
+
+      if (this.voteData.voted && voteFlag) {
         this.initialVote = this.post.likes - 1;
-      } else if (voted && !vote) {
+      } else if (this.voteData.voted && !voteFlag) {
         this.initialVote = this.post.likes + 1;
+      } else {
+        this.initialVote = this.post.likes;
       }
-
-      return { vote, voted } as any;
     },
     async setVote(vote: any) {
-      const likesRef = doc(collection(db, "likes"));
-      const lq = query(
-        collection(db, "likes"),
-        where("user", "==", this.$store.state.user.uid),
-        where("type", "==", "post"),
-        where("objectId", "==", this.post.id)
-      );
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) =>
-          updateDoc(like.ref, {
+      await this.$apollo.mutate({
+        mutation: SET_VOTE,
+        variables: {
+          input: {
             vote: vote,
-            voted: true,
-          })
-        );
-      } else {
-        await setDoc(likesRef, {
-          id: uuid.v4(),
-          createdAt: new Date().toISOString(),
-          objectId: this.post.id,
-          type: "post",
-          vote: vote,
-          voted: true,
-          user: this.$store.state.user.uid,
-        });
-      }
-      // update post like
-      await this.updateTotalLikeCount();
-      if (vote) {
+            type: "post",
+            entityId: this.post.postId,
+          },
+        },
+      });
+
+      if (vote == 1) {
         this.post.likes = this.initialVote + 1;
-      } else {
+      } else if (vote == -1) {
         this.post.likes = this.initialVote - 1;
+      } else {
+        this.post.likes = this.initialVote;
       }
-    },
-    async updateTotalLikeCount() {
-      const lq = query(
-        collection(db, "likes"),
-        where("type", "==", "post"),
-        where("objectId", "==", this.post.id)
-      );
-      let total = 0;
-      const likes = await getDocs(lq);
-      const calculated = likes.docs.map((e) => {
-        const data = e.data();
-        const voteNumeric =
-          data.vote === true ? 1 : data.vote === false ? -1 : 0;
-        return {
-          data,
-          voteNumeric,
-        };
-      });
-      calculated.forEach((e) => (total += e.voteNumeric));
-      updateDoc(this.postRef, {
-        likes: total,
-      });
     },
     async setRef() {
       const q = query(collection(db, "posts"), where("id", "==", this.post.id));
       const querySnapshot = await getDocs(q);
       this.postRef = querySnapshot.docs[0].ref;
     },
-    async removeVote(vote: any) {
+    async removeVote() {
       // retain initial vote when user removes theirs
       this.post.likes = this.initialVote;
-      updateDoc(this.postRef, {
-        likes: this.initialVote,
-      });
-      this.voteData.voted = null;
-      this.voteData.vote = null;
-      const lq = query(
-        collection(db, "likes"),
-        where("user", "==", this.$store.state.user.uid),
-        where("type", "==", "post"),
-        where("objectId", "==", this.post.id)
-      );
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) =>
-          updateDoc(like.ref, {
-            vote: null,
-            voted: null,
-          })
-        );
-      }
+      this.voteData.voted = false;
+      this.voteData.vote = 0;
+      this.setVote(0);
     },
     async upvoted() {
       if (this.$store.state.user) {
-        console.log("up", this.post);
-        console.log(this.voteData.vote, "dawg");
-        if (this.voteData.vote == true) {
-          this.removeVote(true);
+        if (this.voteData.vote == 1) {
+          this.removeVote();
           return;
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = true;
-          this.setVote(true);
+          this.voteData.vote = 1;
+          this.setVote(1);
           return;
         }
       } else {
@@ -199,15 +141,14 @@ export default defineComponent({
       }
     },
     async downvoted() {
+      console.log("downvoted");
       if (this.$store.state.user) {
-        console.log("down");
-        console.log(this.voteData.vote, "vote");
-        if (this.voteData.vote == false) {
-          this.removeVote(false);
+        if (this.voteData.vote == -1) {
+          this.removeVote();
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = false;
-          this.setVote(false);
+          this.voteData.vote = -1;
+          this.setVote(-1);
         }
       } else {
         this.$store.commit("SET_LOGIN_POP", true);

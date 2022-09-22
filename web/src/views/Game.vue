@@ -78,25 +78,25 @@
       >
         <div class="flex flex-row gap-4" v-if="post">
           <vote-clickers
-            :voted="post.voted"
+            :voted="voteData.voted"
             @upvoted="upvoted"
             @downvoted="downvoted"
-            :vote="post.vote"
+            :vote="voteData.vote == 1 ?? false"
             :large="true"
-            :count="post.p.likes"
+            :count="post.likes"
             :dark="true"
             color="#92daac"
             class="mt-5"
           />
           <div class="flex flex-col gap-4 w-full px-2">
-            <p class="pt-5" v-if="post.user">{{ post.user.name }}</p>
+            <p class="pt-5">{{ post.user.fullName }}</p>
             <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
-              {{ post.p.content }}
+              {{ post.content }}
             </p>
             <div class="mr-3 mb-3">
               <vue-load-image>
                 <template v-slot:image>
-                  <img :src="post.p.cover" v-if="post.p.cover" />
+                  <img :src="post.cover" v-if="post.cover" />
                 </template>
                 <template v-slot:preloader>
                   <game-loader></game-loader>
@@ -108,32 +108,31 @@
         <game-loader v-else></game-loader>
       </div>
     </div>
-    <!-- <div class="flex flex-row justify-center p-2 gap-2 mt-2"> -->
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
         <div class="flex flex-row" v-if="post && post.user">
           <div v-if="$store.state.loggedIn">
             <user-avatar
               :path="
-                $store.state.user.uid == post.user.id
+                $store.state.user.userId == post.user.userId
                   ? '/user'
-                  : `/user/${post.user.id}`
+                  : `/user/${post.user.userId}`
               "
-              :img="post.user.photoURL"
+              :img="post.user.photo"
               :user="post.user"
             />
           </div>
           <user-avatar
             v-else
             :path="'/'"
-            :img="post.user.photoURL"
+            :img="post.user.photo"
             :user="post.user"
           />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ post.user.name }}
+              {{ post.user.fullName }}
             </p>
             <div
               class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
@@ -171,7 +170,7 @@
         <div v-if="comments.length">
           <comment-tile
             @replyClicked="replyComment(com)"
-            v-for="(com, ix) in sortedArray()"
+            v-for="(com, ix) in comments"
             :key="ix"
             :comment="com"
           />
@@ -218,6 +217,13 @@ import VueLoadImage from "vue-load-image";
 import Loader from "../components/Loader.vue";
 import GameLoader from "../components/GameLoader.vue";
 import { Head } from "@vueuse/head";
+import {
+  ADD_COMMENT,
+  GET_POST_VOTES,
+  POST,
+  POST_COMMENTS,
+  SET_VOTE,
+} from "../queries";
 
 export default defineComponent({
   components: {
@@ -233,114 +239,33 @@ export default defineComponent({
     Head,
     "vue-load-image": VueLoadImage,
   },
-  // metaInfo() {
-  //   return {
-  //     title: "this.metaTitle DAWG",
-  //     // meta: [
-  //     //   { vmid: 'description', name: 'description', content: this.metaDescription}
-  //     // ]
-  //   }
-  // },
-  // setup() {
-  //   console.log(this.comments, "coms");
-  //   useMeta({ title: "Chewata Forum" });
-  // },
   async mounted() {
-    // useMeta(
-    //   computed(() => ({
-    //     title: this.post ? this.post.user.name : "Chewata Post",
-    //     description: this.post ? this.post.p.content.substr(0, 30) : "",
-    //     // meta: [
-    //     //   {
-    //     //     property: "og:description",
-    //     //     content: this.post ? this.post.p.content.substr(0, 30) : "",
-    //     //   },
-    //     //   {
-    //     //     property: "og:title",
-    //     //     content: this.post ? this.post.user.name : "Chewata Post",
-    //     //   },
-    //     //   {
-    //     //     property: "og:type",
-    //     //     content: "website",
-    //     //   },
-    //     //   {
-    //     //     property: "og:image:width",
-    //     //     content: "800",
-    //     //   },
-    //     //   {
-    //     //     property: "og:image:height",
-    //     //     content: "800",
-    //     //   },
-    //     // ],
-    //     og: {
-    //       image: this.post ? this.getCover() : "",
-    //       description: this.post
-    //         ? this.post.p.content.substr(0, 30)
-    //         : "Chewata App",
-    //       title: this.post ? this.post.user.name : "Chewata Post",
-    //       type: "website",
-    //     },
-    //   }))
-    // );
-    // useMeta({
-    //   title: "Chewata | " + this.content.substr(0, 10),
-    // });
     this.loading = true;
-    const q = query(
-      collection(db, "posts"),
-      where("id", "==", this.$route.params.id)
-    );
-    const querySnapshot = await getDocs(q);
-    let user: any;
-    let likes: any;
-    if (querySnapshot.docs.length) {
-      const post = querySnapshot.docs[0].data();
-      const uq = query(
-        collection(db, "users"),
-        where("id", "==", post["user"])
-      );
-      if (post.user && this.$store.state.loggedIn) {
-        const vote = false;
-        const voteQuery = query(
-          collection(db, "likes"),
-          where("user", "==", this.$store.state.user.uid),
-          where("type", "==", "post"),
-          where("objectId", "==", this.$route.params.id)
-        );
-        likes = await getDocs(voteQuery);
-      }
-      user = await getDocs(uq);
-      // this.comments.push({ comment: comment, user: user.docs[0].data() });
-      // console.log(likes.docs[0].data(), "likes!");
-      if (this.$store.state.loggedIn) this.postRef = querySnapshot.docs[0].ref;
-      this.initialVote = post.likes;
-      // alert(this.initialVote)
-      if (this.$store.state.loggedIn) {
-        const voted = likes.docs.length ? likes.docs[0].data().voted : null;
-        const vote = likes.docs.length ? likes.docs[0].data().vote : null;
-        this.post = {
-          p: post,
-          user: user ? user.docs[0].data() : null,
-          vote,
-          voted,
-        };
-        if (voted && vote) {
-          this.initialVote = post.likes - 1;
-        } else if (voted && !vote) {
-          this.initialVote = post.likes + 1;
-        }
-      } else {
-        this.post = {
-          p: post,
-          user: user ? user.docs[0].data() : null,
-          vote: null,
-          voted: null,
-        };
-      }
-      // useMeta({
-      //   title: this.post ? this.post.p.content.substr(0, 20) : "Chewata Forum",
-      // });
-      console.log(this.post, " POST LOADED ");
+    console.log(this.$store.state);
+    if (this.$store.state.loggedIn) {
+      await this.getPostVote();
+    }
+    const {
+      data: { getPost },
+    } = await this.$apollo
+      .query({
+        query: POST,
+        fetchPolicy: "network-only",
+        variables: { post: this.$route.params.id },
+      })
+      .finally(() => {
+        this.loading = true;
+      });
+    // const postObj = getPost
+    const voteFlag = this.voteData.vote == 1 ?? false;
+    this.post = JSON.parse(JSON.stringify(getPost));
+    // this.initialVote = getPost.likes;
+    if (this.voteData.voted && voteFlag) {
+      this.initialVote = getPost.likes - 1;
+    } else if (this.voteData.voted && !voteFlag) {
+      this.initialVote = getPost.likes + 1;
+    } else {
+      this.initialVote = getPost.likes;
     }
     this.loading = false;
   },
@@ -363,11 +288,12 @@ export default defineComponent({
     showModal: false,
     replyTarget: null as any,
     showSide: true,
+    voteData: { vote: null, voted: null } as any,
   }),
   methods: {
     getCover() {
       const defualtcover = "http://yourwebsite.com/images/default-banner.png";
-      return this.post.p.cover ? this.post.p.cover : defualtcover;
+      return this.post.cover ? this.post.cover : defualtcover;
     },
     replyComment(com: any) {
       if (this.$store.state.loggedIn) {
@@ -478,25 +404,19 @@ export default defineComponent({
     async loadComments() {
       this.loadingComments = true;
       this.comments = [];
-      const q = query(
-        collection(db, "comments"),
-        where("post", "==", this.$route.params.id),
-        orderBy("createdAt", "asc")
-      );
-      const snapshotData = await getDocs(q);
-      snapshotData.forEach(async (c) => {
-        const comment = c.data();
-        const uq = query(
-          collection(db, "users"),
-          where("id", "==", comment["user"])
-        );
-        const user = await getDocs(uq);
-        await this.comments.push({
-          comment: comment,
-          user: user.docs[0].data(),
+      const {
+        data: { getPostComments },
+      } = await this.$apollo
+        .query({
+          query: POST_COMMENTS,
+          variables: {
+            post: this.$route.params.id,
+          },
+        })
+        .finally(() => {
+          this.loadingComments = false;
         });
-      });
-      this.loadingComments = false;
+      this.comments = JSON.parse(JSON.stringify(getPostComments));
     },
     clickFileRef() {
       (this.$refs.file as any).click();
@@ -537,117 +457,78 @@ export default defineComponent({
       this.filename = e.target.files[0].name;
     },
     async saveComment(cover: any = "") {
-      const commentRef = doc(collection(db, "comments"));
-      await setDoc(commentRef, {
-        id: uuid.v4(),
-        message: this.content,
-        cover: this.uploadedUrl,
-        replyTo: this.replyTarget ? this.replyTarget.user.id : "",
-        post: this.$route.params.id,
-        user: this.$store.state.user.uid,
-        createdAt: new Date().toISOString(),
-        likes: 0,
-      }).finally(() => {
-        this.loadingPost = false;
-        this.showCommentForm = false;
-      });
-      await this.loadComments();
+      await this.$apollo
+        .mutate({
+          mutation: ADD_COMMENT,
+          variables: {
+            input: {
+              message: this.content,
+              cover: this.uploadedUrl,
+              replyTo: this.replyTarget ? this.replyTarget.user.id : "",
+              post: this.$route.params.id,
+            },
+          },
+        })
+        .then(({ data: { addComment } }) => {
+          this.comments.unshift(addComment);
+        })
+        .finally(() => {
+          this.loadingPost = false;
+          this.showCommentForm = false;
+        });
+      // const commentRef = doc(collection(db, "comments"));
+      // await setDoc(commentRef, {
+      //   id: uuid.v4(),
+      //   message: this.content,
+      //   cover: this.uploadedUrl,
+      //   replyTo: this.replyTarget ? this.replyTarget.user.id : "",
+      //   post: this.$route.params.id,
+      //   user: this.$store.state.user.uid,
+      //   createdAt: new Date().toISOString(),
+      //   likes: 0,
+      // }).finally(() => {
+      //   this.loadingPost = false;
+      //   this.showCommentForm = false;
+      // });
+      // await this.loadComments();
     },
     async setVote(vote: any) {
-      const likesRef = doc(collection(db, "likes"));
-      const lq = query(
-        collection(db, "likes"),
-        where("user", "==", this.$store.state.user.uid),
-        where("type", "==", "post"),
-        where("objectId", "==", this.$route.params.id)
-      );
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) =>
-          updateDoc(like.ref, {
+      await this.$apollo.mutate({
+        mutation: SET_VOTE,
+        variables: {
+          input: {
             vote: vote,
-            voted: true,
-          })
-        );
-      } else {
-        await setDoc(likesRef, {
-          id: uuid.v4(),
-          createdAt: new Date().toISOString(),
-          objectId: this.$route.params.id,
-          type: "post",
-          vote: vote,
-          voted: true,
-          user: this.$store.state.user.uid,
-        });
-      }
+            type: "post",
+            entityId: this.$route.params.id,
+          },
+        },
+      });
       // update post like
-      await this.updateTotalLikeCount();
-      if (vote) {
-        this.post.p.likes = this.initialVote + 1;
+
+      if (vote == 1) {
+        this.post.likes = this.initialVote + 1;
+      } else if (vote == -1) {
+        this.post.likes = this.initialVote - 1;
       } else {
-        this.post.p.likes = this.initialVote - 1;
+        this.post.likes = this.initialVote;
       }
     },
-    async updateTotalLikeCount() {
-      const lq = query(
-        collection(db, "likes"),
-        where("type", "==", "post"),
-        where("objectId", "==", this.$route.params.id)
-      );
-      let total = 0;
-      const likes = await getDocs(lq);
-      const calculated = likes.docs.map((e) => {
-        const data = e.data();
-        const voteNumeric =
-          data.vote === true ? 1 : data.vote === false ? -1 : 0;
-        return {
-          data,
-          voteNumeric,
-        };
-      });
-      console.log(calculated, "CALC");
-      calculated.forEach((e) => (total += e.voteNumeric));
-      console.log(total, "TOTAL");
-      // const total =
-      updateDoc(this.postRef, {
-        likes: total,
-      });
-    },
-    async removeVote(vote: any) {
+    async removeVote() {
       // retain initial vote when user removes theirs
-      this.post.p.likes = this.initialVote;
-      updateDoc(this.postRef, {
-        likes: this.initialVote,
-      });
-      this.post.voted = null;
-      this.post.vote = null;
-      const lq = query(
-        collection(db, "likes"),
-        where("user", "==", this.$store.state.user.uid),
-        where("type", "==", "post"),
-        where("objectId", "==", this.$route.params.id)
-      );
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) =>
-          updateDoc(like.ref, {
-            vote: null,
-            voted: null,
-          })
-        );
-      }
+      this.post.likes = this.initialVote;
+      this.voteData.voted = false;
+      this.voteData.vote = 0;
+      this.setVote(0);
     },
     async upvoted() {
       if (this.$store.state.user) {
-        console.log("up", this.post);
-        console.log(this.post.vote, "dawg");
-        if (this.post.vote == true) {
-          this.removeVote(true);
+        if (this.voteData.vote == 1) {
+          this.removeVote();
           return;
         } else {
-          this.post.voted = true;
-          this.post.vote = true;
-          this.setVote(true);
+          this.voteData.voted = true;
+          this.voteData.vote = 1;
+          this.setVote(1);
           return;
         }
       } else {
@@ -656,18 +537,29 @@ export default defineComponent({
     },
     async downvoted() {
       if (this.$store.state.user) {
-        console.log("down");
-        console.log(this.post.vote, "vote");
-        if (this.post.vote == false) {
-          this.removeVote(false);
+        if (this.voteData.vote == -1) {
+          this.removeVote();
         } else {
-          this.post.voted = true;
-          this.post.vote = false;
-          this.setVote(false);
+          this.voteData.voted = true;
+          this.voteData.vote = -1;
+          this.setVote(-1);
         }
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
       }
+    },
+    async getPostVote() {
+      const {
+        data: { getPostVote },
+      } = await this.$apollo.query({
+        query: GET_POST_VOTES,
+        variables: { post: this.$route.params.id },
+        fetchPolicy: "network-only",
+      });
+      this.voteData = {
+        vote: getPostVote.vote,
+        voted: getPostVote.voted,
+      };
     },
   },
   async created() {

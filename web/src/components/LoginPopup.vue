@@ -21,7 +21,7 @@
               class="text-white rounded-full flex items-center justify-center gap-3 w-full bg-gradient-to-r from-red-500 via-red-600 to-red-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium py-2.5 text-center mr-2 mb-2"
             >
               <fa :icon="['fab', 'fa-google']" class="text-3xl"></fa>
-              <p>Sign in with Google</p>
+              <p>Sign in with Google || {{ loadingAuth }}</p>
             </button>
           </div>
         </router-link>
@@ -37,6 +37,8 @@ import {
   FacebookAuthProvider,
   getAuth,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import {
   collection,
@@ -48,42 +50,49 @@ import {
   where,
 } from "@firebase/firestore";
 import { db } from "../firebase.config";
+import { SOCIAL_LOGIN } from "../queries";
 
 export default defineComponent({
   components: { DialogModal },
   props: { loginPopup: Boolean },
+  data: () => ({ loadingAuth: false }),
+  // created() {
+  //   const auth = getAuth();
+  //   auth.onAuthStateChanged((result: any) => {
+  //     this.loadingAuth = true;
+  //     if (result) {
+  //       console.log("Result", result);
+  //       if (!this.$store.state.loggedIn) {
+
+  //       }
+  //     }
+  //   });
+  // },
   methods: {
     async loginFb() {
       const auth = getAuth();
       const provider = new FacebookAuthProvider();
       await signInWithPopup(auth, provider)
         .then(async (result: any) => {
-          this.$store.commit("SET_LOGGEDIN", true);
-          this.$store.commit("SET_USER", result.user);
-          this.$emit("loggedin");
-          const userRef = doc(collection(db, "users"));
-          const q = query(
-            collection(db, "users"),
-            where("id", "==", result.user.uid)
-          );
-          const users = await getDocs(q);
-          if (users.empty) {
-            await setDoc(userRef, {
-              id: result.user.uid,
-              name: result.user.displayName,
-              photoURL: result.user.photoURL,
-              email: result.user.email,
-              createdAt: result.user.reloadUserInfo
-                ? result.user.reloadUserInfo.createdAt
-                : "",
-              totalLikes: 0,
+          this.$apollo
+            .mutate({
+              mutation: SOCIAL_LOGIN,
+              variables: {
+                input: result.user.accessToken,
+              },
+            })
+            .then(({ data: { socialMediaLoginGoogle } }) => {
+              console.log("Logged In", socialMediaLoginGoogle);
+              this.$store.commit("SET_LOGGEDIN", true);
+              this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+              this.$emit("loggedin");
+            })
+            .finally(() => {
+              this.$store.state.loading = false;
+              this.loadingAuth = false;
+              this.$store.commit("SET_LOGIN_POP", false);
+              this.$store.commit("SET_MAIN_POP", false);
             });
-          }
-          console.log("done");
-          this.$store.commit("SET_LOGIN_POP", false);
-          this.$store.commit("SET_MAIN_POP", false);
-
-          //   await this.socialLogin(result.user.accessToken, "go");
         })
         .catch((error) => {
           // TODO: handle social auth erros here
@@ -95,32 +104,26 @@ export default defineComponent({
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider)
         .then(async (result: any) => {
-          this.$store.commit("SET_LOGGEDIN", true);
-          this.$store.commit("SET_USER", result.user);
-          this.$emit("loggedin");
-          const userRef = doc(collection(db, "users"));
-          const q = query(
-            collection(db, "users"),
-            where("id", "==", result.user.uid)
-          );
-          const users = await getDocs(q);
-          if (users.empty) {
-            await setDoc(userRef, {
-              id: result.user.uid,
-              name: result.user.displayName,
-              photoURL: result.user.photoURL,
-              email: result.user.email,
-              createdAt: result.user.reloadUserInfo
-                ? result.user.reloadUserInfo.createdAt
-                : "",
-              totalLikes: 0,
+          console.log("Result", result);
+          this.$apollo
+            .mutate({
+              mutation: SOCIAL_LOGIN,
+              variables: {
+                input: result.user.accessToken,
+              },
+            })
+            .then(({ data: { socialMediaLoginGoogle } }) => {
+              console.log("Logged In", socialMediaLoginGoogle);
+              this.$store.commit("SET_LOGGEDIN", true);
+              this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+              this.$emit("loggedin");
+            })
+            .finally(() => {
+              this.$store.state.loading = false;
+              this.loadingAuth = false;
+              this.$store.commit("SET_LOGIN_POP", false);
+              this.$store.commit("SET_MAIN_POP", false);
             });
-          }
-          console.log("done");
-          this.$store.commit("SET_LOGIN_POP", false);
-          this.$store.commit("SET_MAIN_POP", false);
-
-          //   await this.socialLogin(result.user.accessToken, "go");
         })
         .catch((error) => {
           // TODO: handle social auth erros here

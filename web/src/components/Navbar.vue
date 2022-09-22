@@ -54,7 +54,7 @@
           @click="$emit('profileClicked')"
         >
           <img
-            :src="$store.state.user.photoURL"
+            :src="$store.state.user.photo"
             class="w-10 h-10 rounded-full ring-2 ring-green-600"
           />
         </div>

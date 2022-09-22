@@ -5,39 +5,51 @@ import {
   Column,
   UpdateDateColumn,
   CreateDateColumn,
+  Generated,
   ManyToOne,
   JoinColumn,
-  Generated,
 } from "typeorm";
+import { Post } from "./Post";
 import { User } from "./User";
+import { Comment } from "./Comment";
+
+export enum LikeType {
+  POST = "post",
+  COMMENT = "comment",
+}
 
 @ObjectType()
 @Entity()
-export class Post {
+export class Likes {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => String)
   @Column()
   @Generated("uuid")
-  postId: string;
+  likeId: string;
 
   @Field(() => String, { nullable: true })
-  @Column({ nullable: true })
-  slug: string;
+  @Column({
+    type: "enum",
+    nullable: true,
+    enum: LikeType,
+  })
+  likeType: string;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true })
-  content: string;
+  @Field(() => Post, { nullable: true })
+  @ManyToOne(() => Post, { onDelete: "CASCADE", eager: true })
+  @JoinColumn({ name: "post" })
+  post: Post;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true })
-  cover: string;
+  @Field(() => Comment, { nullable: true })
+  @ManyToOne(() => Comment, { onDelete: "CASCADE", eager: true })
+  @JoinColumn({ name: "comment" })
+  comment: Comment;
 
   @Field(() => Int, { nullable: true })
-  @Column({ nullable: true, default: 0 })
-  likes: number;
+  @Column({ type: "int", nullable: true })
+  value: number;
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, { onDelete: "CASCADE", eager: true })

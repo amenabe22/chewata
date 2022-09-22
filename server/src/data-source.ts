@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
 import { Post } from "./entity/Post";
 import { User } from "./entity/User";
+import { Comment } from "./entity/Comment";
+import { Likes } from "./entity/Likes";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -11,7 +13,7 @@ export const AppDataSource = new DataSource({
   database: "chewata",
   synchronize: true,
   logging: false,
-  entities: [User, Post],
+  entities: [User, Post, Comment, Likes],
   subscribers: [],
   migrations: [],
 });

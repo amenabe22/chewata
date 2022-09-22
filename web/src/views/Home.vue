@@ -278,7 +278,7 @@ import InfiniteScroll from "infinite-loading-vue3";
 import PostTile from "../components/PostTile.vue";
 import { getToken, getMessaging, onMessage } from "@firebase/messaging";
 import { messaging } from "../firebase.config";
-// import { Head } from "@vueuse/head";
+import { ADD_POST, GET_POSTS } from "../queries";
 
 export default defineComponent({
   name: "HomePage",
@@ -313,6 +313,10 @@ export default defineComponent({
     loaded: false,
     filename: null as any,
     file: null as any,
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
     posts: [] as Array<any>,
     lastSnapshot: null as any,
   }),
@@ -384,6 +388,7 @@ export default defineComponent({
             },
           },
           (error, result) => {
+            console.log(error, "DAWg");
             if (!error && result && result.event === "success") {
               this.filename = result.info.original_filename;
               this.uploadedUrl = result.info.secure_url;
@@ -422,28 +427,22 @@ export default defineComponent({
     },
     async loadFeed() {
       this.loadingFeed = true;
-      let picturesRef = query(
-        collection(db, "posts"),
-        orderBy("createdAt", "desc"),
-        limit(this.limit)
-      );
-
-      if (this.lastSnapshot)
-        picturesRef = query(
-          collection(db, "posts"),
-          orderBy("createdAt", "desc"),
-          startAfter(this.lastSnapshot),
-          limit(this.limit)
-        );
-
-      // console.log("LAST: ", this.lastSnapshot);
-      const picturesSnap = await getDocs(picturesRef);
-      this.lastSnapshot = picturesSnap.docs[picturesSnap.docs.length - 1];
-      let result = picturesSnap.docs.map((p) => p.data());
-      this.posts.push(...result);
-      this.loadingFeed = false;
-      if (!result.length) this.loadComplete = true;
-      return result.length;
+      const {
+        data: {
+          getPosts: { data },
+        },
+      } = await this.$apollo
+        .query({
+          query: GET_POSTS,
+          fetchPolicy: "network-only",
+          variables: {
+            input: this.pagination,
+          },
+        })
+        .finally(() => {
+          this.loadingFeed = false;
+        });
+      this.posts = JSON.parse(JSON.stringify(data));
     },
     clickFileRef() {
       (this.$refs.file as any).click();
@@ -501,24 +500,26 @@ export default defineComponent({
       }, 250);
     },
     clicked(post: any) {
-      this.$router.push({ path: `/game/${post.id}` });
+      this.$router.push({ path: `/game/${post.postId}` });
     },
     async savePost(cover: any = null) {
-      const postsRef = doc(collection(db, "posts"));
-      await setDoc(postsRef, {
-        id: uuid.v4(),
-        content: this.content,
-        cover: cover,
-        user: this.$store.state.user.uid,
-        createdAt: new Date().toISOString(),
-        likes: 0,
-      }).finally(async () => {
-        this.posts = [];
-        this.loadingPost = false;
-        this.$store.commit("SET_MAIN_POP", false);
-        this.lastSnapshot = null;
-        await this.loadFeed();
-      });
+      await this.$apollo
+        .mutate({
+          mutation: ADD_POST,
+          variables: {
+            input: {
+              content: this.content,
+              cover: cover,
+            },
+          },
+        })
+        .then(({ data: { addPost } }) => {
+          this.posts.unshift(addPost);
+        })
+        .finally(() => {
+          this.loadingPost = false;
+          this.closeDialog();
+        });
     },
     async post() {
       if (this.invalidImage) {

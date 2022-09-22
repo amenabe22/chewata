@@ -11,17 +11,15 @@ import { createHead } from "@vueuse/head";
 import "./index.css";
 import { getMessaging } from "firebase/messaging";
 import { setupFirebase } from "./firebase.config";
+import { apolloProvider } from "./apollo";
 
 library.add(faCoffee, faJs, faFacebook, faGoogle);
 
 setupFirebase();
 const app = createApp(App);
 app.component("fa", FontAwesomeIcon);
-// app.use(vueMetaPlugin);
-// app.use(createMetaManager());
-
-// app.use(metaPlugin); // o
 app.use(router);
 app.use(createHead());
+app.use(apolloProvider)
 app.use(store);
 app.mount("#app");

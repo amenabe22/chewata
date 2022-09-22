@@ -1,11 +1,7 @@
 <template>
   <div>
     <transition name="fade" appear>
-      <div
-        class="modal-overlay opacity-80"
-        v-if="show"
-        @click="$emit('close')"
-      ></div>
+      <div class="modal-overlay opacity-80" v-if="show" @click="closePop"></div>
     </transition>
     <transition name="pop" appear>
       <div class="modal bg-transparent" role="dialog" v-if="show">
@@ -22,6 +18,14 @@ export default defineComponent({
   name: "Modal",
   props: {
     show: Boolean,
+    persistent: Boolean,
+  },
+  methods: {
+    closePop() {
+      if (!this.persistent) {
+        this.$emit("close");
+      }
+    },
   },
 });
 </script>

@@ -5,6 +5,7 @@ import {
   Column,
   UpdateDateColumn,
   CreateDateColumn,
+  Generated,
 } from "typeorm";
 
 @ObjectType()
@@ -13,6 +14,11 @@ export class User {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Field(() => String)
+  @Column()
+  @Generated("uuid")
+  userId: string;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
@@ -32,7 +38,11 @@ export class User {
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
-  totalLikes: string;
+  socialIdtoken: string;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
+  totalLikes: number;
 
   @Field(() => String)
   @CreateDateColumn()

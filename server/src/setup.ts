@@ -1,3 +1,5 @@
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import express, { Express } from "express";
 import { apolloServerSetup } from "./apollo";
 
@@ -9,6 +11,7 @@ export async function startApolloServer() {
   await server.start();
 
   const app = express();
+  app.use(cookieParser());
 
   server.applyMiddleware({
     app,
@@ -19,10 +22,16 @@ export async function startApolloServer() {
     path: "/graphql",
     cors: {
       credentials: true,
-      origin: "*",
+      origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4000"],
     },
   });
-
+  app.use(
+    cors({
+      origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4000"],
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      preflightContinue: false,
+    })
+  );
   // Modified server startup
   await new Promise((resolve: any) => app.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);

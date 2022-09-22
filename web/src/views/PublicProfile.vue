@@ -19,7 +19,7 @@
         class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
         <div class="flex flex-col gap-4 w-full items-start px-2">
-          <p class="pt-5">{{ user.name }}</p>
+          <p class="pt-5">{{ user.fullName }}</p>
           <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
             If you treat me like an option, I’ll leave you like a choice.
           </p>
@@ -32,17 +32,17 @@
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
         <div class="flex flex-row" v-if="$store.state.loggedIn && user">
-          <user-avatar :img="user.photoURL" />
+          <user-avatar :img="user.photo" />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ user.name }}
+              {{ user.fullName }}
             </p>
             <div
               class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
             >
-              1099
+              {{ user.totalLikes }}
             </div>
           </div>
         </div>
@@ -192,6 +192,7 @@ import { db } from "../firebase.config";
 import PostTile from "../components/PostTile.vue";
 import Loader from "../components/Loader.vue";
 import GameLoader from "../components/GameLoader.vue";
+import { USER_PUBLIC } from "../queries";
 
 export default defineComponent({
   components: {
@@ -218,8 +219,8 @@ export default defineComponent({
   }),
   async created() {
     await this.loadUserData();
-    await this.fetchUserPosts();
-    await this.loadComments();
+    // await this.fetchUserPosts();
+    // await this.loadComments();
   },
   methods: {
     setTab(tab: any) {
@@ -229,14 +230,14 @@ export default defineComponent({
       this.$router.push({ path: `/game/${post.id}` });
     },
     async loadUserData() {
-      let q = query(
-        collection(db, "users"),
-        where("id", "==", this.$route.params.uid)
-      );
-      const snapshotData = await getDocs(q);
-      if (!snapshotData.empty) {
-        this.user = snapshotData.docs[0].data();
-      }
+      const {
+        data: { userPublic },
+      } = await this.$apollo.query({
+        query: USER_PUBLIC,
+        fetchPolicy: "network-only",
+        variables: { user: this.$route.params.uid },
+      });
+      this.user = userPublic;
     },
     async loadComments() {
       this.loading = true;

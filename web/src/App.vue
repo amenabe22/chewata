@@ -25,6 +25,8 @@ import LoginPopup from "./components/LoginPopup.vue";
 import Navbar from "./components/Navbar.vue";
 import AccountPopup from "./components/AccountPopup.vue";
 import { Head, useHead } from "@vueuse/head";
+import { getAuth, signOut } from "@firebase/auth";
+import { LOGOUT, SOCIAL_LOGIN } from "./queries";
 
 export default defineComponent({
   components: { LoginPopup, Navbar, AccountPopup, Head },
@@ -32,17 +34,6 @@ export default defineComponent({
     loginPopup: false,
     profileClicked: false,
   }),
-  mounted() {
-    useHead({
-      title: "Website Title",
-      meta: [
-        {
-          name: "description",
-          content: "Website description",
-        },
-      ],
-    });
-  },
   // setup() {
   //   useMeta({ title: "Chewata" });
   // },
@@ -67,9 +58,18 @@ export default defineComponent({
       this.menuClicked();
       this.$router.push("/");
     },
-    logout() {
+    async logout() {
       this.cleanStates();
-      window.location.reload();
+      const auth = getAuth();
+      await this.$apollo.mutate({ mutation: LOGOUT });
+      signOut(auth)
+        .then(() => {
+          window.location.reload();
+          // Sign-out successful.
+        })
+        .catch((error) => {
+          // An error happened.
+        });
     },
   },
 });
