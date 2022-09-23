@@ -41,7 +41,7 @@
                   ref="file"
                 />
                 <p>5000</p>
-                <button @click="openUploadModal">
+                <button @click="clickFileRef">
                   <span v-if="!filename">Attach Img/Gif</span>
                   <span v-else>{{ filename }}</span>
                 </button>
@@ -95,6 +95,7 @@
               v-if="$store.state.loggedIn"
             >
               <button
+                @click="deletePost"
                 class="bg-green-300 rounded-full"
                 v-if="$store.state.user.userId == post.user.userId"
               >
@@ -104,7 +105,7 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-12 text-green-800 h-12 p-2"
+                  class="w-10 text-green-800 h-10 p-2"
                 >
                   <path
                     stroke-linecap="round"
@@ -196,34 +197,15 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import axios from "axios";
+import { defineComponent } from "vue";
 import CommentMeda from "../components/CommentMeda.vue";
 import CommentTile from "../components/CommentTile.vue";
 import LightGallery from "../components/LightGallery.vue";
 import RelatedItems from "../components/RelatedItems.vue";
 import UserAvatar from "../components/UserAvatar.vue";
 import VoteClickers from "../components/VoteClickers.vue";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase.config";
 import DialogModal from "../components/DialogModal.vue";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytes,
-} from "@firebase/storage";
-import { uuid } from "vue-uuid";
 import VueLoadImage from "vue-load-image";
 import Loader from "../components/Loader.vue";
 import GameLoader from "../components/GameLoader.vue";
@@ -234,6 +216,7 @@ import {
   POST,
   POST_COMMENTS,
   SET_VOTE,
+  DELETE_POST,
 } from "../queries";
 
 export default defineComponent({
@@ -293,6 +276,8 @@ export default defineComponent({
     invalidImage: false,
     loading: false,
     initialVote: 0,
+    preset: "c4o7elzd",
+    formData: null as any,
     postRef: null as any,
     lastIncremented: null as any,
     lastDecremented: null as any,
@@ -318,7 +303,6 @@ export default defineComponent({
           const totalCount = await this.loadComments();
           console.log("load more", totalCount);
         }
-        // loadMorePosts();
       }
     },
     getCover() {
@@ -335,59 +319,6 @@ export default defineComponent({
         this.$store.commit("SET_LOGIN_POP", true);
       }
     },
-    openUploadModal() {
-      window.cloudinary
-        .openUploadWidget(
-          {
-            cloud_name: "dtabnh5py",
-            upload_preset: "c4o7elzd",
-            sources: [
-              "local",
-              "camera",
-              "image_search",
-              "google_drive",
-              "facebook",
-              "instagram",
-              "dropbox",
-            ],
-            multiple: false,
-            defaultSource: "local",
-            styles: {
-              palette: {
-                window: "#F5F5F5",
-                sourceBg: "#FFFFFF",
-                windowBorder: "#90a0b3",
-                tabIcon: "#0094c7",
-                inactiveTabIcon: "#69778A",
-                menuIcons: "#0094C7",
-                link: "#53ad9d",
-                action: "#8F5DA5",
-                inProgress: "#0194c7",
-                complete: "#53ad9d",
-                error: "#c43737",
-                textDark: "#000000",
-                textLight: "#FFFFFF",
-              },
-              fonts: {
-                default: null,
-                "sans-serif": {
-                  url: null,
-                  active: true,
-                },
-              },
-            },
-          },
-          (error, result) => {
-            if (!error && result && result.event === "success") {
-              this.filename = result.info.original_filename;
-              this.uploadedUrl = result.info.secure_url;
-
-              console.log("Done uploading..: ", result.info);
-            }
-          }
-        )
-        .open();
-    },
     async postComment() {
       if (this.content == "") {
         alert("Message can't be empty");
@@ -400,19 +331,16 @@ export default defineComponent({
       }
 
       this.loadingPost = true;
-      // if (this.file) {
-      //   const storage = getStorage();
-      //   const storageRef = ref(storage, this.filename);
-
-      //   // 'file' comes from the Blob or File API
-      //   await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
-      //     const url = await getDownloadURL(snapshot.ref);
-      //     await this.saveComment(url);
-      //     console.log("Uploaded a blob or file!", url);
-      //   });
-      //   return;
-      // }
-      await this.saveComment(null);
+      if (this.file && this.formData) {
+        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+        const { data } = await axios({
+          url,
+          method: "POST",
+          data: this.formData,
+        });
+        this.uploadedUrl = data.secure_url;
+      }
+      await this.saveComment();
     },
     ballClicked() {
       if (this.$store.state.loggedIn) {
@@ -488,10 +416,16 @@ export default defineComponent({
         alert(txt);
         return;
       }
-      this.file = e.target.files;
-      this.filename = e.target.files[0].name;
+      this.file = e.target.files[0];
+      this.filename = e.target.files[0].name.substring(0, 20);
+      this.prepareFormData();
     },
-    async saveComment(cover: any = "") {
+    prepareFormData() {
+      this.formData = new FormData();
+      this.formData.append("upload_preset", this.preset);
+      this.formData.append("file", this.file);
+    },
+    async saveComment() {
       await this.$apollo
         .mutate({
           mutation: ADD_COMMENT,
@@ -511,21 +445,6 @@ export default defineComponent({
           this.loadingPost = false;
           this.showCommentForm = false;
         });
-      // const commentRef = doc(collection(db, "comments"));
-      // await setDoc(commentRef, {
-      //   id: uuid.v4(),
-      //   message: this.content,
-      //   cover: this.uploadedUrl,
-      //   replyTo: this.replyTarget ? this.replyTarget.user.id : "",
-      //   post: this.$route.params.id,
-      //   user: this.$store.state.user.uid,
-      //   createdAt: new Date().toISOString(),
-      //   likes: 0,
-      // }).finally(() => {
-      //   this.loadingPost = false;
-      //   this.showCommentForm = false;
-      // });
-      // await this.loadComments();
     },
     async setVote(vote: any) {
       await this.$apollo.mutate({
@@ -595,6 +514,23 @@ export default defineComponent({
         vote: getPostVote.vote,
         voted: getPostVote.voted,
       };
+    },
+    async deletePost() {
+      const confirmDelte = confirm(
+        "Are you sure you want to do delete this post? "
+      );
+      if (confirmDelte) {
+        await this.$apollo
+          .mutate({
+            mutation: DELETE_POST,
+            variables: {
+              post: this.$route.params.id,
+            },
+          })
+          .finally(() => {
+            this.$router.push("/");
+          });
+      }
     },
   },
   async created() {

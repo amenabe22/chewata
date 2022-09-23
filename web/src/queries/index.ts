@@ -298,3 +298,9 @@ export const USER_PUBLIC_COMMENTS = gql`
     }
   }
 `;
+
+export const DELETE_POST = gql`
+  mutation deletePost($post: String!){
+    deletePost(post: $post)
+  }
+`;

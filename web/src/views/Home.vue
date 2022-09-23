@@ -109,7 +109,7 @@
                 accept="image/png, image/gif, image/jpeg"
               />
               <p>5000</p>
-              <button @click="openUploadModal">
+              <button @click="clickFileRef">
                 <span v-if="!filename">Attach Img/Gif</span>
                 <span v-else>{{ filename }}</span>
               </button>
@@ -274,7 +274,7 @@ import {
   limitToLast,
   where,
 } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import axios from "axios";
 import Loader from "../components/Loader.vue";
 import { uuid } from "vue-uuid";
 import LoginPopup from "../components/LoginPopup.vue";
@@ -308,6 +308,8 @@ export default defineComponent({
     uploadedUrl: null,
     noResult: false,
     page: 1,
+    progress: 0,
+    formData: null as any,
     totalCount: 0,
     invalidImage: false,
     showMainDialog: false,
@@ -316,6 +318,7 @@ export default defineComponent({
     showFormx: false,
     loadComplete: false,
     limit: 10,
+    preset: "c4o7elzd",
     loaded: false,
     filename: null as any,
     file: null as any,
@@ -351,51 +354,10 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
-    openUploadModal() {
-      window.cloudinary
-        .openUploadWidget(
-          {
-            cloud_name: "dtabnh5py",
-            upload_preset: "c4o7elzd",
-            sources: ["local"],
-            multiple: false,
-            defaultSource: "local",
-            styles: {
-              palette: {
-                window: "#F5F5F5",
-                sourceBg: "#FFFFFF",
-                windowBorder: "#90a0b3",
-                tabIcon: "#0094c7",
-                inactiveTabIcon: "#69778A",
-                menuIcons: "#0094C7",
-                link: "#53ad9d",
-                action: "#8F5DA5",
-                inProgress: "#0194c7",
-                complete: "#53ad9d",
-                error: "#c43737",
-                textDark: "#000000",
-                textLight: "#FFFFFF",
-              },
-              fonts: {
-                default: null,
-                "sans-serif": {
-                  url: null,
-                  active: true,
-                },
-              },
-            },
-          },
-          (error, result) => {
-            console.log(error, "DAWg");
-            if (!error && result && result.event === "success") {
-              this.filename = result.info.original_filename;
-              this.uploadedUrl = result.info.secure_url;
-
-              console.log("Done uploading..: ", result.info);
-            }
-          }
-        )
-        .open();
+    prepareFormData() {
+      this.formData = new FormData();
+      this.formData.append("upload_preset", this.preset);
+      this.formData.append("file", this.file);
     },
     async handleScroll(e: any) {
       if (
@@ -409,25 +371,6 @@ export default defineComponent({
         }
       }
     },
-    // async handleScroll(e: any) {
-    //   let element = this.$refs.scrollComponent as any;
-    //   if (!this.loadComplete) {
-    //     if (
-    //       Math.round(element.getBoundingClientRect().bottom) <=
-    //       window.innerHeight
-    //     ) {
-    //       const newItems: any = await this.loadFeed();
-    //       console.log(newItems, "ss");
-    //       if (!newItems) {
-    //         this.noResult = true;
-    //         this.message = "No result found";
-    //         this.loadComplete = true;
-    //         console.log("loadded them all");
-    //         return;
-    //       }
-    //     }
-    //   }
-    // },
     menuClicked() {
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
@@ -498,8 +441,9 @@ export default defineComponent({
         alert(txt);
         return;
       }
-      this.file = e.target.files;
+      this.file = e.target.files[0];
       this.filename = e.target.files[0].name;
+      this.prepareFormData();
     },
     cancelPost() {
       this.showFormx = false;
@@ -550,18 +494,16 @@ export default defineComponent({
         return;
       }
       this.loadingPost = true;
-      // if (this.file) {
-      //   const storage = getStorage();
-      //   const storageRef = ref(storage, this.filename);
-
-      //   // 'file' comes from the Blob or File API
-      //   await uploadBytes(storageRef, this.file[0]).then(async (snapshot) => {
-      //     const url = await getDownloadURL(snapshot.ref);
-      //     await this.savePost(url);
-      //   });
-      //   return;
-      // }
-      await this.savePost(this.uploadedUrl);
+      const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+      const { data } = await axios({
+        url,
+        method: "POST",
+        data: this.formData,
+        onUploadProgress: (e) => {
+          this.progress = Math.round((e.loaded * 100) / e.total);
+        },
+      });
+      await this.savePost(data.secure_url);
     },
   },
 });

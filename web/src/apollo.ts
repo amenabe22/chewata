@@ -7,9 +7,9 @@ import {
 } from "@apollo/client/core";
 import { createApolloProvider } from "@vue/apollo-option";
 
-const prod = false;
+const prod = true;
 const uri = prod
-  ? "https://chewata.fun/graphql/"
+  ? "https://chewata.fun/graphql"
   : "http://127.0.0.1:4000/graphql/";
 
 export const httpLink = createHttpLink({
@@ -23,14 +23,6 @@ export const apolloClient = new ApolloClient({
   credentials: "include",
   uri: uri,
 });
-
-// Create the apollo client
-// export const apolloClient = new ApolloClient({
-//     link: httpLink,
-//     cache: new InMemoryCache(),
-//     connectToDevTools: true,
-//     credentials: "include"
-// });
 
 // Create a provider
 export const apolloProvider = createApolloProvider({

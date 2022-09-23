@@ -10,7 +10,7 @@
         <router-link to="/">
           <div class="flex flex-row">
             <img
-              src="../assets/final.svg"
+              src="/src/assets/final.svg"
               alt=""
               style="-webkit-transform: scaleX(-1); transform: scaleX(-1)"
               class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"

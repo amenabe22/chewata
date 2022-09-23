@@ -60,15 +60,12 @@ export default defineComponent({
     initialVote: 0,
     postRef: null as any,
   }),
-  props: ["compKey"],
-  props: ["post", "count", "readonly"],
+  props: ["post", "count", "readonly", "compKey"],
   async created() {
     this.initialVote = this.post.likes;
     if (this.$store.state.loggedIn) {
       await this.fetchVotes();
     }
-    // ignore
-    // await this.setRef();
   },
   methods: {
     async fetchVotes() {

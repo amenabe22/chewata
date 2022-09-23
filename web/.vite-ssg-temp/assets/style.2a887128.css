@@ -1,4 +1,4 @@
-.modal[data-v-50d3b3cc] {
+.modal[data-v-17573adf] {
   position: absolute;
   position: fixed;
   top: 0;
@@ -18,10 +18,10 @@
   z-index: 999;
   transform: none;
 }
-.modal h1[data-v-50d3b3cc] {
+.modal h1[data-v-17573adf] {
   margin: 0 0 1rem;
 }
-.modal-overlay[data-v-50d3b3cc] {
+.modal-overlay[data-v-17573adf] {
   content: "";
   position: absolute;
   position: fixed;
@@ -35,20 +35,20 @@
 }
 
 /* ---------------------------------- */
-.fade-enter-active[data-v-50d3b3cc],
-.fade-leave-active[data-v-50d3b3cc] {
+.fade-enter-active[data-v-17573adf],
+.fade-leave-active[data-v-17573adf] {
   transition: opacity 0.4s linear;
 }
-.fade-enter-from[data-v-50d3b3cc],
-.fade-leave-to[data-v-50d3b3cc] {
+.fade-enter-from[data-v-17573adf],
+.fade-leave-to[data-v-17573adf] {
   opacity: 0;
 }
-.pop-enter-active[data-v-50d3b3cc],
-.pop-leave-active[data-v-50d3b3cc] {
+.pop-enter-active[data-v-17573adf],
+.pop-leave-active[data-v-17573adf] {
   transition: all 0.2s cubic-bezier(0, 0, 0.97, 1);
 }
-.pop-enter-from[data-v-50d3b3cc],
-.pop-leave-to[data-v-50d3b3cc] {
+.pop-enter-from[data-v-17573adf],
+.pop-leave-to[data-v-17573adf] {
   opacity: 0;
   transform: translateY(220px);
 }
@@ -245,7 +245,7 @@
   text-align: center;
 }
 
-.modal-mask[data-v-36e6abf5] {
+.modal-mask[data-v-a3c4611c] {
   position: fixed;
   z-index: 9998;
   top: 0;
@@ -256,11 +256,11 @@
   display: table;
   transition: opacity 0.3s ease;
 }
-.modal-wrapper[data-v-36e6abf5] {
+.modal-wrapper[data-v-a3c4611c] {
   display: table-cell;
   vertical-align: middle;
 }
-.modal-container[data-v-36e6abf5] {
+.modal-container[data-v-a3c4611c] {
   width: 300px;
   margin: 0px auto;
   padding: 20px 30px;
@@ -270,14 +270,14 @@
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
 }
-.modal-header h3[data-v-36e6abf5] {
+.modal-header h3[data-v-a3c4611c] {
   margin-top: 0;
   color: #42b983;
 }
-.modal-body[data-v-36e6abf5] {
+.modal-body[data-v-a3c4611c] {
   margin: 20px 0;
 }
-.modal-default-button[data-v-36e6abf5] {
+.modal-default-button[data-v-a3c4611c] {
   float: right;
 }
 
@@ -289,34 +289,34 @@
  * You can easily play with the modal transition by editing
  * these styles.
  */
-.modal-enter-from[data-v-36e6abf5] {
+.modal-enter-from[data-v-a3c4611c] {
   opacity: 0;
 }
-.modal-leave-active[data-v-36e6abf5] {
+.modal-leave-active[data-v-a3c4611c] {
   opacity: 0;
 }
-.modal-enter-from .modal-container[data-v-36e6abf5],
-.modal-leave-from-active .modal-container[data-v-36e6abf5] {
+.modal-enter-from .modal-container[data-v-a3c4611c],
+.modal-leave-from-active .modal-container[data-v-a3c4611c] {
   transform: scale(1.1);
 }
-.slide-fade-enter-active[data-v-36e6abf5] {
+.slide-fade-enter-active[data-v-a3c4611c] {
   transition: all 0.1s;
 }
-.slide-fade-leave-active[data-v-36e6abf5] {
+.slide-fade-leave-active[data-v-a3c4611c] {
   transition: all 0.29s cubic-bezier(0, 0, 0.97, 1);
 }
-.slide-fade-enter-from[data-v-36e6abf5], .slide-fade-leave-to[data-v-36e6abf5]
+.slide-fade-enter-from[data-v-a3c4611c], .slide-fade-leave-to[data-v-a3c4611c]
 /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(-220px);
   opacity: 0;
 }
-.slide-form-enter-active[data-v-36e6abf5] {
+.slide-form-enter-active[data-v-a3c4611c] {
   transition: all 0.1s;
 }
-.slide-form-leave-active[data-v-36e6abf5] {
+.slide-form-leave-active[data-v-a3c4611c] {
   transition: all 0.23s cubic-bezier(0, 0, 0.97, 1);
 }
-.slide-form-enter-from[data-v-36e6abf5], .slide-form-leave-to[data-v-36e6abf5]
+.slide-form-enter-from[data-v-a3c4611c], .slide-form-leave-to[data-v-a3c4611c]
 /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(220px);
   opacity: 0;
@@ -1478,9 +1478,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .left-0 {
   left: 0px;
 }
-.bottom-0 {
-  bottom: 0px;
-}
 .right-0 {
   right: 0px;
 }
@@ -1580,6 +1577,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 .mb-3 {
   margin-bottom: 0.75rem;
 }
+.mr-5 {
+  margin-right: 1.25rem;
+}
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -1640,8 +1640,8 @@ Ensure the default browser behavior of the `hidden` attribute.
 .h-2\/6 {
   height: 33.333333%;
 }
-.h-5 {
-  height: 1.25rem;
+.h-11 {
+  height: 2.75rem;
 }
 .h-44 {
   height: 11rem;
@@ -1651,6 +1651,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .h-7 {
   height: 1.75rem;
+}
+.h-5 {
+  height: 1.25rem;
 }
 .h-3\/4 {
   height: 75%;
@@ -1676,14 +1679,17 @@ Ensure the default browser behavior of the `hidden` attribute.
 .w-10 {
   width: 2.5rem;
 }
-.w-5 {
-  width: 1.25rem;
+.w-11 {
+  width: 2.75rem;
 }
 .w-1\/6 {
   width: 16.666667%;
 }
 .w-7 {
   width: 1.75rem;
+}
+.w-5 {
+  width: 1.25rem;
 }
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1782,10 +1788,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-none {
   border-style: none;
 }
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
 .border-gray-200 {
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
@@ -1813,10 +1815,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-.bg-green-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(22 163 74 / var(--tw-bg-opacity));
-}
 .bg-green-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(220 252 231 / var(--tw-bg-opacity));
@@ -1824,6 +1822,14 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-gray-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+.bg-green-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity));
+}
+.bg-green-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(134 239 172 / var(--tw-bg-opacity));
 }
 .bg-yellow-600 {
   --tw-bg-opacity: 1;
@@ -2063,6 +2069,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-green-200 {
   --tw-text-opacity: 1;
   color: rgb(187 247 208 / var(--tw-text-opacity));
+}
+.text-green-800 {
+  --tw-text-opacity: 1;
+  color: rgb(22 101 52 / var(--tw-text-opacity));
 }
 .text-green-500 {
   --tw-text-opacity: 1;

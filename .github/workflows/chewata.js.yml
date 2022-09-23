@@ -1,0 +1,24 @@
+name: chewata.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+        # Runs a single command using the runners shell
+      - name: Run a one-line script
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          npm i
+

@@ -1,23 +1,27 @@
 import { defineComponent, useSSRContext, mergeProps, resolveComponent, withCtx, createVNode, Transition, openBlock, createBlock, createCommentVNode, toDisplayString, withDirectives, vModelText, createTextVNode, createApp } from "vue";
 import { ssrRenderAttrs, ssrRenderSlot, ssrRenderComponent, ssrRenderAttr, ssrRenderStyle, ssrRenderClass, ssrInterpolate, ssrRenderList } from "vue/server-renderer";
 import { getAuth, FacebookAuthProvider, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, collection as collection$1, query as query$1, where as where$1, getDocs as getDocs$1, setDoc, updateDoc as updateDoc$1, limit as limit$1, startAfter as startAfter$1 } from "@firebase/firestore";
+import gql from "graphql-tag";
+import { defineComponent as defineComponent$1 } from "@vue/runtime-core";
+import { Head, createHead } from "@vueuse/head";
+import { getAuth as getAuth$1, signOut } from "@firebase/auth";
+import { createRouter, createWebHistory } from "vue-router";
+import VueLoadImage from "vue-load-image";
+import axios from "axios";
+import InfiniteScroll from "infinite-loading-vue3";
+import { query as query$1, collection as collection$1, where as where$1, getDocs as getDocs$1 } from "@firebase/firestore";
 import { initializeApp } from "firebase/app";
-import { getFirestore, query, collection, where, getDocs, updateDoc, orderBy, limit, startAfter, doc as doc$1, setDoc as setDoc$1 } from "firebase/firestore";
+import { getFirestore, query, collection, where, getDocs, updateDoc } from "firebase/firestore";
 import { getMessaging, getToken } from "firebase/messaging";
 import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import { defineComponent as defineComponent$1 } from "@vue/runtime-core";
-import { Head, useHead, createHead } from "@vueuse/head";
-import { createRouter, createWebHistory } from "vue-router";
-import VueLoadImage from "vue-load-image";
-import { uuid } from "vue-uuid";
-import InfiniteScroll from "infinite-loading-vue3";
 import { onMessage } from "@firebase/messaging";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { faJs, faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { createHttpLink, ApolloClient, InMemoryCache } from "@apollo/client/core";
+import { createApolloProvider } from "@vue/apollo-option";
 var DialogModal_vue_vue_type_style_index_0_scoped_true_lang = "";
 var _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
@@ -31,13 +35,21 @@ const _sfc_main$m = defineComponent({
   },
   name: "Modal",
   props: {
-    show: Boolean
+    show: Boolean,
+    persistent: Boolean
+  },
+  methods: {
+    closePop() {
+      if (!this.persistent) {
+        this.$emit("close");
+      }
+    }
   }
 });
 function _sfc_ssrRender$m(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
-  _push(`<div${ssrRenderAttrs(_attrs)} data-v-50d3b3cc>`);
+  _push(`<div${ssrRenderAttrs(_attrs)} data-v-17573adf>`);
   if (_ctx.show) {
-    _push(`<div${ssrRenderAttrs(mergeProps({ class: "modal-overlay opacity-80" }, _attrs))} data-v-50d3b3cc></div>`);
+    _push(`<div${ssrRenderAttrs(mergeProps({ class: "modal-overlay opacity-80" }, _attrs))} data-v-17573adf></div>`);
   } else {
     _push(`<!---->`);
   }
@@ -45,7 +57,7 @@ function _sfc_ssrRender$m(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     _push(`<div${ssrRenderAttrs(mergeProps({
       class: "modal bg-transparent",
       role: "dialog"
-    }, _attrs))} data-v-50d3b3cc>`);
+    }, _attrs))} data-v-17573adf>`);
     ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
     _push(`</div>`);
   } else {
@@ -59,104 +71,320 @@ _sfc_main$m.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("src/components/DialogModal.vue");
   return _sfc_setup$m ? _sfc_setup$m(props, ctx) : void 0;
 };
-var DialogModal = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["ssrRender", _sfc_ssrRender$m], ["__scopeId", "data-v-50d3b3cc"]]);
-const state = {
-  showMainDialog: false,
-  profilePopup: false,
-  loggedIn: false,
-  loginPopup: false,
-  user: null
-};
-const mutations = {
-  ["SET_USER"](state2, data) {
-    state2.user = data;
-  },
-  ["SET_LOGGEDIN"](state2, value) {
-    state2.loggedIn = value;
-  },
-  ["SET_MAIN_POP"](state2, value) {
-    state2.showMainDialog = value;
-  },
-  ["SET_LOGIN_POP"](state2, value) {
-    state2.loginPopup = value;
-  },
-  ["SET_PROFILE_POP"](state2, value) {
-    state2.profilePopup = value;
-  }
-};
-const store = createStore({
-  plugins: [createPersistedState()],
-  state,
-  mutations
-});
-const config = {
-  apiKey: "AIzaSyDQV6SMwJk91fFuZGewlyvJHNcxyYTUxqQ",
-  authDomain: "moyats-60dfd.firebaseapp.com",
-  databaseURL: "https://moyats-60dfd-default-rtdb.firebaseio.com",
-  projectId: "moyats-60dfd",
-  storageBucket: "moyats-60dfd.appspot.com",
-  messagingSenderId: "960557736635",
-  appId: "1:960557736635:web:2b65cedfa4b794e1383f9e",
-  measurementId: "G-G7RHL9H6J3"
-};
-const app$1 = initializeApp(config);
-const db = getFirestore(app$1);
-const messaging = getMessaging(app$1);
-const setupFirebase = () => {
-  navigator.serviceWorker.register("/firebase-messaging-sw.js").then((registration) => {
-    console.log("Registration", registration);
-  }).catch((err) => {
-    console.log(err);
-  });
-  getToken(messaging, {
-    vapidKey: "BBWn7Fkrmhrj0BkeKLiYcD5VhagQg4zlrW-QtpC0VpuPGiPVTK6nleZMNrmo4U0qUSgM48esnt_hAv1vOSivkUk"
-  }).then(async (currentToken) => {
-    if (currentToken) {
-      console.log(currentToken);
-      if (store.state.loggedIn) {
-        const uid = store.state.user.uid;
-        const userQry = query(collection(db, "users"), where("id", "==", uid));
-        const userSnap = await getDocs(userQry);
-        if (!userSnap.empty) {
-          updateDoc(userSnap.docs[0].ref, {
-            pushToken: currentToken
-          });
+var DialogModal = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["ssrRender", _sfc_ssrRender$m], ["__scopeId", "data-v-17573adf"]]);
+const GET_POSTS = gql`
+  query getPosts($input: PaginationInputType!) {
+    getPosts(input: $input) {
+      page
+      per_page
+      total
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
         }
+        createdAt
       }
-    } else {
-      console.log("No registration token available. Request permission to generate one.");
     }
-  }).catch((err) => {
-    console.log("An error occurred while retrieving token. ", err);
-  });
-};
+  }
+`;
+const POST = gql`
+  query getPost($post: String!) {
+    getPost(post: $post) {
+      id
+      slug
+      postId
+      content
+      cover
+      likes
+      user {
+        id
+        userId
+        fullName
+        photo
+        totalLikes
+      }
+      createdAt
+    }
+  }
+`;
+const POST_COMMENTS = gql`
+  query getPostComments($post: String!, $pagination: PaginationInputType!) {
+    getPostComments(post: $post, pagination: $pagination) {
+      page
+      per_page
+      total
+      data {
+        id
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          userId
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
+        createdAt
+      }
+    }
+  }
+`;
+const SOCIAL_LOGIN = gql`
+  mutation socialMediaLoginGoogle($input: String!) {
+    socialMediaLoginGoogle(input: $input) {
+      token
+      user {
+        id
+        userId
+        fullName
+        email
+        photo
+        socialIdtoken
+        totalLikes
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+const SET_VOTE = gql`
+  mutation setVote($input: VoteInputType!) {
+    setVote(input: $input)
+  }
+`;
+const GET_POST_VOTES = gql`
+  query getPostVote($post: String!) {
+    getPostVote(post: $post) {
+      vote
+      voted
+    }
+  }
+`;
+const GET_COMMENT_VOTES = gql`
+  query getCommentVote($comment: String!) {
+    getCommentVote(comment: $comment) {
+      vote
+      voted
+    }
+  }
+`;
+const ADD_POST = gql`
+  mutation addPost($input: PostInputType!) {
+    addPost(input: $input) {
+      id
+      postId
+      slug
+      content
+      cover
+      likes
+      user {
+        id
+        fullName
+        photo
+        totalLikes
+      }
+      createdAt
+    }
+  }
+`;
+const ADD_COMMENT = gql`
+  mutation addComment($input: CommentInput!) {
+    addComment(input: $input) {
+      id
+      commentId
+      message
+      isReply
+      cover
+      likes
+      user {
+        id
+        fullName
+        photo
+        totalLikes
+        createdAt
+      }
+      createdAt
+    }
+  }
+`;
+gql`
+  query {
+    me {
+      userId
+      fullName
+      email
+      photo
+      totalLikes
+      createdAt
+    }
+  }
+`;
+const LOGOUT = gql`
+  mutation {
+    logout
+  }
+`;
+const USER_PUBLIC = gql`
+  query userPublic($user: String!) {
+    userPublic(user: $user) {
+      id
+      userId
+      fullName
+      photo
+      totalLikes
+      createdAt
+    }
+  }
+`;
+const USER_POSTS = gql`
+  query userPosts($pagination: PaginationInputType!) {
+    userPosts(pagination: $pagination) {
+      page
+      total
+      total_pages
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;
+const USER_COMMENTS = gql`
+  query userComments($pagination: PaginationInputType!) {
+    userComments(pagination: $pagination) {
+      page
+      per_page
+      total
+      data {
+        id
+        post {
+          postId
+        }
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
+        createdAt
+      }
+    }
+  }
+`;
+const USER_PUBLIC_POSTS = gql`
+  query userPublicPosts($pagination: PaginationInputType!, $user: String!) {
+    userPublicPosts(pagination: $pagination, user: $user) {
+      page
+      total
+      total_pages
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;
+const USER_PUBLIC_COMMENTS = gql`
+  query userPublicComments($pagination: PaginationInputType!, $user: String!) {
+    userPublicComments(pagination: $pagination, user: $user) {
+      page
+      per_page
+      total
+      data {
+        id
+        commentId
+        message
+        isReply
+        cover
+        likes
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+          createdAt
+        }
+        post {
+          postId
+        }
+        createdAt
+      }
+    }
+  }
+`;
+const DELETE_POST = gql`
+  mutation deletePost($post: String!){
+    deletePost(post: $post)
+  }
+`;
 const _sfc_main$l = defineComponent({
   components: { DialogModal },
   props: { loginPopup: Boolean },
+  data: () => ({ loadingAuth: false }),
   methods: {
     async loginFb() {
       const auth = getAuth();
       const provider = new FacebookAuthProvider();
       await signInWithPopup(auth, provider).then(async (result) => {
-        this.$store.commit("SET_LOGGEDIN", true);
-        this.$store.commit("SET_USER", result.user);
-        this.$emit("loggedin");
-        const userRef = doc(collection$1(db, "users"));
-        const q = query$1(collection$1(db, "users"), where$1("id", "==", result.user.uid));
-        const users = await getDocs$1(q);
-        if (users.empty) {
-          await setDoc(userRef, {
-            id: result.user.uid,
-            name: result.user.displayName,
-            photoURL: result.user.photoURL,
-            email: result.user.email,
-            createdAt: result.user.reloadUserInfo ? result.user.reloadUserInfo.createdAt : "",
-            totalLikes: 0
-          });
-        }
-        console.log("done");
-        this.$store.commit("SET_LOGIN_POP", false);
-        this.$store.commit("SET_MAIN_POP", false);
+        this.$apollo.mutate({
+          mutation: SOCIAL_LOGIN,
+          variables: {
+            input: result.user.accessToken
+          }
+        }).then(({ data: { socialMediaLoginGoogle } }) => {
+          console.log("Logged In", socialMediaLoginGoogle);
+          this.$store.commit("SET_LOGGEDIN", true);
+          this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+          this.$emit("loggedin");
+        }).finally(() => {
+          this.$store.state.loading = false;
+          this.loadingAuth = false;
+          this.$store.commit("SET_LOGIN_POP", false);
+          this.$store.commit("SET_MAIN_POP", false);
+        });
       }).catch((error) => {
         console.warn(error);
       });
@@ -165,25 +393,23 @@ const _sfc_main$l = defineComponent({
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider).then(async (result) => {
-        this.$store.commit("SET_LOGGEDIN", true);
-        this.$store.commit("SET_USER", result.user);
-        this.$emit("loggedin");
-        const userRef = doc(collection$1(db, "users"));
-        const q = query$1(collection$1(db, "users"), where$1("id", "==", result.user.uid));
-        const users = await getDocs$1(q);
-        if (users.empty) {
-          await setDoc(userRef, {
-            id: result.user.uid,
-            name: result.user.displayName,
-            photoURL: result.user.photoURL,
-            email: result.user.email,
-            createdAt: result.user.reloadUserInfo ? result.user.reloadUserInfo.createdAt : "",
-            totalLikes: 0
-          });
-        }
-        console.log("done");
-        this.$store.commit("SET_LOGIN_POP", false);
-        this.$store.commit("SET_MAIN_POP", false);
+        console.log("Result", result);
+        this.$apollo.mutate({
+          mutation: SOCIAL_LOGIN,
+          variables: {
+            input: result.user.accessToken
+          }
+        }).then(({ data: { socialMediaLoginGoogle } }) => {
+          console.log("Logged In", socialMediaLoginGoogle);
+          this.$store.commit("SET_LOGGEDIN", true);
+          this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+          this.$emit("loggedin");
+        }).finally(() => {
+          this.$store.state.loading = false;
+          this.loadingAuth = false;
+          this.$store.commit("SET_LOGIN_POP", false);
+          this.$store.commit("SET_MAIN_POP", false);
+        });
       }).catch((error) => {
         console.warn(error);
       });
@@ -297,7 +523,7 @@ _sfc_main$l.setup = (props, ctx) => {
   return _sfc_setup$l ? _sfc_setup$l(props, ctx) : void 0;
 };
 var LoginPopup = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["ssrRender", _sfc_ssrRender$l]]);
-var _imports_0$2 = "./assets/final.baddaad2.svg";
+var _imports_0$1 = "./assets/final.baddaad2.svg";
 const _sfc_main$k = defineComponent$1({
   setup() {
   }
@@ -311,12 +537,12 @@ function _sfc_ssrRender$k(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   _push(ssrRenderComponent(_component_router_link, { to: "/" }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`<div class="flex flex-row"${_scopeId}><img${ssrRenderAttr("src", _imports_0$2)} alt="" style="${ssrRenderStyle({ "-webkit-transform": "scaleX(-1)", "transform": "scaleX(-1)" })}" class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"${_scopeId}><p class="text-white font-black text-3xl tracking-widest pt-4 pr-5"${_scopeId}> \u1328\u12CB\u1273 </p></div>`);
+        _push2(`<div class="flex flex-row"${_scopeId}><img${ssrRenderAttr("src", _imports_0$1)} alt="" style="${ssrRenderStyle({ "-webkit-transform": "scaleX(-1)", "transform": "scaleX(-1)" })}" class="w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"${_scopeId}><p class="text-white font-black text-3xl tracking-widest pt-4 pr-5"${_scopeId}> \u1328\u12CB\u1273 </p></div>`);
       } else {
         return [
           createVNode("div", { class: "flex flex-row" }, [
             createVNode("img", {
-              src: _imports_0$2,
+              src: _imports_0$1,
               alt: "",
               style: { "-webkit-transform": "scaleX(-1)", "transform": "scaleX(-1)" },
               class: "w-12 h-12 ml-3 md:ml-10 lg:ml-10 xl:ml-10 my-3 block"
@@ -358,7 +584,7 @@ function _sfc_ssrRender$k(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     _push(`<div><button class="p- bg-white rounded-xl mx-5 mt-3 py-2 px-3 ring-2 hover:bg-green-100 ring-green-500"> Login </button></div>`);
   }
   if (_ctx.$store.state.user) {
-    _push(`<div class="p-3 cursor-pointer"><img${ssrRenderAttr("src", _ctx.$store.state.user.photoURL)} class="w-10 h-10 rounded-full ring-2 ring-green-600"></div>`);
+    _push(`<div class="p-3 cursor-pointer"><img${ssrRenderAttr("src", _ctx.$store.state.user.photo)} class="w-10 h-10 rounded-full ring-2 ring-green-600"></div>`);
   } else {
     _push(`<!---->`);
   }
@@ -470,17 +696,6 @@ const _sfc_main$i = defineComponent({
     loginPopup: false,
     profileClicked: false
   }),
-  mounted() {
-    useHead({
-      title: "Website Title",
-      meta: [
-        {
-          name: "description",
-          content: "Website description"
-        }
-      ]
-    });
-  },
   methods: {
     menuClicked() {
       if (this.$store.state.loggedIn) {
@@ -502,9 +717,14 @@ const _sfc_main$i = defineComponent({
       this.menuClicked();
       this.$router.push("/");
     },
-    logout() {
+    async logout() {
       this.cleanStates();
-      window.location.reload();
+      const auth = getAuth$1();
+      await this.$apollo.mutate({ mutation: LOGOUT });
+      signOut(auth).then(() => {
+        window.location.assign("/");
+      }).catch((error) => {
+      });
     }
   }
 });
@@ -694,7 +914,7 @@ _sfc_main$f.setup = (props, ctx) => {
   return _sfc_setup$f ? _sfc_setup$f(props, ctx) : void 0;
 };
 var FeedTile = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["ssrRender", _sfc_ssrRender$f]]);
-var _imports_0$1 = "./assets/soccer-ball.3f469443.png";
+var _imports_0 = "./assets/soccer-ball.3f469443.png";
 var GroundMeda_vue_vue_type_style_index_0_scoped_true_lang = "";
 const _sfc_main$e = defineComponent$1({
   props: {
@@ -704,7 +924,7 @@ const _sfc_main$e = defineComponent$1({
 function _sfc_ssrRender$e(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
   _push(`<div${ssrRenderAttrs(_attrs)} data-v-ee096a8a>`);
   if (!_ctx.hideBall) {
-    _push(`<button class="shadow-2xl xl:block lg:block md:block ball" data-v-ee096a8a><img class="shadow-2xl"${ssrRenderAttr("src", _imports_0$1)} alt="" data-v-ee096a8a></button>`);
+    _push(`<button class="shadow-2xl xl:block lg:block md:block ball" data-v-ee096a8a><img class="shadow-2xl"${ssrRenderAttr("src", _imports_0)} alt="" data-v-ee096a8a></button>`);
   } else {
     _push(`<!---->`);
   }
@@ -717,6 +937,76 @@ _sfc_main$e.setup = (props, ctx) => {
   return _sfc_setup$e ? _sfc_setup$e(props, ctx) : void 0;
 };
 var GroundMeda = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["ssrRender", _sfc_ssrRender$e], ["__scopeId", "data-v-ee096a8a"]]);
+const state = {
+  showMainDialog: false,
+  profilePopup: false,
+  loggedIn: false,
+  loginPopup: false,
+  user: null
+};
+const mutations = {
+  ["SET_USER"](state2, data) {
+    state2.user = data;
+  },
+  ["SET_LOGGEDIN"](state2, value) {
+    state2.loggedIn = value;
+  },
+  ["SET_MAIN_POP"](state2, value) {
+    state2.showMainDialog = value;
+  },
+  ["SET_LOGIN_POP"](state2, value) {
+    state2.loginPopup = value;
+  },
+  ["SET_PROFILE_POP"](state2, value) {
+    state2.profilePopup = value;
+  }
+};
+const store = createStore({
+  plugins: [createPersistedState()],
+  state,
+  mutations
+});
+const config = {
+  apiKey: "AIzaSyDQV6SMwJk91fFuZGewlyvJHNcxyYTUxqQ",
+  authDomain: "moyats-60dfd.firebaseapp.com",
+  databaseURL: "https://moyats-60dfd-default-rtdb.firebaseio.com",
+  projectId: "moyats-60dfd",
+  storageBucket: "moyats-60dfd.appspot.com",
+  messagingSenderId: "960557736635",
+  appId: "1:960557736635:web:2b65cedfa4b794e1383f9e",
+  measurementId: "G-G7RHL9H6J3"
+};
+const app$1 = initializeApp(config);
+const db = getFirestore(app$1);
+const messaging = getMessaging(app$1);
+const setupFirebase = () => {
+  navigator.serviceWorker.register("/firebase-messaging-sw.js").then((registration) => {
+    console.log("Registration", registration);
+  }).catch((err) => {
+    console.log(err);
+  });
+  getToken(messaging, {
+    vapidKey: "BBWn7Fkrmhrj0BkeKLiYcD5VhagQg4zlrW-QtpC0VpuPGiPVTK6nleZMNrmo4U0qUSgM48esnt_hAv1vOSivkUk"
+  }).then(async (currentToken) => {
+    if (currentToken) {
+      console.log(currentToken);
+      if (store.state.loggedIn) {
+        const uid = store.state.user.uid;
+        const userQry = query(collection(db, "users"), where("id", "==", uid));
+        const userSnap = await getDocs(userQry);
+        if (!userSnap.empty) {
+          updateDoc(userSnap.docs[0].ref, {
+            pushToken: currentToken
+          });
+        }
+      }
+    } else {
+      console.log("No registration token available. Request permission to generate one.");
+    }
+  }).catch((err) => {
+    console.log("An error occurred while retrieving token. ", err);
+  });
+};
 const _sfc_main$d = defineComponent({
   components: { VoteClickers, "vue-load-image": VueLoadImage, Loader },
   data: () => ({
@@ -724,110 +1014,74 @@ const _sfc_main$d = defineComponent({
     initialVote: 0,
     postRef: null
   }),
-  props: ["post", "count", "readonly"],
+  props: ["post", "count", "readonly", "compKey"],
   async created() {
     this.initialVote = this.post.likes;
     if (this.$store.state.loggedIn) {
-      this.fetchVotes();
+      await this.fetchVotes();
     }
-    await this.setRef();
   },
   methods: {
     async fetchVotes() {
-      const voteQuery = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "post"), where$1("objectId", "==", this.post.id));
-      let vote = null;
-      let voted = null;
-      const likes = await getDocs$1(voteQuery);
-      if (!likes.empty) {
-        const likesData = likes.docs[0].data();
-        vote = likes.docs.length ? likesData.vote : null;
-        voted = likes.docs.length ? likesData.voted : null;
-        this.voteData.vote = vote;
-        this.voteData.voted = voted;
-      }
-      if (voted && vote) {
+      const {
+        data: { getPostVote }
+      } = await this.$apollo.query({
+        query: GET_POST_VOTES,
+        fetchPolicy: "network-only",
+        variables: { post: this.post.postId }
+      });
+      this.voteData = {
+        vote: getPostVote.vote,
+        voted: getPostVote.voted
+      };
+      const voteFlag = this.voteData.vote == 1;
+      if (this.voteData.voted && voteFlag) {
         this.initialVote = this.post.likes - 1;
-      } else if (voted && !vote) {
+      } else if (this.voteData.voted && !voteFlag) {
         this.initialVote = this.post.likes + 1;
+      } else {
+        this.initialVote = this.post.likes;
       }
-      return { vote, voted };
     },
     async setVote(vote) {
-      const likesRef = doc(collection$1(db, "likes"));
-      const lq = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "post"), where$1("objectId", "==", this.post.id));
-      const likes = await getDocs$1(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc$1(like.ref, {
-          vote,
-          voted: true
-        }));
-      } else {
-        await setDoc(likesRef, {
-          id: uuid.v4(),
-          createdAt: new Date().toISOString(),
-          objectId: this.post.id,
-          type: "post",
-          vote,
-          voted: true,
-          user: this.$store.state.user.uid
-        });
-      }
-      await this.updateTotalLikeCount();
-      if (vote) {
+      await this.$apollo.mutate({
+        mutation: SET_VOTE,
+        variables: {
+          input: {
+            vote,
+            type: "post",
+            entityId: this.post.postId
+          }
+        }
+      });
+      if (vote == 1) {
         this.post.likes = this.initialVote + 1;
-      } else {
+      } else if (vote == -1) {
         this.post.likes = this.initialVote - 1;
+      } else {
+        this.post.likes = this.initialVote;
       }
-    },
-    async updateTotalLikeCount() {
-      const lq = query$1(collection$1(db, "likes"), where$1("type", "==", "post"), where$1("objectId", "==", this.post.id));
-      let total = 0;
-      const likes = await getDocs$1(lq);
-      const calculated = likes.docs.map((e) => {
-        const data = e.data();
-        const voteNumeric = data.vote === true ? 1 : data.vote === false ? -1 : 0;
-        return {
-          data,
-          voteNumeric
-        };
-      });
-      calculated.forEach((e) => total += e.voteNumeric);
-      updateDoc$1(this.postRef, {
-        likes: total
-      });
     },
     async setRef() {
       const q = query$1(collection$1(db, "posts"), where$1("id", "==", this.post.id));
       const querySnapshot = await getDocs$1(q);
       this.postRef = querySnapshot.docs[0].ref;
     },
-    async removeVote(vote) {
+    async removeVote() {
       this.post.likes = this.initialVote;
-      updateDoc$1(this.postRef, {
-        likes: this.initialVote
-      });
-      this.voteData.voted = null;
-      this.voteData.vote = null;
-      const lq = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "post"), where$1("objectId", "==", this.post.id));
-      const likes = await getDocs$1(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc$1(like.ref, {
-          vote: null,
-          voted: null
-        }));
-      }
+      this.voteData.voted = false;
+      this.voteData.vote = 0;
+      this.setVote(0);
     },
     async upvoted() {
       if (this.$store.state.user) {
-        console.log("up", this.post);
-        console.log(this.voteData.vote, "dawg");
-        if (this.voteData.vote == true) {
-          this.removeVote(true);
+        if (this.voteData.vote == 1) {
+          this.removeVote();
           return;
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = true;
-          this.setVote(true);
+          this.voteData.vote = 1;
+          this.setVote(1);
           return;
         }
       } else {
@@ -835,15 +1089,14 @@ const _sfc_main$d = defineComponent({
       }
     },
     async downvoted() {
+      console.log("downvoted");
       if (this.$store.state.user) {
-        console.log("down");
-        console.log(this.voteData.vote, "vote");
-        if (this.voteData.vote == false) {
-          this.removeVote(false);
+        if (this.voteData.vote == -1) {
+          this.removeVote();
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = false;
-          this.setVote(false);
+          this.voteData.vote = -1;
+          this.setVote(-1);
         }
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
@@ -859,14 +1112,14 @@ function _sfc_ssrRender$d(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   _push(ssrRenderComponent(_component_vote_clickers, {
     readonly: _ctx.readonly,
     voted: _ctx.voteData.voted,
-    vote: _ctx.voteData.vote,
+    vote: _ctx.voteData.vote == 1,
     large: false,
     count: _ctx.post.likes,
     color: "#92daac",
     class: "mt-5"
   }, null, _parent));
   _push(`<div class="mx-3 pt-2 cursor-pointer w-full"><p class="${ssrRenderClass([{ "py-2": _ctx.post.cover, "pt-5": !_ctx.post.cover }, "px-2 tracking-wide text-gray-600 text-lg"])}">${ssrInterpolate(_ctx.post.content)}</p>`);
-  _push(ssrRenderComponent(_component_vue_load_image, null, {
+  _push(ssrRenderComponent(_component_vue_load_image, { key: _ctx.compKey }, {
     image: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
         if (_ctx.post.cover) {
@@ -928,6 +1181,9 @@ const _sfc_main$c = defineComponent({
     uploadedUrl: null,
     noResult: false,
     page: 1,
+    progress: 0,
+    formData: null,
+    totalCount: 0,
     invalidImage: false,
     showMainDialog: false,
     showForm: false,
@@ -935,9 +1191,14 @@ const _sfc_main$c = defineComponent({
     showFormx: false,
     loadComplete: false,
     limit: 10,
+    preset: "c4o7elzd",
     loaded: false,
     filename: null,
     file: null,
+    pagination: {
+      page: 1,
+      pageSize: 3
+    },
     posts: [],
     lastSnapshot: null
   }),
@@ -951,70 +1212,23 @@ const _sfc_main$c = defineComponent({
       console.error("Error : ", e);
     }
     await this.loadFeed();
+    window.addEventListener("scroll", this.handleScroll);
   },
   unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
-    openUploadModal() {
-      window.cloudinary.openUploadWidget({
-        cloud_name: "dtabnh5py",
-        upload_preset: "c4o7elzd",
-        sources: [
-          "local",
-          "camera",
-          "image_search",
-          "google_drive",
-          "facebook",
-          "instagram",
-          "dropbox"
-        ],
-        multiple: false,
-        defaultSource: "local",
-        styles: {
-          palette: {
-            window: "#F5F5F5",
-            sourceBg: "#FFFFFF",
-            windowBorder: "#90a0b3",
-            tabIcon: "#0094c7",
-            inactiveTabIcon: "#69778A",
-            menuIcons: "#0094C7",
-            link: "#53ad9d",
-            action: "#8F5DA5",
-            inProgress: "#0194c7",
-            complete: "#53ad9d",
-            error: "#c43737",
-            textDark: "#000000",
-            textLight: "#FFFFFF"
-          },
-          fonts: {
-            default: null,
-            "sans-serif": {
-              url: null,
-              active: true
-            }
-          }
-        }
-      }, (error, result) => {
-        if (!error && result && result.event === "success") {
-          this.filename = result.info.original_filename;
-          this.uploadedUrl = result.info.secure_url;
-          console.log("Done uploading..: ", result.info);
-        }
-      }).open();
+    prepareFormData() {
+      this.formData = new FormData();
+      this.formData.append("upload_preset", this.preset);
+      this.formData.append("file", this.file);
     },
     async handleScroll(e) {
-      let element = this.$refs.scrollComponent;
-      if (!this.loadComplete) {
-        if (Math.round(element.getBoundingClientRect().bottom) <= window.innerHeight) {
-          const newItems = await this.loadFeed();
-          console.log(newItems, "ss");
-          if (!newItems) {
-            this.noResult = true;
-            this.message = "No result found";
-            this.loadComplete = true;
-            console.log("loadded them all");
-            return;
-          }
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 50) {
+        if (this.totalCount) {
+          this.pagination.page++;
+          const totalCount = await this.loadFeed();
+          console.log("load more", totalCount);
         }
       }
     },
@@ -1025,19 +1239,31 @@ const _sfc_main$c = defineComponent({
         this.$store.commit("SET_LOGIN_POP", true);
       }
     },
+    async loadMoreFeed() {
+      this.page++;
+      console.log(this.page);
+      await this.loadFeed();
+    },
     async loadFeed() {
       this.loadingFeed = true;
-      let picturesRef = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(this.limit));
-      if (this.lastSnapshot)
-        picturesRef = query(collection(db, "posts"), orderBy("createdAt", "desc"), startAfter(this.lastSnapshot), limit(this.limit));
-      const picturesSnap = await getDocs(picturesRef);
-      this.lastSnapshot = picturesSnap.docs[picturesSnap.docs.length - 1];
-      let result = picturesSnap.docs.map((p) => p.data());
-      this.posts.push(...result);
-      this.loadingFeed = false;
-      if (!result.length)
-        this.loadComplete = true;
-      return result.length;
+      const {
+        data: {
+          getPosts: { data, total }
+        }
+      } = await this.$apollo.query({
+        query: GET_POSTS,
+        fetchPolicy: "network-only",
+        variables: {
+          input: this.pagination
+        }
+      }).finally(() => {
+        this.loadingFeed = false;
+      });
+      this.totalCount = data.length;
+      const posts = JSON.parse(JSON.stringify(data));
+      posts.forEach((p) => {
+        this.posts.push(p);
+      });
     },
     clickFileRef() {
       this.$refs.file.click();
@@ -1065,8 +1291,9 @@ const _sfc_main$c = defineComponent({
         alert(txt);
         return;
       }
-      this.file = e.target.files;
+      this.file = e.target.files[0];
       this.filename = e.target.files[0].name;
+      this.prepareFormData();
     },
     cancelPost() {
       this.showFormx = false;
@@ -1086,23 +1313,22 @@ const _sfc_main$c = defineComponent({
       }, 250);
     },
     clicked(post) {
-      this.$router.push({ path: `/game/${post.id}` });
+      this.$router.push({ path: `/game/${post.postId}` });
     },
     async savePost(cover = null) {
-      const postsRef = doc$1(collection(db, "posts"));
-      await setDoc$1(postsRef, {
-        id: uuid.v4(),
-        content: this.content,
-        cover,
-        user: this.$store.state.user.uid,
-        createdAt: new Date().toISOString(),
-        likes: 0
-      }).finally(async () => {
-        this.posts = [];
+      await this.$apollo.mutate({
+        mutation: ADD_POST,
+        variables: {
+          input: {
+            content: this.content,
+            cover
+          }
+        }
+      }).then(({ data: { addPost } }) => {
+        this.posts.unshift(addPost);
+      }).finally(() => {
         this.loadingPost = false;
-        this.$store.commit("SET_MAIN_POP", false);
-        this.lastSnapshot = null;
-        await this.loadFeed();
+        this.closeDialog();
       });
     },
     async post() {
@@ -1115,7 +1341,16 @@ const _sfc_main$c = defineComponent({
         return;
       }
       this.loadingPost = true;
-      await this.savePost(this.uploadedUrl);
+      const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+      const { data } = await axios({
+        url,
+        method: "POST",
+        data: this.formData,
+        onUploadProgress: (e) => {
+          this.progress = Math.round(e.loaded * 100 / e.total);
+        }
+      });
+      await this.savePost(data.secure_url);
     }
   }
 });
@@ -1126,10 +1361,7 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   const _component_router_link = resolveComponent("router-link");
   const _component_post_tile = resolveComponent("post-tile");
   const _component_ground_meda = resolveComponent("ground-meda");
-  _push(`<div${ssrRenderAttrs(mergeProps({
-    class: "w-full",
-    ref: "scrollComponent"
-  }, _attrs))} data-v-36e6abf5>`);
+  _push(`<div${ssrRenderAttrs(mergeProps({ class: "w-full" }, _attrs))} data-v-a3c4611c>`);
   _push(ssrRenderComponent(_component_login_popup, {
     loginPopup: _ctx.$store.state.loginPopup
   }, null, _parent));
@@ -1138,23 +1370,23 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`<div class="px-2 relative w-full" data-v-36e6abf5${_scopeId}>`);
+        _push2(`<div class="px-2 relative w-full" data-v-a3c4611c${_scopeId}>`);
         if (_ctx.loadingPost) {
-          _push2(`<div class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50" data-v-36e6abf5${_scopeId}><div class="flex flex-col mt-32 justify-center items-center" data-v-36e6abf5${_scopeId}><p class="text-xl font-bold text-white tracking-wider" data-v-36e6abf5${_scopeId}> Loading... </p>`);
+          _push2(`<div class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50" data-v-a3c4611c${_scopeId}><div class="flex flex-col mt-32 justify-center items-center" data-v-a3c4611c${_scopeId}><p class="text-xl font-bold text-white tracking-wider" data-v-a3c4611c${_scopeId}> Loading... </p>`);
           _push2(ssrRenderComponent(_component_loader, { dark: true }, null, _parent2, _scopeId));
           _push2(`</div></div>`);
         } else {
           _push2(`<!---->`);
         }
         if (!_ctx.showForm) {
-          _push2(`<div${ssrRenderAttrs(mergeProps({ class: "lg:w-96 xl:w-96 md:lg:w-96 z-0" }, _attrs))} data-v-36e6abf5${_scopeId}>`);
+          _push2(`<div${ssrRenderAttrs(mergeProps({ class: "lg:w-96 xl:w-96 md:lg:w-96 z-0" }, _attrs))} data-v-a3c4611c${_scopeId}>`);
           _push2(ssrRenderComponent(_component_router_link, {
             to: "/",
             style: { filter: _ctx.loadingPost ? "blur(8px)" : "" }
           }, {
             default: withCtx((_2, _push3, _parent3, _scopeId2) => {
               if (_push3) {
-                _push3(`<p class="${ssrRenderClass([{ "opacity-40": _ctx.loadingPost }, "text-4xl xl:text-5xl lg:text-5xl text-white"])}" data-v-36e6abf5${_scopeId2}> \u12A0\u12F2\u1235 \u1328\u12CB\u1273 </p>`);
+                _push3(`<p class="${ssrRenderClass([{ "opacity-40": _ctx.loadingPost }, "text-4xl xl:text-5xl lg:text-5xl text-white"])}" data-v-a3c4611c${_scopeId2}> \u12A0\u12F2\u1235 \u1328\u12CB\u1273 </p>`);
               } else {
                 return [
                   createVNode("p", {
@@ -1165,7 +1397,7 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
             }),
             _: 1
           }, _parent2, _scopeId));
-          _push2(`<button style="${ssrRenderStyle({ "opacity": "12px" })}" class="bg-green-600 rounded-lg mt-5 w-full font-bold text-white p-16 xl:text-2xl lg:text-2xl text-xl" data-v-36e6abf5${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-36e6abf5${_scopeId}> Meme / Story </p></button><button class="w-full bg-yellow-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-36e6abf5${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-36e6abf5${_scopeId}> Sport Rant </p></button><button class="w-full bg-red-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-36e6abf5${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-36e6abf5${_scopeId}> Random Shit </p></button></div>`);
+          _push2(`<button style="${ssrRenderStyle({ "opacity": "12px" })}" class="bg-green-600 rounded-lg mt-5 w-full font-bold text-white p-16 xl:text-2xl lg:text-2xl text-xl" data-v-a3c4611c${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-a3c4611c${_scopeId}> Meme / Story </p></button><button class="w-full bg-yellow-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-a3c4611c${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-a3c4611c${_scopeId}> Sport Rant </p></button><button class="w-full bg-red-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-a3c4611c${_scopeId}><p style="${ssrRenderStyle({ filter: _ctx.loadingPost ? "blur(8px)" : "" })}" class="${ssrRenderClass({ "opacity-40": _ctx.loadingPost })}" data-v-a3c4611c${_scopeId}> Random Shit </p></button></div>`);
         } else {
           _push2(`<!---->`);
         }
@@ -1173,13 +1405,13 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
           _push2(`<div${ssrRenderAttrs(mergeProps({
             class: ["w-full relative", { "opacity-70": _ctx.loadingPost }],
             style: { filter: _ctx.loadingPost ? "blur(2px)" : "" }
-          }, _attrs))} data-v-36e6abf5${_scopeId}><p class="text-4xl xl:text-5xl lg:text-5xl text-white" data-v-36e6abf5${_scopeId}>Post Here</p><textarea class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none" id="exampleFormControlTextarea1" rows="3" placeholder="Your post starts here ..." data-v-36e6abf5${_scopeId}>${ssrInterpolate(_ctx.content)}</textarea><div class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white" data-v-36e6abf5${_scopeId}><input type="file" class="hidden" accept="image/png, image/gif, image/jpeg" data-v-36e6abf5${_scopeId}><p data-v-36e6abf5${_scopeId}>5000</p><button data-v-36e6abf5${_scopeId}>`);
+          }, _attrs))} data-v-a3c4611c${_scopeId}><p class="text-4xl xl:text-5xl lg:text-5xl text-white" data-v-a3c4611c${_scopeId}>Post Here</p><textarea class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none" id="exampleFormControlTextarea1" rows="3" placeholder="Your post starts here ..." data-v-a3c4611c${_scopeId}>${ssrInterpolate(_ctx.content)}</textarea><div class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white" data-v-a3c4611c${_scopeId}><input type="file" class="hidden" accept="image/png, image/gif, image/jpeg" data-v-a3c4611c${_scopeId}><p data-v-a3c4611c${_scopeId}>5000</p><button data-v-a3c4611c${_scopeId}>`);
           if (!_ctx.filename) {
-            _push2(`<span data-v-36e6abf5${_scopeId}>Attach Img/Gif</span>`);
+            _push2(`<span data-v-a3c4611c${_scopeId}>Attach Img/Gif</span>`);
           } else {
-            _push2(`<span data-v-36e6abf5${_scopeId}>${ssrInterpolate(_ctx.filename)}</span>`);
+            _push2(`<span data-v-a3c4611c${_scopeId}>${ssrInterpolate(_ctx.filename)}</span>`);
           }
-          _push2(`</button></div><button class="bg-green-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-36e6abf5${_scopeId}><p data-v-36e6abf5${_scopeId}>Post</p></button><button class="bg-red-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-36e6abf5${_scopeId}><p data-v-36e6abf5${_scopeId}>Cancel</p></button></div>`);
+          _push2(`</button></div><button class="bg-green-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-a3c4611c${_scopeId}><p data-v-a3c4611c${_scopeId}>Post</p></button><button class="bg-red-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl" data-v-a3c4611c${_scopeId}><p data-v-a3c4611c${_scopeId}>Cancel</p></button></div>`);
         } else {
           _push2(`<!---->`);
         }
@@ -1265,7 +1497,7 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
                       accept: "image/png, image/gif, image/jpeg"
                     }, null, 40, ["onChange"]),
                     createVNode("p", null, "5000"),
-                    createVNode("button", { onClick: _ctx.openUploadModal }, [
+                    createVNode("button", { onClick: _ctx.clickFileRef }, [
                       !_ctx.filename ? (openBlock(), createBlock("span", { key: 0 }, "Attach Img/Gif")) : (openBlock(), createBlock("span", { key: 1 }, toDisplayString(_ctx.filename), 1))
                     ], 8, ["onClick"])
                   ]),
@@ -1291,15 +1523,15 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     }),
     _: 1
   }, _parent));
-  _push(`<div class="flex flex-row justify-center gap-10 mt-24" data-v-36e6abf5>`);
+  _push(`<div class="flex flex-row justify-center gap-10 mt-24" data-v-a3c4611c>`);
   if (_ctx.$store.state.loggedIn) {
-    _push(`<div class="w-1/6 mt-2 hidden lg:block xl:block md:block" data-v-36e6abf5><h1 class="text-gray-500 text-2xl font-semibold tracking-widest" data-v-36e6abf5> Welcome to Chewata </h1><p class="font-normal text-gray-400 text-lg" data-v-36e6abf5> you can start posting by clicking the ball icon and just go around and like and enjoy. </p></div>`);
+    _push(`<div class="w-1/6 mt-2 hidden lg:block xl:block md:block" data-v-a3c4611c><h1 class="text-gray-500 text-2xl font-semibold tracking-widest" data-v-a3c4611c> Welcome to Chewata </h1><p class="font-normal text-gray-400 text-lg" data-v-a3c4611c> you can start posting by clicking the ball icon and just go around and like and enjoy. </p></div>`);
   } else {
-    _push(`<div class="w-1/6 mt-2 hidden lg:block xl:block md:block" data-v-36e6abf5><h1 class="text-gray-500 text-2xl font-semibold tracking-widest" data-v-36e6abf5> Join Chewata </h1><p class="font-normal text-gray-400 text-lg" data-v-36e6abf5> Do all the things like ++ or -- rants, post your own rants, comment on others&#39; rants and just have fun. </p><button class="rounded-xl tracking-widest border-2 mt-2 p-2" data-v-36e6abf5> Sign Up </button></div>`);
+    _push(`<div class="w-1/6 mt-2 hidden lg:block xl:block md:block" data-v-a3c4611c><h1 class="text-gray-500 text-2xl font-semibold tracking-widest" data-v-a3c4611c> Join Chewata </h1><p class="font-normal text-gray-400 text-lg" data-v-a3c4611c> Do all the things like ++ or -- rants, post your own rants, comment on others&#39; rants and just have fun. </p><button class="rounded-xl tracking-widest border-2 mt-2 p-2" data-v-a3c4611c> Sign Up </button></div>`);
   }
-  _push(`<div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2" data-v-36e6abf5><p class="text-2xl font-semibold tracking-wider text-gray-500" data-v-36e6abf5>Feed</p>`);
+  _push(`<div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2" data-v-a3c4611c><p class="text-2xl font-semibold tracking-wider text-gray-500" data-v-a3c4611c>Feed</p>`);
   if (_ctx.loadingFeed) {
-    _push(`<div class="flex justify-center items-center mt-28" data-v-36e6abf5>`);
+    _push(`<div class="flex justify-center items-center mt-28" data-v-a3c4611c>`);
     _push(ssrRenderComponent(_component_loader, null, null, _parent));
     _push(`</div>`);
   } else {
@@ -1307,28 +1539,26 @@ function _sfc_ssrRender$c(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   }
   _push(`<!--[-->`);
   ssrRenderList(_ctx.posts, (post, ix) => {
-    _push(`<div class="mt-4" data-v-36e6abf5>`);
-    _push(ssrRenderComponent(_component_post_tile, { post }, null, _parent));
-    _push(`<div class="mb-3 flex flex-row justify-end" data-v-36e6abf5><button class="px-2 mx-2" data-v-36e6abf5><div class="flex" data-v-36e6abf5><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-500 mt-1" viewBox="0 0 20 20" fill="currentColor" data-v-36e6abf5><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" data-v-36e6abf5></path><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" data-v-36e6abf5></path></svg><p class="text-green-500 mt-1 text-xl" data-v-36e6abf5>2</p></div></button></div><div class="border-t border-gray-200 w-full" data-v-36e6abf5></div></div>`);
+    _push(`<div class="mt-4" data-v-a3c4611c>`);
+    _push(ssrRenderComponent(_component_post_tile, {
+      compKey: post.postId,
+      post
+    }, null, _parent));
+    _push(`<div class="mb-3 flex flex-row justify-end" data-v-a3c4611c><button class="px-2 mx-2" data-v-a3c4611c><div class="flex" data-v-a3c4611c><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-500 mt-1" viewBox="0 0 20 20" fill="currentColor" data-v-a3c4611c><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" data-v-a3c4611c></path><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" data-v-a3c4611c></path></svg><p class="text-green-500 mt-1 text-xl" data-v-a3c4611c>2</p></div></button></div><div class="border-t border-gray-200 w-full" data-v-a3c4611c></div></div>`);
   });
   _push(`<!--]-->`);
   if (_ctx.loadComplete) {
-    _push(`<div class="text-center pb-32 pt-10" data-v-36e6abf5><p class="text-lg text-gray-400 font-semibold" data-v-36e6abf5>No More Posts</p></div>`);
-  } else {
-    _push(`<!---->`);
-  }
-  if (_ctx.posts.length && !_ctx.loadingFeed && !_ctx.loadComplete) {
-    _push(`<div class="flex justify-center my-10" data-v-36e6abf5><button class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full" data-v-36e6abf5><span data-v-36e6abf5>Load More</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 font-bold" data-v-36e6abf5><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" data-v-36e6abf5></path></svg></button></div>`);
+    _push(`<div class="text-center pb-32 pt-10" data-v-a3c4611c><p class="text-lg text-gray-400 font-semibold" data-v-a3c4611c>No More Posts</p></div>`);
   } else if (_ctx.loadingFeed && _ctx.posts.length) {
-    _push(`<div class="flex justify-center my-10" data-v-36e6abf5>`);
+    _push(`<div class="flex justify-center my-10" data-v-a3c4611c>`);
     _push(ssrRenderComponent(_component_loader, null, null, _parent));
     _push(`</div>`);
   } else {
     _push(`<!---->`);
   }
-  _push(`</div><div class="w-1/6 mt-2 hidden lg:block xl:block" data-v-36e6abf5><h1 class="text-gray-500 px-2 pb-4 text-2xl font-semibold tracking-widest" data-v-36e6abf5> Top Tags </h1><div class="grid xl:grid-cols-4 lg:grid-cols-3 gap-1" data-v-36e6abf5><!--[-->`);
+  _push(`</div><div class="w-1/6 mt-2 hidden lg:block xl:block" data-v-a3c4611c><h1 class="text-gray-500 px-2 pb-4 text-2xl font-semibold tracking-widest" data-v-a3c4611c> Top Tags </h1><div class="grid xl:grid-cols-4 lg:grid-cols-3 gap-1" data-v-a3c4611c><!--[-->`);
   ssrRenderList(13, (x) => {
-    _push(`<div class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75" data-v-36e6abf5><p class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75" data-v-36e6abf5> Soccer </p></div>`);
+    _push(`<div class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75" data-v-a3c4611c><p class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75" data-v-a3c4611c> Soccer </p></div>`);
   });
   _push(`<!--]--></div></div></div>`);
   if (!_ctx.loadingFeed) {
@@ -1344,7 +1574,7 @@ _sfc_main$c.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("src/views/Home.vue");
   return _sfc_setup$c ? _sfc_setup$c(props, ctx) : void 0;
 };
-var Home = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["ssrRender", _sfc_ssrRender$c], ["__scopeId", "data-v-36e6abf5"]]);
+var Home = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["ssrRender", _sfc_ssrRender$c], ["__scopeId", "data-v-a3c4611c"]]);
 var CommentMeda_vue_vue_type_style_index_0_scoped_true_lang = "";
 const _sfc_main$b = defineComponent$1({
   props: {
@@ -1370,7 +1600,6 @@ _sfc_main$b.setup = (props, ctx) => {
   return _sfc_setup$b ? _sfc_setup$b(props, ctx) : void 0;
 };
 var CommentMeda = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["ssrRender", _sfc_ssrRender$b], ["__scopeId", "data-v-71babe14"]]);
-var _imports_0 = "./assets/manchester-united.6a616d0a.png";
 const _sfc_main$a = defineComponent({
   props: ["img", "user", "path"]
 });
@@ -1383,19 +1612,14 @@ function _sfc_ssrRender$a(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   }, _attrs), {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`<img class="inline-block object-cover w-12 h-12 rounded-full"${ssrRenderAttr("src", _ctx.img)} alt="Profile image"${_scopeId}><img${ssrRenderAttr("src", _imports_0)} class="w-5 h-5 absolute bottom-0 right-0 inline-block bg-green-600 border-2 border-white rounded-full" alt=""${_scopeId}>`);
+        _push2(`<img class="inline-block object-cover w-11 h-11 rounded-full"${ssrRenderAttr("src", _ctx.img)} alt="Profile image"${_scopeId}>`);
       } else {
         return [
           createVNode("img", {
-            class: "inline-block object-cover w-12 h-12 rounded-full",
+            class: "inline-block object-cover w-11 h-11 rounded-full",
             src: _ctx.img,
             alt: "Profile image"
-          }, null, 8, ["src"]),
-          createVNode("img", {
-            src: _imports_0,
-            class: "w-5 h-5 absolute bottom-0 right-0 inline-block bg-green-600 border-2 border-white rounded-full",
-            alt: ""
-          })
+          }, null, 8, ["src"])
         ];
       }
     }),
@@ -1421,106 +1645,69 @@ const _sfc_main$9 = defineComponent({
     if (this.$store.state.loggedIn) {
       this.fetchVotes();
     }
-    this.initialVote = this.comment.comment.likes;
-    await this.setRef();
   },
   methods: {
     async fetchVotes() {
-      const voteQuery = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "comment"), where$1("objectId", "==", this.comment.comment.id));
-      const likes = await getDocs$1(voteQuery);
-      let vote;
-      let voted;
-      if (!likes.empty) {
-        const likesData = likes.docs[0].data();
-        vote = likes.docs.length ? likesData.vote : null;
-        voted = likes.docs.length ? likesData.voted : null;
-        this.voteData.vote = vote;
-        this.voteData.voted = voted;
-        if (voted && vote) {
-          this.initialVote = this.comment.comment.likes - 1;
-        } else if (voted && !vote) {
-          this.initialVote = this.comment.comment.likes + 1;
-        }
+      const {
+        data: { getCommentVote }
+      } = await this.$apollo.query({
+        query: GET_COMMENT_VOTES,
+        variables: { comment: this.comment.commentId }
+      });
+      this.voteData = {
+        vote: getCommentVote.vote,
+        voted: getCommentVote.voted
+      };
+      const voteFlag = this.voteData.vote == 1;
+      if (this.voteData.voted && voteFlag) {
+        this.initialVote = this.comment.likes - 1;
+      } else if (this.voteData.voted && !voteFlag) {
+        this.initialVote = this.comment.likes + 1;
+      } else {
+        this.initialVote = this.comment.likes;
       }
-      console.log({ vote, voted });
-      return { vote, voted };
+      console.log(this.comment.likes);
     },
     async setRef() {
-      const q = query$1(collection$1(db, "comments"), where$1("id", "==", this.comment.comment.id));
+      const q = query$1(collection$1(db, "comments"), where$1("id", "==", this.comment.id));
       const querySnapshot = await getDocs$1(q);
       this.commentRef = querySnapshot.docs[0].ref;
     },
     async setVote(vote) {
-      const likesRef = doc(collection$1(db, "likes"));
-      const lq = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "comment"), where$1("objectId", "==", this.comment.comment.id));
-      const likes = await getDocs$1(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc$1(like.ref, {
-          vote,
-          voted: true
-        }));
+      await this.$apollo.mutate({
+        mutation: SET_VOTE,
+        variables: {
+          input: {
+            vote,
+            type: "comment",
+            entityId: this.comment.commentId
+          }
+        }
+      });
+      if (vote == 1) {
+        this.comment.likes = this.initialVote + 1;
+      } else if (vote == -1) {
+        this.comment.likes = this.initialVote - 1;
       } else {
-        await setDoc(likesRef, {
-          id: uuid.v4(),
-          createdAt: new Date().toISOString(),
-          objectId: this.comment.comment.id,
-          type: "comment",
-          vote,
-          voted: true,
-          user: this.$store.state.user.uid
-        });
-      }
-      this.updateTotalLikeCount();
-      if (vote) {
-        this.comment.comment.likes = this.initialVote + 1;
-      } else {
-        this.comment.comment.likes = this.initialVote - 1;
+        this.comment.likes = this.initialVote;
       }
     },
-    async updateTotalLikeCount() {
-      const lq = query$1(collection$1(db, "likes"), where$1("type", "==", "comment"), where$1("objectId", "==", this.comment.comment.id));
-      let total = 0;
-      const likes = await getDocs$1(lq);
-      const calculated = likes.docs.map((e) => {
-        const data = e.data();
-        const voteNumeric = data.vote === true ? 1 : data.vote === false ? -1 : 0;
-        return {
-          data,
-          voteNumeric
-        };
-      });
-      calculated.forEach((e) => total += e.voteNumeric);
-      updateDoc$1(this.commentRef, {
-        likes: total
-      });
-    },
-    async removeVote(vote) {
-      this.comment.comment.likes = this.initialVote;
-      updateDoc$1(this.commentRef, {
-        likes: this.initialVote
-      });
-      this.voteData.voted = null;
-      this.voteData.vote = null;
-      const lq = query$1(collection$1(db, "likes"), where$1("user", "==", this.$store.state.user.uid), where$1("type", "==", "comment"), where$1("objectId", "==", this.comment.comment.id));
-      const likes = await getDocs$1(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc$1(like.ref, {
-          vote: null,
-          voted: null
-        }));
-      }
+    async removeVote() {
+      console.log("Remove me");
+      this.comment.likes = this.initialVote;
+      this.voteData.voted = false;
+      this.voteData.vote = 0;
+      this.setVote(0);
     },
     async upvoted() {
       if (this.$store.state.user) {
-        console.log("up", this.comment);
-        console.log(this.voteData.vote, "dawg");
-        if (this.voteData.vote == true) {
-          this.removeVote(true);
+        if (this.voteData.vote == 1) {
+          this.removeVote();
           return;
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = true;
-          this.setVote(true);
+          this.voteData.vote = 1;
+          this.setVote(1);
           return;
         }
       } else {
@@ -1529,14 +1716,12 @@ const _sfc_main$9 = defineComponent({
     },
     async downvoted() {
       if (this.$store.state.user) {
-        console.log("down");
-        console.log(this.voteData.vote, "vote");
-        if (this.voteData.vote == false) {
-          this.removeVote(false);
+        if (this.voteData.vote == -1) {
+          this.removeVote();
         } else {
           this.voteData.voted = true;
-          this.voteData.vote = false;
-          this.setVote(false);
+          this.voteData.vote = -1;
+          this.setVote(-1);
         }
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
@@ -1553,33 +1738,33 @@ function _sfc_ssrRender$9(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   _push(ssrRenderComponent(_component_vote_clickers, {
     voted: _ctx.voteData.voted,
     readonly: _ctx.readonly,
-    vote: _ctx.voteData.vote,
+    vote: _ctx.voteData.vote == 1,
     large: false,
-    count: _ctx.comment.comment.likes
+    count: _ctx.comment.likes
   }, null, _parent));
   _push(`<div><div class="flex flex-row mt-2">`);
   if (_ctx.$store.state.loggedIn) {
     _push(`<div>`);
     _push(ssrRenderComponent(_component_user_avatar, {
-      img: _ctx.comment.user.photoURL,
-      path: _ctx.$store.state.user.uid == _ctx.comment.user.id ? "/user" : `/user/${_ctx.comment.user.id}`,
+      img: _ctx.comment.user.photo,
+      path: _ctx.$store.state.user.userId == _ctx.comment.user.userId ? "/user" : `/user/${_ctx.comment.user.userId}`,
       user: _ctx.comment.user
     }, null, _parent));
     _push(`</div>`);
   } else {
     _push(ssrRenderComponent(_component_user_avatar, {
-      img: _ctx.comment.user.photoURL,
+      img: _ctx.comment.user.photo,
       path: "/",
       user: _ctx.comment.user
     }, null, _parent));
   }
   _push(`<div></div>`);
   if (_ctx.comment.user) {
-    _push(`<div><p class="text-sm text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.comment.user.name)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500">${ssrInterpolate(_ctx.comment.user.totalLikes)}</div></div>`);
+    _push(`<div><p class="text-sm text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.comment.user.fullName)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500">${ssrInterpolate(_ctx.comment.user.totalLikes)}</div></div>`);
   } else {
     _push(`<!---->`);
   }
-  _push(`</div><p class="pt-2 tracking-wide text-gray-600 text-lg">${ssrInterpolate(_ctx.comment.comment.message)}</p>`);
+  _push(`</div><p class="pt-2 tracking-wide text-gray-600 text-lg">${ssrInterpolate(_ctx.comment.message)}</p>`);
   if (_ctx.$store.state.user) {
     _push(`<div>`);
     if (_ctx.$store.state.user.uid != _ctx.comment.user.id) {
@@ -1622,8 +1807,8 @@ function _sfc_ssrRender$9(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     _: 1
   }, _parent));
   _push(`</div></div>`);
-  if (_ctx.comment.comment.cover) {
-    _push(`<img${ssrRenderAttr("src", _ctx.comment.comment.cover)} alt="" style="${ssrRenderStyle({ "object-fit": "contain" })}">`);
+  if (_ctx.comment.cover) {
+    _push(`<img${ssrRenderAttr("src", _ctx.comment.cover)} alt="" style="${ssrRenderStyle({ "object-fit": "contain" })}">`);
   } else {
     _push(`<!---->`);
   }
@@ -1724,47 +1909,34 @@ const _sfc_main$5 = defineComponent({
     "vue-load-image": VueLoadImage
   },
   async mounted() {
+    window.addEventListener("scroll", this.handleScroll);
     this.loading = true;
-    const q = query(collection(db, "posts"), where("id", "==", this.$route.params.id));
-    const querySnapshot = await getDocs(q);
-    let user;
-    let likes;
-    if (querySnapshot.docs.length) {
-      const post = querySnapshot.docs[0].data();
-      const uq = query(collection(db, "users"), where("id", "==", post["user"]));
-      if (post.user && this.$store.state.loggedIn) {
-        const voteQuery = query(collection(db, "likes"), where("user", "==", this.$store.state.user.uid), where("type", "==", "post"), where("objectId", "==", this.$route.params.id));
-        likes = await getDocs(voteQuery);
-      }
-      user = await getDocs(uq);
-      if (this.$store.state.loggedIn)
-        this.postRef = querySnapshot.docs[0].ref;
-      this.initialVote = post.likes;
-      if (this.$store.state.loggedIn) {
-        const voted = likes.docs.length ? likes.docs[0].data().voted : null;
-        const vote = likes.docs.length ? likes.docs[0].data().vote : null;
-        this.post = {
-          p: post,
-          user: user ? user.docs[0].data() : null,
-          vote,
-          voted
-        };
-        if (voted && vote) {
-          this.initialVote = post.likes - 1;
-        } else if (voted && !vote) {
-          this.initialVote = post.likes + 1;
-        }
-      } else {
-        this.post = {
-          p: post,
-          user: user ? user.docs[0].data() : null,
-          vote: null,
-          voted: null
-        };
-      }
-      console.log(this.post, " POST LOADED ");
+    console.log(this.$store.state);
+    if (this.$store.state.loggedIn) {
+      await this.getPostVote();
+    }
+    const {
+      data: { getPost }
+    } = await this.$apollo.query({
+      query: POST,
+      fetchPolicy: "network-only",
+      variables: { post: this.$route.params.id }
+    }).finally(() => {
+      this.loading = true;
+    });
+    const voteFlag = this.voteData.vote == 1;
+    this.post = JSON.parse(JSON.stringify(getPost));
+    if (this.voteData.voted && voteFlag) {
+      this.initialVote = getPost.likes - 1;
+    } else if (this.voteData.voted && !voteFlag) {
+      this.initialVote = getPost.likes + 1;
+    } else {
+      this.initialVote = getPost.likes;
     }
     this.loading = false;
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   data: () => ({
     comments: [],
@@ -1775,6 +1947,8 @@ const _sfc_main$5 = defineComponent({
     invalidImage: false,
     loading: false,
     initialVote: 0,
+    preset: "c4o7elzd",
+    formData: null,
     postRef: null,
     lastIncremented: null,
     lastDecremented: null,
@@ -1784,12 +1958,24 @@ const _sfc_main$5 = defineComponent({
     showCommentForm: false,
     showModal: false,
     replyTarget: null,
-    showSide: true
+    showSide: true,
+    totalCount: 0,
+    pagination: { page: 1, pageSize: 2 },
+    voteData: { vote: null, voted: null }
   }),
   methods: {
+    async handleScroll(e) {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 50) {
+        if (this.totalCount) {
+          this.pagination.page++;
+          const totalCount = await this.loadComments();
+          console.log("load more", totalCount);
+        }
+      }
+    },
     getCover() {
       const defualtcover = "http://yourwebsite.com/images/default-banner.png";
-      return this.post.p.cover ? this.post.p.cover : defualtcover;
+      return this.post.cover ? this.post.cover : defualtcover;
     },
     replyComment(com) {
       if (this.$store.state.loggedIn) {
@@ -1801,53 +1987,6 @@ const _sfc_main$5 = defineComponent({
         this.$store.commit("SET_LOGIN_POP", true);
       }
     },
-    openUploadModal() {
-      window.cloudinary.openUploadWidget({
-        cloud_name: "dtabnh5py",
-        upload_preset: "c4o7elzd",
-        sources: [
-          "local",
-          "camera",
-          "image_search",
-          "google_drive",
-          "facebook",
-          "instagram",
-          "dropbox"
-        ],
-        multiple: false,
-        defaultSource: "local",
-        styles: {
-          palette: {
-            window: "#F5F5F5",
-            sourceBg: "#FFFFFF",
-            windowBorder: "#90a0b3",
-            tabIcon: "#0094c7",
-            inactiveTabIcon: "#69778A",
-            menuIcons: "#0094C7",
-            link: "#53ad9d",
-            action: "#8F5DA5",
-            inProgress: "#0194c7",
-            complete: "#53ad9d",
-            error: "#c43737",
-            textDark: "#000000",
-            textLight: "#FFFFFF"
-          },
-          fonts: {
-            default: null,
-            "sans-serif": {
-              url: null,
-              active: true
-            }
-          }
-        }
-      }, (error, result) => {
-        if (!error && result && result.event === "success") {
-          this.filename = result.info.original_filename;
-          this.uploadedUrl = result.info.secure_url;
-          console.log("Done uploading..: ", result.info);
-        }
-      }).open();
-    },
     async postComment() {
       if (this.content == "") {
         alert("Message can't be empty");
@@ -1858,7 +1997,16 @@ const _sfc_main$5 = defineComponent({
         return;
       }
       this.loadingPost = true;
-      await this.saveComment(null);
+      if (this.file && this.formData) {
+        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+        const { data } = await axios({
+          url,
+          method: "POST",
+          data: this.formData
+        });
+        this.uploadedUrl = data.secure_url;
+      }
+      await this.saveComment();
     },
     ballClicked() {
       if (this.$store.state.loggedIn) {
@@ -1879,19 +2027,23 @@ const _sfc_main$5 = defineComponent({
     },
     async loadComments() {
       this.loadingComments = true;
-      this.comments = [];
-      const q = query(collection(db, "comments"), where("post", "==", this.$route.params.id), orderBy("createdAt", "asc"));
-      const snapshotData = await getDocs(q);
-      snapshotData.forEach(async (c) => {
-        const comment = c.data();
-        const uq = query(collection(db, "users"), where("id", "==", comment["user"]));
-        const user = await getDocs(uq);
-        await this.comments.push({
-          comment,
-          user: user.docs[0].data()
-        });
+      const {
+        data: {
+          getPostComments: { data }
+        }
+      } = await this.$apollo.query({
+        query: POST_COMMENTS,
+        fetchPolicy: "network-only",
+        variables: {
+          post: this.$route.params.id,
+          pagination: this.pagination
+        }
+      }).finally(() => {
+        this.loadingComments = false;
       });
-      this.loadingComments = false;
+      const comments = JSON.parse(JSON.stringify(data));
+      this.totalCount = comments.length;
+      this.comments.push(...comments);
     },
     clickFileRef() {
       this.$refs.file.click();
@@ -1919,99 +2071,67 @@ const _sfc_main$5 = defineComponent({
         alert(txt);
         return;
       }
-      this.file = e.target.files;
-      this.filename = e.target.files[0].name;
+      this.file = e.target.files[0];
+      this.filename = e.target.files[0].name.substring(0, 20);
+      this.prepareFormData();
     },
-    async saveComment(cover = "") {
-      const commentRef = doc$1(collection(db, "comments"));
-      await setDoc$1(commentRef, {
-        id: uuid.v4(),
-        message: this.content,
-        cover: this.uploadedUrl,
-        replyTo: this.replyTarget ? this.replyTarget.user.id : "",
-        post: this.$route.params.id,
-        user: this.$store.state.user.uid,
-        createdAt: new Date().toISOString(),
-        likes: 0
+    prepareFormData() {
+      this.formData = new FormData();
+      this.formData.append("upload_preset", this.preset);
+      this.formData.append("file", this.file);
+    },
+    async saveComment() {
+      await this.$apollo.mutate({
+        mutation: ADD_COMMENT,
+        variables: {
+          input: {
+            message: this.content,
+            cover: this.uploadedUrl,
+            replyTo: this.replyTarget ? this.replyTarget.user.id : "",
+            post: this.$route.params.id
+          }
+        }
+      }).then(({ data: { addComment } }) => {
+        this.comments.unshift(addComment);
       }).finally(() => {
         this.loadingPost = false;
         this.showCommentForm = false;
       });
-      await this.loadComments();
     },
     async setVote(vote) {
-      const likesRef = doc$1(collection(db, "likes"));
-      const lq = query(collection(db, "likes"), where("user", "==", this.$store.state.user.uid), where("type", "==", "post"), where("objectId", "==", this.$route.params.id));
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc(like.ref, {
-          vote,
-          voted: true
-        }));
+      await this.$apollo.mutate({
+        mutation: SET_VOTE,
+        variables: {
+          input: {
+            vote,
+            type: "post",
+            entityId: this.$route.params.id
+          }
+        }
+      });
+      if (vote == 1) {
+        this.post.likes = this.initialVote + 1;
+      } else if (vote == -1) {
+        this.post.likes = this.initialVote - 1;
       } else {
-        await setDoc$1(likesRef, {
-          id: uuid.v4(),
-          createdAt: new Date().toISOString(),
-          objectId: this.$route.params.id,
-          type: "post",
-          vote,
-          voted: true,
-          user: this.$store.state.user.uid
-        });
-      }
-      await this.updateTotalLikeCount();
-      if (vote) {
-        this.post.p.likes = this.initialVote + 1;
-      } else {
-        this.post.p.likes = this.initialVote - 1;
+        this.post.likes = this.initialVote;
       }
     },
-    async updateTotalLikeCount() {
-      const lq = query(collection(db, "likes"), where("type", "==", "post"), where("objectId", "==", this.$route.params.id));
-      let total = 0;
-      const likes = await getDocs(lq);
-      const calculated = likes.docs.map((e) => {
-        const data = e.data();
-        const voteNumeric = data.vote === true ? 1 : data.vote === false ? -1 : 0;
-        return {
-          data,
-          voteNumeric
-        };
-      });
-      console.log(calculated, "CALC");
-      calculated.forEach((e) => total += e.voteNumeric);
-      console.log(total, "TOTAL");
-      updateDoc(this.postRef, {
-        likes: total
-      });
-    },
-    async removeVote(vote) {
-      this.post.p.likes = this.initialVote;
-      updateDoc(this.postRef, {
-        likes: this.initialVote
-      });
-      this.post.voted = null;
-      this.post.vote = null;
-      const lq = query(collection(db, "likes"), where("user", "==", this.$store.state.user.uid), where("type", "==", "post"), where("objectId", "==", this.$route.params.id));
-      const likes = await getDocs(lq);
-      if (likes.docs.length) {
-        likes.forEach((like) => updateDoc(like.ref, {
-          vote: null,
-          voted: null
-        }));
-      }
+    async removeVote() {
+      this.post.likes = this.initialVote;
+      this.voteData.voted = false;
+      this.voteData.vote = 0;
+      this.setVote(0);
     },
     async upvoted() {
       if (this.$store.state.user) {
-        console.log("up", this.post);
-        console.log(this.post.vote, "dawg");
-        if (this.post.vote == true) {
-          this.removeVote(true);
+        if (this.voteData.vote == 1) {
+          this.removeVote();
           return;
         } else {
-          this.post.voted = true;
-          this.post.vote = true;
-          this.setVote(true);
+          this.voteData.voted = true;
+          this.voteData.vote = 1;
+          this.setVote(1);
           return;
         }
       } else {
@@ -2020,17 +2140,41 @@ const _sfc_main$5 = defineComponent({
     },
     async downvoted() {
       if (this.$store.state.user) {
-        console.log("down");
-        console.log(this.post.vote, "vote");
-        if (this.post.vote == false) {
-          this.removeVote(false);
+        if (this.voteData.vote == -1) {
+          this.removeVote();
         } else {
-          this.post.voted = true;
-          this.post.vote = false;
-          this.setVote(false);
+          this.voteData.voted = true;
+          this.voteData.vote = -1;
+          this.setVote(-1);
         }
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
+      }
+    },
+    async getPostVote() {
+      const {
+        data: { getPostVote }
+      } = await this.$apollo.query({
+        query: GET_POST_VOTES,
+        variables: { post: this.$route.params.id },
+        fetchPolicy: "network-only"
+      });
+      this.voteData = {
+        vote: getPostVote.vote,
+        voted: getPostVote.voted
+      };
+    },
+    async deletePost() {
+      const confirmDelte = confirm("Are you sure you want to do delete this post? ");
+      if (confirmDelte) {
+        await this.$apollo.mutate({
+          mutation: DELETE_POST,
+          variables: {
+            post: this.$route.params.id
+          }
+        }).finally(() => {
+          this.$router.push("/");
+        });
       }
     }
   },
@@ -2047,7 +2191,6 @@ const _sfc_main$5 = defineComponent({
   }
 });
 function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
-  const _component_Head = resolveComponent("Head");
   const _component_dialog_modal = resolveComponent("dialog-modal");
   const _component_game_loader = resolveComponent("game-loader");
   const _component_router_link = resolveComponent("router-link");
@@ -2058,54 +2201,6 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   const _component_comment_tile = resolveComponent("comment-tile");
   const _component_comment_meda = resolveComponent("comment-meda");
   _push(`<div${ssrRenderAttrs(_attrs)}>`);
-  if (_ctx.post) {
-    _push(ssrRenderComponent(_component_Head, null, {
-      default: withCtx((_, _push2, _parent2, _scopeId) => {
-        if (_push2) {
-          _push2(`<title${_scopeId}>${ssrInterpolate(_ctx.post.user.name)}</title><meta name="description" content="This page is awesome"${_scopeId}><meta property="og:title" content="Hello Title"${_scopeId}><meta property="og:description" content="This page is awesome"${_scopeId}><meta property="og:image" content="https://picsum.photos/1200/675"${_scopeId}><meta name="twitter:title" content="Hello Title"${_scopeId}><meta name="twitter:description" content="This page is awesome"${_scopeId}><meta name="twitter:image" content="https://picsum.photos/1200/675"${_scopeId}><meta name="twitter:card" content="summary_large_image"${_scopeId}>`);
-        } else {
-          return [
-            createVNode("title", null, toDisplayString(_ctx.post.user.name), 1),
-            createVNode("meta", {
-              name: "description",
-              content: "This page is awesome"
-            }),
-            createVNode("meta", {
-              property: "og:title",
-              content: "Hello Title"
-            }),
-            createVNode("meta", {
-              property: "og:description",
-              content: "This page is awesome"
-            }),
-            createVNode("meta", {
-              property: "og:image",
-              content: "https://picsum.photos/1200/675"
-            }),
-            createVNode("meta", {
-              name: "twitter:title",
-              content: "Hello Title"
-            }),
-            createVNode("meta", {
-              name: "twitter:description",
-              content: "This page is awesome"
-            }),
-            createVNode("meta", {
-              name: "twitter:image",
-              content: "https://picsum.photos/1200/675"
-            }),
-            createVNode("meta", {
-              name: "twitter:card",
-              content: "summary_large_image"
-            })
-          ];
-        }
-      }),
-      _: 1
-    }, _parent));
-  } else {
-    _push(`<!---->`);
-  }
   _push(ssrRenderComponent(_component_dialog_modal, { show: _ctx.showCommentForm }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
@@ -2182,7 +2277,7 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
                         ref: "file"
                       }, null, 40, ["onChange"]),
                       createVNode("p", null, "5000"),
-                      createVNode("button", { onClick: _ctx.openUploadModal }, [
+                      createVNode("button", { onClick: _ctx.clickFileRef }, [
                         !_ctx.filename ? (openBlock(), createBlock("span", { key: 0 }, "Attach Img/Gif")) : (openBlock(), createBlock("span", { key: 1 }, toDisplayString(_ctx.filename), 1))
                       ], 8, ["onClick"])
                     ]),
@@ -2203,38 +2298,32 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     }),
     _: 1
   }, _parent));
-  _push(`<div class="h-1/2 w-full" style="${ssrRenderStyle({ "background": "#5fe18c" })}"><div class="text-white p-2 font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20">`);
+  _push(`<div class="h-1/2 w-full" style="${ssrRenderStyle({ "background": "#5fe18c" })}"><div class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20">`);
   if (_ctx.post) {
     _push(`<div class="flex flex-row gap-4">`);
     _push(ssrRenderComponent(_component_vote_clickers, {
-      voted: _ctx.post.voted,
-      vote: _ctx.post.vote,
+      voted: _ctx.voteData.voted,
+      vote: _ctx.voteData.vote == 1,
       large: true,
-      count: _ctx.post.p.likes,
+      count: _ctx.post.likes,
       dark: true,
       color: "#92daac",
       class: "mt-5"
     }, null, _parent));
-    _push(`<div class="flex flex-col gap-4 w-full px-2">`);
-    if (_ctx.post.user) {
-      _push(`<p class="pt-5">${ssrInterpolate(_ctx.post.user.name)}</p>`);
-    } else {
-      _push(`<!---->`);
-    }
-    _push(`<p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">${ssrInterpolate(_ctx.post.p.content)}</p><div class="mr-3 mb-3">`);
+    _push(`<div class="flex flex-row justify-start items-start"><div class="flex flex-col gap-4 w-full px-2"><p class="pt-5">${ssrInterpolate(_ctx.post.user.fullName)}</p><p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">${ssrInterpolate(_ctx.post.content)}</p><div class="mr-3 mb-3">`);
     _push(ssrRenderComponent(_component_vue_load_image, null, {
       image: withCtx((_, _push2, _parent2, _scopeId) => {
         if (_push2) {
-          if (_ctx.post.p.cover) {
-            _push2(`<img${ssrRenderAttr("src", _ctx.post.p.cover)}${_scopeId}>`);
+          if (_ctx.post.cover) {
+            _push2(`<img${ssrRenderAttr("src", _ctx.post.cover)}${_scopeId}>`);
           } else {
             _push2(`<!---->`);
           }
         } else {
           return [
-            _ctx.post.p.cover ? (openBlock(), createBlock("img", {
+            _ctx.post.cover ? (openBlock(), createBlock("img", {
               key: 0,
-              src: _ctx.post.p.cover
+              src: _ctx.post.cover
             }, null, 8, ["src"])) : createCommentVNode("", true)
           ];
         }
@@ -2250,7 +2339,19 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
       }),
       _: 1
     }, _parent));
-    _push(`</div></div></div>`);
+    _push(`</div></div>`);
+    if (_ctx.$store.state.loggedIn) {
+      _push(`<div class="absolute right-0 mr-5 mt-5">`);
+      if (_ctx.$store.state.user.userId == _ctx.post.user.userId) {
+        _push(`<button class="bg-green-300 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 text-green-800 h-10 p-2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg></button>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</div>`);
+    } else {
+      _push(`<!---->`);
+    }
+    _push(`</div></div>`);
   } else {
     _push(ssrRenderComponent(_component_game_loader, null, null, _parent));
   }
@@ -2260,19 +2361,19 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     if (_ctx.$store.state.loggedIn) {
       _push(`<div>`);
       _push(ssrRenderComponent(_component_user_avatar, {
-        path: _ctx.$store.state.user.uid == _ctx.post.user.id ? "/user" : `/user/${_ctx.post.user.id}`,
-        img: _ctx.post.user.photoURL,
+        path: _ctx.$store.state.user.userId == _ctx.post.user.userId ? "/user" : `/user/${_ctx.post.user.userId}`,
+        img: _ctx.post.user.photo,
         user: _ctx.post.user
       }, null, _parent));
       _push(`</div>`);
     } else {
       _push(ssrRenderComponent(_component_user_avatar, {
         path: "/",
-        img: _ctx.post.user.photoURL,
+        img: _ctx.post.user.photo,
         user: _ctx.post.user
       }, null, _parent));
     }
-    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.post.user.name)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"> 1099 </div></div></div>`);
+    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.post.user.fullName)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"> 1099 </div></div></div>`);
   } else {
     _push(`<!---->`);
   }
@@ -2292,7 +2393,7 @@ function _sfc_ssrRender$5(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   }
   if (_ctx.comments.length) {
     _push(`<div><!--[-->`);
-    ssrRenderList(_ctx.sortedArray(), (com, ix) => {
+    ssrRenderList(_ctx.comments, (com, ix) => {
       _push(ssrRenderComponent(_component_comment_tile, {
         key: ix,
         comment: com
@@ -2328,63 +2429,87 @@ const _sfc_main$4 = defineComponent({
     loadComplete: false,
     activeTab: "posts",
     showModal: false,
+    totalCountPost: 0,
+    totalCountComments: 0,
+    paginationP: {
+      page: 1,
+      pageSize: 2
+    },
+    paginationC: {
+      page: 1,
+      pageSize: 4
+    },
     comments: [],
     posts: [],
-    limit: 10
+    limit: 2
   }),
   async created() {
     await this.fetchUserPosts();
     await this.loadComments();
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
   methods: {
+    async handleScroll(e) {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 50) {
+        console.log("there");
+        if (this.totalCountPost) {
+          this.paginationP.page++;
+          await this.fetchUserPosts();
+          console.log("load more");
+        } else if (this.totalCountComments) {
+          this.paginationC.page++;
+          const totalCount = await this.loadComments();
+          console.log("load more", totalCount);
+        }
+      }
+    },
     setTab(tab) {
       this.activeTab = tab;
     },
     clicked(post) {
-      this.$router.push({ path: `/game/${post.id}` });
+      this.$router.push({ path: `/game/${post.postId}` });
     },
     async loadComments() {
       this.loading = true;
-      let q = query$1(collection$1(db, "comments"), where$1("user", "==", this.$store.state.user.uid), limit$1(this.limit));
-      if (this.lastCommentSnapshot) {
-        q = query$1(collection$1(db, "comments"), where$1("user", "==", this.$store.state.user.uid), startAfter$1(this.lastCommentSnapshot), limit$1(this.limit));
-      }
-      const snapshotData = await getDocs$1(q);
-      this.lastCommentSnapshot = snapshotData.docs[snapshotData.docs.length - 1];
-      snapshotData.forEach(async (c) => {
-        const comment = c.data();
-        let uq = query$1(collection$1(db, "users"), where$1("id", "==", comment["user"]));
-        const user = await getDocs$1(uq);
-        await this.comments.push({
-          comment,
-          user: user.docs[0].data()
-        });
+      const {
+        data: {
+          userComments: { data, total }
+        }
+      } = await this.$apollo.query({
+        query: USER_COMMENTS,
+        variables: {
+          pagination: this.paginationC
+        }
+      }).finally(() => {
+        this.loading = false;
       });
-      this.loading = false;
-    },
-    sortedArray: function() {
-      function compare(a, b) {
-        if (new Date(a.comment.createdAt) < new Date(b.comment.createdAt))
-          return -1;
-        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
-          return 1;
-        return 0;
-      }
-      return this.comments.sort(compare);
+      const comments = JSON.parse(JSON.stringify(data));
+      this.totalCountComments = this.comments.length;
+      this.comments.push(...comments);
     },
     async fetchUserPosts() {
       this.loading = true;
-      let postQ = query$1(collection$1(db, "posts"), where$1("user", "==", this.$store.state.user.uid), limit$1(this.limit));
-      if (this.lastSnapshot)
-        postQ = query$1(collection$1(db, "posts"), where$1("user", "==", this.$store.state.user.uid), startAfter$1(this.lastSnapshot), limit$1(this.limit));
-      const querySnapshot = await getDocs$1(postQ);
-      this.lastSnapshot = querySnapshot.docs[querySnapshot.docs.length - 1];
-      let result = querySnapshot.docs.map((p) => p.data());
-      this.posts.push(...result);
-      this.loading = false;
-      if (!result.length)
-        this.loadComplete = true;
-      return result.length;
+      const {
+        data: {
+          userPosts: { data }
+        }
+      } = await this.$apollo.query({
+        query: USER_POSTS,
+        fetchPolicy: "network-only",
+        variables: {
+          pagination: this.paginationP
+        }
+      }).finally(() => {
+        this.loading = false;
+      });
+      const post = JSON.parse(JSON.stringify(data));
+      this.totalCountPost = post.length;
+      this.posts.push(...post);
     }
   }
 });
@@ -2396,13 +2521,13 @@ function _sfc_ssrRender$4(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   const _component_comment_tile = resolveComponent("comment-tile");
   _push(`<div${ssrRenderAttrs(_attrs)}>`);
   _push(ssrRenderComponent(_component_navbar, null, null, _parent));
-  _push(`<div class="mt-16 h-3/4 w-full" style="${ssrRenderStyle({ "background": "#5fe18c", "background-repeat": "no-repeat", "background-size": "cover" })}"><div class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"><div class="flex flex-col gap-4 w-full items-start px-2"><p class="pt-5">${ssrInterpolate(_ctx.$store.state.user.displayName)}</p><p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal"> If you treat me like an option, I\u2019ll leave you like a choice. </p></div></div></div><div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3"><div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">`);
+  _push(`<div class="mt-16 h-3/4 w-full" style="${ssrRenderStyle({ "background": "#5fe18c", "background-repeat": "no-repeat", "background-size": "cover" })}"><div class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"><div class="flex flex-col gap-4 w-full items-start px-2"><p class="pt-5">${ssrInterpolate(_ctx.$store.state.user.fullName)}</p><p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal"> If you treat me like an option, I\u2019ll leave you like a choice. </p></div></div></div><div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3"><div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">`);
   if (_ctx.$store.state.loggedIn) {
     _push(`<div class="flex flex-row">`);
     _push(ssrRenderComponent(_component_user_avatar, {
-      img: _ctx.$store.state.user.photoURL
+      img: _ctx.$store.state.user.photo
     }, null, _parent));
-    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.$store.state.user.displayName)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"> 1099 </div></div></div>`);
+    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.$store.state.user.fullName)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"> 1099 </div></div></div>`);
   } else {
     _push(`<!---->`);
   }
@@ -2441,15 +2566,10 @@ function _sfc_ssrRender$4(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     } else {
       _push(`<!---->`);
     }
-    if (_ctx.posts.length && !_ctx.loading && !_ctx.loadComplete) {
-      _push(`<div class="flex justify-center my-10"><button class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"><span>Load More</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 font-bold"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"></path></svg></button></div>`);
-    } else {
-      _push(`<!---->`);
-    }
     _push(`</div>`);
   } else {
     _push(`<div><!--[-->`);
-    ssrRenderList(_ctx.sortedArray(), (com, ix) => {
+    ssrRenderList(_ctx.comments, (com, ix) => {
       _push(ssrRenderComponent(_component_comment_tile, {
         readonly: true,
         key: ix,
@@ -2466,11 +2586,6 @@ function _sfc_ssrRender$4(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     }
     if (_ctx.loadComplete) {
       _push(`<div class="text-center pb-32 pt-10"><p class="text-lg text-gray-400 font-semibold">No More Posts</p></div>`);
-    } else {
-      _push(`<!---->`);
-    }
-    if (_ctx.posts.length && !_ctx.loading && !_ctx.loadComplete) {
-      _push(`<div class="flex justify-center my-10"><button class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"><span>Load More</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 font-bold"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"></path></svg></button></div>`);
     } else {
       _push(`<!---->`);
     }
@@ -2505,6 +2620,16 @@ const _sfc_main$3 = defineComponent({
     activeTab: "posts",
     showModal: false,
     user: null,
+    totalCountPost: 0,
+    totalCountComments: 0,
+    paginationP: {
+      page: 1,
+      pageSize: 2
+    },
+    paginationC: {
+      page: 1,
+      pageSize: 4
+    },
     comments: [],
     posts: [],
     limit: 10
@@ -2514,7 +2639,27 @@ const _sfc_main$3 = defineComponent({
     await this.fetchUserPosts();
     await this.loadComments();
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
   methods: {
+    async handleScroll(e) {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 50) {
+        console.log("there");
+        if (this.totalCountPost) {
+          this.paginationP.page++;
+          await this.fetchUserPosts();
+          console.log("load more");
+        } else if (this.totalCountComments) {
+          this.paginationC.page++;
+          const totalCount = await this.loadComments();
+          console.log("load more", totalCount);
+        }
+      }
+    },
     setTab(tab) {
       this.activeTab = tab;
     },
@@ -2522,54 +2667,53 @@ const _sfc_main$3 = defineComponent({
       this.$router.push({ path: `/game/${post.id}` });
     },
     async loadUserData() {
-      let q = query$1(collection$1(db, "users"), where$1("id", "==", this.$route.params.uid));
-      const snapshotData = await getDocs$1(q);
-      if (!snapshotData.empty) {
-        this.user = snapshotData.docs[0].data();
-      }
+      const {
+        data: { userPublic }
+      } = await this.$apollo.query({
+        query: USER_PUBLIC,
+        fetchPolicy: "network-only",
+        variables: { user: this.$route.params.uid }
+      });
+      this.user = userPublic;
     },
     async loadComments() {
       this.loading = true;
-      let q = query$1(collection$1(db, "comments"), where$1("user", "==", this.$route.params.uid), limit$1(this.limit));
-      if (this.lastCommentSnapshot) {
-        q = query$1(collection$1(db, "comments"), where$1("user", "==", this.$route.params.uid), startAfter$1(this.lastCommentSnapshot), limit$1(this.limit));
-      }
-      const snapshotData = await getDocs$1(q);
-      this.lastCommentSnapshot = snapshotData.docs[snapshotData.docs.length - 1];
-      snapshotData.forEach(async (c) => {
-        const comment = c.data();
-        let uq = query$1(collection$1(db, "users"), where$1("id", "==", comment["user"]));
-        const user = await getDocs$1(uq);
-        await this.comments.push({
-          comment,
-          user: user.docs[0].data()
-        });
+      const {
+        data: {
+          userPublicComments: { data, total }
+        }
+      } = await this.$apollo.query({
+        query: USER_PUBLIC_COMMENTS,
+        variables: {
+          pagination: this.paginationC,
+          user: this.$route.params.uid
+        }
+      }).finally(() => {
+        this.loading = false;
       });
-      this.loading = false;
-    },
-    sortedArray: function() {
-      function compare(a, b) {
-        if (new Date(a.comment.createdAt) < new Date(b.comment.createdAt))
-          return -1;
-        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
-          return 1;
-        return 0;
-      }
-      return this.comments.sort(compare);
+      const comments = JSON.parse(JSON.stringify(data));
+      this.totalCountComments = this.comments.length;
+      this.comments.push(...comments);
     },
     async fetchUserPosts() {
       this.loading = true;
-      let postQ = query$1(collection$1(db, "posts"), where$1("user", "==", this.$route.params.uid), limit$1(this.limit));
-      if (this.lastSnapshot)
-        postQ = query$1(collection$1(db, "posts"), where$1("user", "==", this.$route.params.uid), startAfter$1(this.lastSnapshot), limit$1(this.limit));
-      const querySnapshot = await getDocs$1(postQ);
-      this.lastSnapshot = querySnapshot.docs[querySnapshot.docs.length - 1];
-      let result = querySnapshot.docs.map((p) => p.data());
-      this.posts.push(...result);
-      this.loading = false;
-      if (!result.length)
-        this.loadComplete = true;
-      return result.length;
+      const {
+        data: {
+          userPublicPosts: { data }
+        }
+      } = await this.$apollo.query({
+        query: USER_PUBLIC_POSTS,
+        fetchPolicy: "network-only",
+        variables: {
+          pagination: this.paginationP,
+          user: this.$route.params.uid
+        }
+      }).finally(() => {
+        this.loading = false;
+      });
+      const post = JSON.parse(JSON.stringify(data));
+      this.totalCountPost = post.length;
+      this.posts.push(...post);
     }
   }
 });
@@ -2584,7 +2728,7 @@ function _sfc_ssrRender$3(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   _push(ssrRenderComponent(_component_navbar, null, null, _parent));
   _push(`<div class="mt-16 h-3/4 w-full" style="${ssrRenderStyle({ "background": "#5fe18c", "background-repeat": "no-repeat", "background-size": "cover" })}">`);
   if (_ctx.user) {
-    _push(`<div class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"><div class="flex flex-col gap-4 w-full items-start px-2"><p class="pt-5">${ssrInterpolate(_ctx.user.name)}</p><p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal"> If you treat me like an option, I\u2019ll leave you like a choice. </p></div></div>`);
+    _push(`<div class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"><div class="flex flex-col gap-4 w-full items-start px-2"><p class="pt-5">${ssrInterpolate(_ctx.user.fullName)}</p><p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal"> If you treat me like an option, I\u2019ll leave you like a choice. </p></div></div>`);
   } else {
     _push(`<div class="flex items-center justify-center">`);
     _push(ssrRenderComponent(_component_game_loader, null, null, _parent));
@@ -2594,9 +2738,9 @@ function _sfc_ssrRender$3(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
   if (_ctx.$store.state.loggedIn && _ctx.user) {
     _push(`<div class="flex flex-row">`);
     _push(ssrRenderComponent(_component_user_avatar, {
-      img: _ctx.user.photoURL
+      img: _ctx.user.photo
     }, null, _parent));
-    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.user.name)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"> 1099 </div></div></div>`);
+    _push(`<div><p class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans">${ssrInterpolate(_ctx.user.fullName)}</p><div class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500">${ssrInterpolate(_ctx.user.totalLikes)}</div></div></div>`);
   } else {
     _push(`<!---->`);
   }
@@ -2634,15 +2778,10 @@ function _sfc_ssrRender$3(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     } else {
       _push(`<!---->`);
     }
-    if (_ctx.posts.length && !_ctx.loading && !_ctx.loadComplete) {
-      _push(`<div class="flex justify-center my-10"><button class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"><span>Load More</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 font-bold"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"></path></svg></button></div>`);
-    } else {
-      _push(`<!---->`);
-    }
     _push(`</div>`);
   } else {
     _push(`<div><!--[-->`);
-    ssrRenderList(_ctx.sortedArray(), (com, ix) => {
+    ssrRenderList(_ctx.comments, (com, ix) => {
       _push(ssrRenderComponent(_component_comment_tile, {
         readonly: false,
         key: ix,
@@ -2660,11 +2799,6 @@ function _sfc_ssrRender$3(_ctx, _push, _parent, _attrs, $props, $setup, $data, $
     }
     if (_ctx.loadComplete) {
       _push(`<div class="text-center pb-32 pt-10"><p class="text-lg text-gray-400 font-semibold">No More Posts</p></div>`);
-    } else {
-      _push(`<!---->`);
-    }
-    if (_ctx.posts.length && !_ctx.loading && !_ctx.loadComplete) {
-      _push(`<div class="flex justify-center my-10"><button class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"><span>Load More</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 font-bold"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"></path></svg></button></div>`);
     } else {
       _push(`<!---->`);
     }
@@ -2822,11 +2956,26 @@ router.beforeEach((to, from, next) => {
   next();
 });
 var index = "";
+const uri = "https://chewata.fun/graphql";
+createHttpLink({
+  uri,
+  credentials: "include"
+});
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  connectToDevTools: true,
+  credentials: "include",
+  uri
+});
+const apolloProvider = createApolloProvider({
+  defaultClient: apolloClient
+});
 library.add(faCoffee, faJs, faFacebook, faGoogle);
 setupFirebase();
 const app = createApp(App);
 app.component("fa", FontAwesomeIcon);
 app.use(router);
 app.use(createHead());
+app.use(apolloProvider);
 app.use(store);
 app.mount("#app");
