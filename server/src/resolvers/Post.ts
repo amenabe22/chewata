@@ -9,6 +9,21 @@ import { Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
 import { Likes } from "../entity/Likes";
 
 export class PostResolver {
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async deletePost(@Arg("post") post: string, @Ctx() { user }: MyContext) {
+    console.log(post, user.id);
+
+    const postObj = await AppDataSource.manager.find(Post, {
+      where: { postId: post, user: { id: user.id } },
+    });
+    if (!postObj.length) {
+      throw Error("post not found");
+    }
+    await AppDataSource.manager.delete(Post, postObj[0]?.id);
+    return true;
+  }
+
   @Query(() => [User])
   async getUsers() {
     const users = await AppDataSource.getRepository(User)
