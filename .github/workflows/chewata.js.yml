@@ -27,6 +27,7 @@ jobs:
           mkdir assets templates
           cd ../web
           npm i
+          npm run build 
           cd ..
           cp -r web/dist/assets/* server/dist/assets
           cp web/dist/assets/index.html server/dist/templates
