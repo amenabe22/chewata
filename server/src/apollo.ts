@@ -1,11 +1,7 @@
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/User";
-import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-} from "apollo-server-core";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { PostResolver } from "./resolvers/Post";
 import { CommentResolver } from "./resolvers/Comment";
 import { LikeResolver } from "./resolvers/Likes";
@@ -16,7 +12,7 @@ export const apolloServerSetup = async () => {
       resolvers: [UserResolver, PostResolver, CommentResolver, LikeResolver],
       validate: false,
     }),
-    context: ({ req, res, connection }) => {
+    context: ({ req, res, connection }: any) => {
       if (connection) {
         return { ...connection.context };
       } else {

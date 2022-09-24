@@ -4,7 +4,7 @@ import { User } from "../entity/User";
 import { Post } from "../entity/Post";
 import { Comment } from "../entity/Comment";
 
-export const calculateTotalPostVotes = async (post: Post, user: User) => {
+export const calculateTotalPostVotes = async (post: Post, _user: User) => {
   let total = 0;
   const likes = await AppDataSource.manager.find(Likes, {
     where: {
@@ -27,7 +27,7 @@ export const calculateTotalPostVotes = async (post: Post, user: User) => {
 
 export const calculateTotalCommentVotes = async (
   comment: Comment,
-  user: User
+  _user: User
 ) => {
   let total = 0;
   const likes = await AppDataSource.manager.find(Likes, {

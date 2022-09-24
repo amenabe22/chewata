@@ -1,8 +1,9 @@
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import express, { Express } from "express";
+import express from "express";
 import { apolloServerSetup } from "./apollo";
 import path from "path";
+// @ts-ignore
 import history from "connect-history-api-fallback";
 
 export async function startApolloServer() {
@@ -21,11 +22,11 @@ export async function startApolloServer() {
       // verbose: true
     })
   );
-  app.get("/", function (req, res) {
+  app.get("/", function (_req, res) {
     // save html files in the `views` folder...
     res.sendfile(__dirname + "/templates/index.html");
   });
-  app.get("/firebase-messaging-sw.js", (req, res) => {
+  app.get("/firebase-messaging-sw.js", (_req, res) => {
     res.sendFile(
       path.resolve(__dirname, "assets/", "firebase-messaging-sw.js")
     );

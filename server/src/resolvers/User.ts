@@ -27,7 +27,7 @@ export const signCookie = (user: User) => {
 export class UserResolver {
   @Mutation(() => UserResponse, { nullable: true })
   async socialMediaLoginGoogle(
-    @Ctx() { req, res }: MyContext,
+    @Ctx() { res }: MyContext,
     @Arg("input") token: string
   ) {
     const decodedToken = await auth().verifyIdToken(token);
