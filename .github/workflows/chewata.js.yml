@@ -25,7 +25,6 @@ jobs:
           npm i
           npm run build
           cd ..
-          pm2 stop 0
-          pm2 start 0
+          pm2 start server/dist/server.js --name chewata
           pm2 save
           sudo service nginx restart
