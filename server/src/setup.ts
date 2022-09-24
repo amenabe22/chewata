@@ -25,16 +25,15 @@ export async function startApolloServer() {
   // );
   const excluded = [
     "/",
-    "/login",
-    "/find-matches*",
-    "/@*",
-    "/unsubscribe",
-    "/country-exempt",
-    "/ca",
-    "/chat*",
+    "/user",
+    "/game/*",
+    "/game",
+    "/user/*",
+    "/notification",
+    "/privacy",
   ];
   app.get(excluded, function (_, res) {
-    const templatePath = join(__dirname, "/dist/index.html");
+    const templatePath = join(__dirname, "/assets/index.html");
     fs.readFile(templatePath, "utf-8", (err, content) => {
       if (err) {
         console.log("can't open file");
