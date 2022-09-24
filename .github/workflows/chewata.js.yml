@@ -24,7 +24,7 @@ jobs:
           cd server
           npm i
           npm run build
-          mkdir assets templates
+          mkdir dist/assets  dist/templates
           cd ../web
           npm i
           npm run build 
