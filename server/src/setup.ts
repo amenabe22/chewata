@@ -34,7 +34,7 @@ export async function startApolloServer() {
   ];
   app.get(excluded, function (_, res) {
     const templatePath = join(__dirname, "/templates/index.html");
-    console.log(templatePath,"path")
+    console.log(templatePath, "path");
     fs.readFile(templatePath, "utf-8", (err, content) => {
       if (err) {
         console.log("can't open file");
@@ -66,12 +66,20 @@ export async function startApolloServer() {
     path: "/graphql",
     cors: {
       credentials: true,
-      origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4000"],
+      origin: [
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:4000",
+        "https://chewata-staging.netlify.app/",
+      ],
     },
   });
   app.use(
     cors({
-      origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4000"],
+      origin: [
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:4000",
+        "https://chewata-staging.netlify.app/",
+      ],
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       preflightContinue: false,
     })
