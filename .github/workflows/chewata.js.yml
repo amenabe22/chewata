@@ -32,6 +32,12 @@ jobs:
           cp -r web/dist/assets/* server/dist/assets
           cp -r web/firebase-messaging-sw.js server/dist/assets
           cp web/dist/index.html server/dist/templates
+          touch .env
+          echo DB_PASS="#Hallelujah" >> .env
+          echo DB_NAME=chewata >> .env
+          echo DB_USER=admin >> .env
+          echo DB_HOST=localhost >> .env
+          echo DB_PORT=5432 >> .env
           pm2 start server/dist/server.js --name chewata
           pm2 restart all
           pm2 save
