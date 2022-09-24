@@ -9,10 +9,10 @@ import { Mutations, mutations } from "./mutations";
 import createPersistedState from "vuex-persistedstate";
 
 export const store = createStore<State>({
-  plugins:
-    process.env.NODE_ENV === "development"
-      ? [createLogger(), createPersistedState()]
-      : [createPersistedState()],
+  plugins: [createPersistedState()],
+  // process.env.NODE_ENV === "development"
+  //   ? [createLogger(), createPersistedState()]
+  //   : [createPersistedState()],
   state,
   mutations,
   // actions,

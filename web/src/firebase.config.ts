@@ -1,7 +1,6 @@
-import { initializeApp } from "firebase/app";
 import "firebase/firestore";
-import { onBackgroundMessage } from "firebase/messaging/sw";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import {
   collection,
   getDocs,
@@ -25,9 +24,12 @@ export const config = {
 
 const app = initializeApp(config);
 const db = getFirestore(app);
-const messaging = getMessaging(app);
+let messaging: any;
 
-export const setupFirebase = () => {
+export const setupFirebase = async () => {
+  if (await isSupported()) {
+    messaging = getMessaging(app);
+  }
   navigator.serviceWorker
     .register("/firebase-messaging-sw.js")
     .then((registration) => {
