@@ -33,7 +33,7 @@ export async function startApolloServer() {
     "/privacy",
   ];
   app.get(excluded, function (_, res) {
-    const templatePath = join(__dirname, "/assets/index.html");
+    const templatePath = join(__dirname, "/templates/index.html");
     console.log(templatePath,"path")
     fs.readFile(templatePath, "utf-8", (err, content) => {
       if (err) {
