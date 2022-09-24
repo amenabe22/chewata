@@ -34,6 +34,7 @@ export async function startApolloServer() {
   ];
   app.get(excluded, function (_, res) {
     const templatePath = join(__dirname, "/assets/index.html");
+    console.log(templatePath,"path")
     fs.readFile(templatePath, "utf-8", (err, content) => {
       if (err) {
         console.log("can't open file");
