@@ -24,13 +24,13 @@ jobs:
           cd server
           npm i
           npm run build
-          mkdir dist/assets  dist/templates
+          mkdir dist/assets dist/templates
           cd ../web
           npm i
           npm run build 
           cd ..
           cp -r web/dist/assets/* server/dist/assets
-          cp web/dist/assets/index.html server/dist/templates
+          cp web/dist/index.html server/dist/templates
           pm2 start server/dist/server.js --name chewata
           pm2 restart all
           pm2 save
