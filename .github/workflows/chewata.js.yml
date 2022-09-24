@@ -24,7 +24,12 @@ jobs:
           cd server
           npm i
           npm run build
+          mkdir assets templates
+          cd ../web
+          npm i
           cd ..
+          cp -r web/dist/assets/* server/dist/assets
+          cp web/dist/assets/index.html server/dist/templates
           pm2 start server/dist/server.js --name chewata
           pm2 restart all
           pm2 save
