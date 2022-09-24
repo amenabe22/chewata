@@ -1,8 +1,9 @@
+import fs from "fs";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import express from "express";
+import path, { join } from "path";
+import cookieParser from "cookie-parser";
 import { apolloServerSetup } from "./apollo";
-import path from "path";
 // @ts-ignore
 import history from "connect-history-api-fallback";
 
@@ -15,13 +16,37 @@ export async function startApolloServer() {
 
   const app = express();
   app.use(cookieParser());
-  app.use(
-    history({
-      index: "/templates/index.html",
-      // disableDotRule: true,
-      // verbose: true
-    })
-  );
+  // app.use(
+  //   history({
+  //     index: "/templates/index.html",
+  //     // disableDotRule: true,
+  //     // verbose: true
+  //   })
+  // );
+  const excluded = [
+    "/",
+    "/login",
+    "/find-matches*",
+    "/@*",
+    "/unsubscribe",
+    "/country-exempt",
+    "/ca",
+    "/chat*",
+  ];
+  app.get(excluded, function (_, res) {
+    const templatePath = join(__dirname, "/dist/index.html");
+    fs.readFile(templatePath, "utf-8", (err, content) => {
+      if (err) {
+        console.log("can't open file");
+      }
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+      return res.end(content);
+    });
+    // res.sendFile(join());
+  });
+  app.use("/", express.static(__dirname));
   app.get("/", function (_req, res) {
     // save html files in the `views` folder...
     res.sendfile(__dirname + "/templates/index.html");
@@ -31,7 +56,6 @@ export async function startApolloServer() {
       path.resolve(__dirname, "assets/", "firebase-messaging-sw.js")
     );
   });
-  app.use("/", express.static(__dirname));
   // app.use("/static", express.static("static")!);
   server.applyMiddleware({
     app,

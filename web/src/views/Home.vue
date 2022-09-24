@@ -281,7 +281,7 @@ import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import PostTile from "../components/PostTile.vue";
-import { getToken, getMessaging, onMessage } from "@firebase/messaging";
+import { getToken, getMessaging } from "@firebase/messaging";
 import { messaging } from "../firebase.config";
 import { ADD_POST, GET_POSTS } from "../queries";
 
@@ -330,22 +330,6 @@ export default defineComponent({
     lastSnapshot: null as any,
   }),
   async mounted() {
-    // const currentToken = await getToken(messaging, {
-    //   vapidKey:
-    //     "BBWn7Fkrmhrj0BkeKLiYcD5VhagQg4zlrW-QtpC0VpuPGiPVTK6nleZMNrmo4U0qUSgM48esnt_hAv1vOSivkUk",
-    // });
-    // console.log("TOKEN", currentToken);
-    console.log("Test");
-    // window.addEventListener("scroll", this.handleScroll);
-    try {
-      onMessage(messaging, (payload: any) => {
-        console.info("Message received : ", payload);
-        // console.log(payload.message);
-      });
-    } catch (e) {
-      console.error("Error : ", e);
-    }
-
     await this.loadFeed();
     // handle infintie scroll
     window.addEventListener("scroll", this.handleScroll);

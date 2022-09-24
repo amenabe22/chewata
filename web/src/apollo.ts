@@ -1,8 +1,5 @@
-import ApolloClientCore from "@apollo/client/core/core.cjs";
 import { createApolloProvider } from "@vue/apollo-option";
-
-const { ApolloClient, ApolloLink, createHttpLink, HttpLink, InMemoryCache } =
-  ApolloClientCore;
+import { ApolloClient, ApolloLink, createHttpLink, HttpLink, InMemoryCache } from "@apollo/client/core"
 
 const prod = true;
 const uri = prod
