@@ -10,6 +10,8 @@ import {
   where,
 } from "firebase/firestore";
 import { store } from "./store";
+import { apolloClient } from "./apollo";
+import { UPDATE_PUSH_TOKEN } from "./queries";
 
 export const config = {
   apiKey: "AIzaSyDQV6SMwJk91fFuZGewlyvJHNcxyYTUxqQ",
@@ -48,17 +50,12 @@ export const setupFirebase = async () => {
       if (currentToken) {
         console.log(currentToken);
         if (store.state.loggedIn) {
-          const uid = store.state.user.uid;
-          const userQry = query(
-            collection(db, "users"),
-            where("id", "==", uid)
-          );
-          const userSnap = await getDocs(userQry);
-          if (!userSnap.empty) {
-            updateDoc(userSnap.docs[0].ref, {
-              pushToken: currentToken,
-            });
-          }
+          apolloClient.mutate({
+            mutation: UPDATE_PUSH_TOKEN,
+            variables: {
+              token: currentToken,
+            },
+          });
         }
         // Send the token to your server and update the UI if necessary
         // ...

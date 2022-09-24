@@ -304,3 +304,9 @@ export const DELETE_POST = gql`
     deletePost(post: $post)
   }
 `;
+
+
+export const UPDATE_PUSH_TOKEN = gql`mutation updateUserPushToken($token: String!) {
+  updateUserPushToken(token: $token)
+}
+`

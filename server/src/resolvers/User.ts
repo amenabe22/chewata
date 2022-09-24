@@ -23,8 +23,22 @@ export const signCookie = (user: User) => {
     JWT_KEY!
   );
 };
+
 @Resolver(User)
 export class UserResolver {
+  // update user push notification token Id
+  @Mutation(() => Boolean, { nullable: true })
+  @UseMiddleware(isAuthed)
+  async updateUserPushToken(
+    @Arg("token") token: string,
+    @Ctx() { user }: MyContext
+  ) {
+    await AppDataSource.manager
+      .getRepository(User)
+      .update(user.id, { pushToken: token });
+    return true;
+  }
+
   @Mutation(() => UserResponse, { nullable: true })
   async socialMediaLoginGoogle(
     @Ctx() { res }: MyContext,
