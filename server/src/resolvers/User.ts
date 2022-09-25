@@ -75,7 +75,12 @@ export class UserResolver {
 
       return {
         user: user,
-        token: signedToken,
+        token: sign(
+          {
+            userId: user.id,
+          },
+          JWT_KEY!
+        ),
       };
     }
     const signedToken = signCookie(user);
