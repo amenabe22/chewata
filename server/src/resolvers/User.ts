@@ -26,6 +26,10 @@ export const signCookie = (user: User) => {
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => String)
+  async testCiCd() {
+    return "Sup there";
+  }
   // update user push notification token Id
   @Mutation(() => Boolean, { nullable: true })
   @UseMiddleware(isAuthed)
