@@ -218,6 +218,7 @@ import {
   SET_VOTE,
   DELETE_POST,
 } from "../queries";
+import { useMeta } from "vue-meta";
 
 export default defineComponent({
   components: {
@@ -232,6 +233,14 @@ export default defineComponent({
     Loader,
     Head,
     "vue-load-image": VueLoadImage,
+  },
+  metaInfo() {
+    const ptitle = this.post ? this.post.content : "";
+    return {
+      title: ptitle.substr(0, 15),
+      htmlAttrs: { lang: "en", amp: true },
+      meta: [{ vmid: "description", name: "description", content: "foo" }],
+    };
   },
   async mounted() {
     window.addEventListener("scroll", this.handleScroll);

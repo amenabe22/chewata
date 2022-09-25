@@ -10,6 +10,7 @@ import { createHead } from "@vueuse/head";
 import "./index.css";
 import { setupFirebase } from "./firebase.config";
 import { apolloProvider } from "./apollo";
+import { createMetaManager, plugin as metaPlugin } from 'vue-meta'
 
 library.add(faCoffee, faJs, faFacebook, faGoogle);
 
@@ -20,4 +21,6 @@ app.use(router);
 app.use(createHead());
 app.use(apolloProvider)
 app.use(store);
+app.use(createMetaManager())
+app.use(metaPlugin)
 app.mount("#app");

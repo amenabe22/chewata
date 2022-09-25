@@ -1,21 +1,5 @@
 <template>
   <div class="w-full">
-    <!-- <Head>
-      <title>Chewata | Fun | Freedom</title>
-      <meta name="description" content="This page is awesome" />
-
-
-      <meta property="og:title" content="Hello Title" />
-      <meta property="og:description" content="This page is awesome" />
-      <meta property="og:image" content="https://picsum.photos/1200/675" />
-
-
-      <meta name="twitter:title" content="Hello Title" />
-      <meta name="twitter:description" content="This page is awesome" />
-      <meta name="twitter:image" content="https://picsum.photos/1200/675" />
-      <meta name="twitter:card" content="summary_large_image" />
-    </Head> -->
-
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
@@ -197,31 +181,6 @@
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
         </div>
-        <!-- <div
-          class="flex justify-center my-10"
-          v-if="posts.length && !loadingFeed && !loadComplete"
-        >
-          <button
-            class="mb-44 flex gap-2 bg-green-200 px-4 py-3 ring-2 ring-green-400 hover:bg-green-300 hover:scale-110 delay-75 rounded-full"
-            @click="loadFeed"
-          >
-            <span>Load More</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-5 h-5 font-bold"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-              />
-            </svg>
-          </button>
-        </div> -->
         <div
           class="flex justify-center my-10"
           v-else-if="loadingFeed && posts.length"
@@ -261,25 +220,12 @@ import DialogModal from "../components/DialogModal.vue";
 import FeedTile from "../components/FeedTile.vue";
 import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
-import { db } from "../firebase.config";
-import {
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  limit,
-  setDoc,
-  startAfter,
-  limitToLast,
-  where,
-} from "firebase/firestore";
 import axios from "axios";
 import Loader from "../components/Loader.vue";
-import { uuid } from "vue-uuid";
 import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
+import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
 import { getToken, getMessaging } from "@firebase/messaging";
 import { messaging } from "../firebase.config";
@@ -297,7 +243,6 @@ export default defineComponent({
     AccountPopup,
     InfiniteScroll,
     PostTile,
-    // Head,
   },
   data: () => ({
     loadingFeed: false,
@@ -329,6 +274,12 @@ export default defineComponent({
     posts: [] as Array<any>,
     lastSnapshot: null as any,
   }),
+  metaInfo() {
+    return {
+      title: "Chewata Home",
+      htmlAttrs: { lang: "en", amp: true },
+    };
+  },
   async mounted() {
     await this.loadFeed();
     // handle infintie scroll

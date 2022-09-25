@@ -1,5 +1,10 @@
 <template>
   <main>
+    <metainfo>
+      <template v-slot:title="{ content }">{{
+        content ? `${content} | SITE_NAME` : `SITE_NAME`
+      }}</template>
+    </metainfo>
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
