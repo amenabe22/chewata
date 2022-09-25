@@ -13,6 +13,7 @@ export const GET_POSTS = gql`
         content
         cover
         likes
+        comments
         user {
           id
           fullName
@@ -127,6 +128,7 @@ export const ADD_POST = gql`
       content
       cover
       likes
+      comments
       user {
         id
         fullName

@@ -1,7 +1,11 @@
 <template>
   <div
-    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2"
+    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 relative"
   >
+    <!-- <div class="flex flex-row justify-end absolute top-0 right-0 w-full">
+
+      <div class="border-t border-gray-200 w-full">xx</div>
+    </div> -->
     <vote-clickers
       :readonly="readonly"
       :voted="voteData.voted"
@@ -32,6 +36,26 @@
           <loader></loader>
         </template>
       </vue-load-image>
+      <div class="flex items-end justify-end my-1">
+        <button class="">
+          <div class="flex">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-green-400 mt-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
+              />
+              <path
+                d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
+              />
+            </svg>
+            <p class="text-green-400 text-lg px-1">{{ post.comments }}</p>
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 </template>

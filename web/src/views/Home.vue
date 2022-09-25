@@ -165,26 +165,6 @@
             :post="post"
             @clicked="clicked(post)"
           ></post-tile>
-          <div class="mb-3 flex flex-row justify-end">
-            <button class="px-2 mx-2">
-              <div class="flex">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mt-3 text-green-400"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
-                  />
-                  <path
-                    d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
-                  />
-                </svg>
-                <p class="text-green-400 mt-1 text-lg pt-1 px-1">2</p>
-              </div>
-            </button>
-          </div>
           <div class="border-t border-gray-200 w-full"></div>
         </div>
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
