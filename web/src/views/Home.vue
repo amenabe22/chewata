@@ -278,6 +278,57 @@ export default defineComponent({
     return {
       title: "Chewata Home",
       htmlAttrs: { lang: "en", amp: true },
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: "Bringing vibrant communities together",
+        },
+        {
+          property: "og:type",
+          content: "website",
+        },
+        {
+          property: "og:url",
+          content: "https://chewata.fun/",
+        },
+        {
+          property: "og:title",
+          content: "Chewata - Vibrant Community",
+        },
+        {
+          property: "og:description",
+          content:
+            "An awesome place to talk connect and have fun without censorship",
+        },
+        {
+          property: "og:image",
+          content:
+            "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
+        },
+        {
+          property: "twitter:card",
+          content: "summary_large_image",
+        },
+        {
+          property: "twitter:url",
+          content: "https://chewata.fun/",
+        },
+        {
+          property: "twitter:title",
+          content: "Chewata - Vibrant Community",
+        },
+        {
+          property: "twitter:description",
+          content:
+            "An awesome place to talk connect and have fun without censorship",
+        },
+        {
+          property: "twitter:image",
+          content:
+            "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
+        },
+      ],
     };
   },
   async mounted() {
