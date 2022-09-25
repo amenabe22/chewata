@@ -6,6 +6,7 @@ import { AppDataSource } from "../data-source";
 import { paginator } from "../utils/paginator";
 import { MyContext, PostsPaginatedResponse, VoteType } from "../types";
 import { Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
+import { Comment } from "../entity/Comment";
 import { Likes } from "../entity/Likes";
 
 export class PostResolver {
@@ -72,7 +73,7 @@ export class PostResolver {
       user,
     });
     await AppDataSource.manager.save(post);
-    return post;
+    return { ...post, comments: this.commentsCount(post) };
   }
 
   @Query(() => Post)
@@ -98,7 +99,12 @@ export class PostResolver {
     }
     return { vote: like.value, voted: like.value != 0 };
   }
-
+  async commentsCount(e: Post): Promise<number> {
+    const posts = await AppDataSource.manager.count(Comment, {
+      where: { post: { id: e.id } },
+    });
+    return posts;
+  }
   @Query(() => PostsPaginatedResponse)
   async getPosts(
     @Arg("input") pagination: PaginationInputType
@@ -108,8 +114,14 @@ export class PostResolver {
       .leftJoinAndSelect("posts.user", "user")
       .orderBy("posts.createdAt", "DESC")
       .getMany();
-
-    let paginResponse = paginator(posts, pagination.page, pagination.pageSize);
+    const all_posts = posts.map(async (e) => {
+      return { ...e, comments: await this.commentsCount(e) };
+    });
+    let paginResponse = paginator(
+      all_posts,
+      pagination.page,
+      pagination.pageSize
+    );
     return paginResponse;
   }
 }

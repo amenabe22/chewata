@@ -39,6 +39,9 @@ export class Post {
   @Column({ nullable: true, default: 0 })
   likes: number;
 
+  @Field(() => Int, { nullable: true })
+  comments: number;
+
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, { onDelete: "CASCADE", eager: true })
   @JoinColumn({ name: "user" })
