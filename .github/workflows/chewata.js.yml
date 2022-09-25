@@ -44,3 +44,4 @@ jobs:
           pm2 list #check pm2 list
           pm2 start server/dist/server.js --watch -i max
           pm2 save
+          pm2 restart all
