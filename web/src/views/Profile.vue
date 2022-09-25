@@ -178,7 +178,7 @@ export default defineComponent({
         window.scrollY + window.innerHeight >=
         document.body.scrollHeight - 50
       ) {
-        console.log("there");
+        console.log("breakpoint");
         if (this.totalCountPost) {
           this.paginationP.page++;
           await this.fetchUserPosts();
