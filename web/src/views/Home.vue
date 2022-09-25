@@ -324,7 +324,7 @@ export default defineComponent({
     file: null as any,
     pagination: {
       page: 1,
-      pageSize: 3,
+      pageSize: 25,
     },
     posts: [] as Array<any>,
     lastSnapshot: null as any,
