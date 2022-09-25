@@ -148,10 +148,10 @@
           <p class="text-2xl font-semibold tracking-wider text-gray-500">
             Cheweta
           </p>
-          <div class="flex gap-3 text-gray-500">
+          <div class="flex gap-3 text-gray-500 text-lg font-light">
+            <a class="font-bold">All</a>
+            <a href="">Recent</a>
             <a href="">Top</a>
-            <a href="">Today</a>
-            <a href="">This Week</a>
           </div>
         </div>
 

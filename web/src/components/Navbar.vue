@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="h-20 fixed w-full top-0 z-50"
+    class="h-16 sm:h-20 fixed w-full top-0 z-50"
     style="box-sizing: content-box; background: #5fe18c"
   >
     <div
@@ -13,7 +13,7 @@
             height="120"
             viewBox="0 0 219 120"
             fill="none"
-            class="w-40 pb-8 px-3"
+            class="w-32 sm:w-40 pb-14 sm:pb-8 px-3"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -35,7 +35,7 @@
           </svg>
         </router-link>
       </div>
-      <div class="flex flex-row mx-2 pt-3">
+      <div class="flex flex-row mx-2 sm:pt-3">
         <div
           class="rounded-xl mb-4 mt-2 bg-transparent"
           v-if="$store.state.loggedIn"
@@ -43,7 +43,7 @@
           <router-link to="/notification" class="ont-black">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-8 w-8 m-2 text-white"
+              class="w-8 m-2 text-white"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
