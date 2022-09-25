@@ -178,11 +178,9 @@ export default defineComponent({
         window.scrollY + window.innerHeight >=
         document.body.scrollHeight - 50
       ) {
-        console.log("breakpoint");
         if (this.totalCountPost) {
           this.paginationP.page++;
           await this.fetchUserPosts();
-          console.log("load more");
         } else if (this.totalCountComments) {
           this.paginationC.page++;
           const totalCount = await this.loadComments();
