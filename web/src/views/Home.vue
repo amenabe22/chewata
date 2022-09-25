@@ -449,14 +449,14 @@ export default defineComponent({
     clicked(post: any) {
       this.$router.push({ path: `/game/${post.postId}` });
     },
-    async savePost(cover: any = null) {
+    async savePost() {
       await this.$apollo
         .mutate({
           mutation: ADD_POST,
           variables: {
             input: {
               content: this.content,
-              cover: cover,
+              cover: this.uploadedUrl,
             },
           },
         })
@@ -478,16 +478,19 @@ export default defineComponent({
         return;
       }
       this.loadingPost = true;
-      const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
-      const { data } = await axios({
-        url,
-        method: "POST",
-        data: this.formData,
-        onUploadProgress: (e) => {
-          this.progress = Math.round((e.loaded * 100) / e.total);
-        },
-      });
-      await this.savePost(data.secure_url);
+      if (this.file) {
+        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+        const { data } = await axios({
+          url,
+          method: "POST",
+          data: this.formData,
+          onUploadProgress: (e) => {
+            this.progress = Math.round((e.loaded * 100) / e.total);
+          },
+        });
+        this.uploadedUrl = data.secure_url;
+      }
+      await this.savePost();
     },
   },
 });
