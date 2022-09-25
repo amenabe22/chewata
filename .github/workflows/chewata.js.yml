@@ -38,7 +38,10 @@ jobs:
           echo DB_USER=admin >> .env
           echo DB_HOST=localhost >> .env
           echo DB_PORT=5432 >> .env
-          pm2 start server/dist/server.js --name chewata
-          pm2 restart all
+
+      - name: Run deployment
+        run: |
+          pm2 list #check pm2 list
+          pm2 start server/dist/server.js --watch -i max
           pm2 save
           sudo service nginx restart
