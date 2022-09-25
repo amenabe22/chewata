@@ -113,6 +113,7 @@ export class PostResolver {
       .createQueryBuilder("posts")
       .leftJoinAndSelect("posts.user", "user")
       .orderBy("posts.createdAt", "DESC")
+      .orderBy("posts.likes", "DESC")
       .getMany();
     const all_posts = posts.map(async (e) => {
       return { ...e, comments: await this.commentsCount(e) };
