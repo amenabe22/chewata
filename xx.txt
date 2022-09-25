@@ -1,4 +1,0 @@
-mane
-mane=12
-DB_PASS=#Hallelujah
-DB_PASS="#Hallelujah"
