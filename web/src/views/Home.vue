@@ -144,7 +144,16 @@
         </button>
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
-        <p class="text-2xl font-semibold tracking-wider text-gray-500">Feed</p>
+        <div class="flex flex-row justify-between">
+          <p class="text-2xl font-semibold tracking-wider text-gray-500">
+            Cheweta
+          </p>
+          <div class="flex gap-3 text-gray-500">
+            <a href="">Top</a>
+            <a href="">Today</a>
+            <a href="">This Week</a>
+          </div>
+        </div>
 
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
           <loader></loader>
@@ -161,7 +170,7 @@
               <div class="flex">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-7 w-7 text-green-500 mt-1"
+                  class="h-5 w-5 mt-3 text-green-400"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -172,7 +181,7 @@
                     d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
                   />
                 </svg>
-                <p class="text-green-500 mt-1 text-xl">2</p>
+                <p class="text-green-400 mt-1 text-lg pt-1 px-1">2</p>
               </div>
             </button>
           </div>
