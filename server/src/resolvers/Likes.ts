@@ -11,7 +11,6 @@ import {
   calculateTotalPostVotes,
   sendUpVoteNotification,
 } from "../utils/core";
-import { coreBullQ } from "../queue";
 
 @Resolver(Likes)
 export class LikeResolver {

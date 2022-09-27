@@ -4,8 +4,8 @@ import { Notifications } from "../entity/Notification";
 import { redisConig } from "../config.redis";
 import { sendPushNotification } from "../utils/core";
 
-const sleep = (t: any) =>
-  new Promise((resolve) => setTimeout(resolve, t * 1000));
+// const sleep = (t: any) =>
+//   new Promise((resolve) => setTimeout(resolve, t * 1000));
 
 export async function setupBullMQProcessor(queueName: string) {
   new Worker(queueName, async (job) => {

@@ -1,6 +1,5 @@
 import { Notifications } from "../entity/Notification";
-import { Query, Resolver, UseMiddleware } from "type-graphql";
-import { isAuthed } from "../decorators";
+import { Query, Resolver } from "type-graphql";
 import { AppDataSource } from "../data-source";
 
 @Resolver(Notifications)
