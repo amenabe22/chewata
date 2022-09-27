@@ -322,7 +322,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
         this.replyTarget = com;
-        this.content = `@${this.replyTarget.user.name}`;
+        this.content = `@${this.replyTarget.user.fullName}`;
         this.showCommentForm = true;
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
