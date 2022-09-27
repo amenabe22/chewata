@@ -103,7 +103,7 @@ export class CommentResolver {
       user,
     });
     await AppDataSource.manager.save(comment);
-    if (comment.user.id != user.id) {
+    if (post.user.id != user.id) {
       sendCommentNotification(user, comment, post, comment.commentId);
     }
     return comment;
