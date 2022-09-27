@@ -9,7 +9,9 @@ import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import {
   calculateTotalCommentVotes,
   calculateTotalPostVotes,
+  sendUpVoteNotification,
 } from "../utils/core";
+import { coreBullQ } from "../queue";
 
 @Resolver(Likes)
 export class LikeResolver {
@@ -41,12 +43,22 @@ export class LikeResolver {
           value: input.vote,
         });
         await AppDataSource.manager.save(likeObj);
+        if (input.vote == 1 && user.id != post.user.id) {
+          sendUpVoteNotification(user, post);
+        }
+
         await calculateTotalPostVotes(post, user);
       } else {
-        console.log(input.vote, "||", likes.value);
+        console.log("Vote", input.vote);
         await AppDataSource.manager.getRepository(Likes).update(likes.id, {
           value: input.vote,
         });
+        console.log(input.vote == 1, "||", likes.value);
+        if (input.vote == 1 && user.id != post.user.id) {
+          console.log("check");
+          sendUpVoteNotification(user, post);
+        }
+
         await calculateTotalPostVotes(post, user);
       }
     } else {

@@ -5,11 +5,18 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-co
 import { PostResolver } from "./resolvers/Post";
 import { CommentResolver } from "./resolvers/Comment";
 import { LikeResolver } from "./resolvers/Likes";
+import { NotificationsResolver } from "./resolvers/Notifications";
 
 export const apolloServerSetup = async () => {
   return new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PostResolver, CommentResolver, LikeResolver],
+      resolvers: [
+        UserResolver,
+        PostResolver,
+        CommentResolver,
+        LikeResolver,
+        NotificationsResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res, connection }: any) => {

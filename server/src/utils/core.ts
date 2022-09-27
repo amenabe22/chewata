@@ -3,6 +3,59 @@ import { Likes } from "../entity/Likes";
 import { User } from "../entity/User";
 import { Post } from "../entity/Post";
 import { Comment } from "../entity/Comment";
+import { coreBullQ } from "../queue";
+import axios from "axios";
+
+export const sendPushNotification = async (
+  target: string,
+  title: string,
+  body: string,
+  cover: string,
+  link: string
+) => {
+  const data = {
+    data: {
+      score: "5x1",
+      time: "15:10",
+    },
+    to: target,
+    direct_boot_ok: true,
+    notification: {
+      title: title,
+      image: cover,
+      body: body,
+      click_action: link,
+      icon: cover,
+    },
+  };
+  await axios
+    .post("https://fcm.googleapis.com/fcm/send", data, {
+      headers: {
+        Authorization:
+          "key=AAAA36Wz4rs:APA91bGd7X54GMxU_MDY69yMNnkWtJMeQUzxld1GX0UdU-oo4GzZyFXSFp-FA0X261zrDkimXtDCX3AJSG5jmLraYxoakdgDuBIerklk6Ku5_SXQ6t6eT7JDN4B44iKSbY6rch648Ak3",
+        "Content-Type": "application/json",
+      },
+    })
+    .then(({ data }) => {
+      console.log(data);
+    });
+};
+
+export const sendUpVoteNotification = (user: User, post: Post) => {
+  const annotation = `You got an upvote from ${user.fullName}`;
+  const link = `http://127.0.0.1:4000/game/${post.postId}`;
+  coreBullQ.add("Add", {
+    title: "Notification",
+    type: "notification",
+    user: user,
+    target: post.user,
+    cover: post.cover,
+    annotation: annotation,
+    notificationType: "vote",
+    data: post.cover,
+    link,
+  });
+};
 
 export const calculateTotalPostVotes = async (post: Post, _user: User) => {
   let total = 0;

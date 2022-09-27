@@ -32,6 +32,7 @@ import AccountPopup from "./components/AccountPopup.vue";
 import { Head, useHead } from "@vueuse/head";
 import { getAuth, signOut } from "@firebase/auth";
 import { LOGOUT, SOCIAL_LOGIN } from "./queries";
+import { getMessaging, onMessage } from "@firebase/messaging";
 
 export default defineComponent({
   components: { LoginPopup, Navbar, AccountPopup, Head },
@@ -39,9 +40,15 @@ export default defineComponent({
     loginPopup: false,
     profileClicked: false,
   }),
-  // setup() {
-  //   useMeta({ title: "Chewata" });
-  // },
+  mounted() {
+    const messaging = getMessaging();
+    onMessage(messaging, (payload: any) => {
+      console.log("Message received. ", payload);
+      // show notification here
+      alert(payload.notification.body);
+      // ...
+    });
+  },
   methods: {
     menuClicked() {
       if (this.$store.state.loggedIn) {

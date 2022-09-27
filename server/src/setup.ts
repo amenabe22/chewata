@@ -4,8 +4,12 @@ import express from "express";
 import path, { join } from "path";
 import cookieParser from "cookie-parser";
 import { apolloServerSetup } from "./apollo";
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { ExpressAdapter } from "@bull-board/express";
 // @ts-ignore
 import history from "connect-history-api-fallback";
+import { coreBullQ, setupBullMQProcessor } from "./queue";
 
 export async function startApolloServer() {
   // Same ApolloServer initialization as before
@@ -16,13 +20,17 @@ export async function startApolloServer() {
 
   const app = express();
   app.use(cookieParser());
-  // app.use(
-  //   history({
-  //     index: "/templates/index.html",
-  //     // disableDotRule: true,
-  //     // verbose: true
-  //   })
-  // );
+  await setupBullMQProcessor(coreBullQ.name);
+
+  const serverAdapter = new ExpressAdapter();
+  serverAdapter.setBasePath("/ui");
+
+  createBullBoard({
+    queues: [new BullMQAdapter(coreBullQ)],
+    serverAdapter,
+  });
+
+  app.use("/ui", serverAdapter.getRouter());
   const excluded = [
     "/",
     "/user",
@@ -47,6 +55,7 @@ export async function startApolloServer() {
     // res.sendFile(join());
   });
   app.use("/", express.static(__dirname));
+
   app.get("/", function (_req, res) {
     // save html files in the `views` folder...
     res.sendfile(__dirname + "/templates/index.html");
@@ -69,6 +78,7 @@ export async function startApolloServer() {
       origin: [
         "http://127.0.0.1:3000",
         "http://127.0.0.1:4000",
+        "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",
       ],
     },
@@ -78,6 +88,7 @@ export async function startApolloServer() {
       origin: [
         "http://127.0.0.1:3000",
         "http://127.0.0.1:4000",
+        "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",
       ],
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
