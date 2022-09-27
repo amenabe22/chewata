@@ -41,8 +41,8 @@ export class Notifications {
   })
   notificationType: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
   entityId: string;
 
   @Field(() => String)
