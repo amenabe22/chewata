@@ -3,6 +3,7 @@ import { Post } from "../entity/Post";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "../entity/User";
 import { Comment } from "../entity/Comment";
+import { Notifications } from "../entity/Notification";
 
 export type MyContext = {
   req: Request & { session: any };
@@ -67,4 +68,28 @@ export class CommentsPaginatedType {
 
   @Field(() => [Comment])
   data: Array<Comment>;
+}
+
+@ObjectType()
+export class PaginatedNotificationsResponse {
+  @Field()
+  page: number;
+
+  @Field()
+  per_page: number;
+
+  @Field(() => Number)
+  pre_page: number | null;
+
+  @Field(() => Number)
+  next_page: number | null;
+
+  @Field(() => Number)
+  total: number;
+
+  @Field(() => Number)
+  total_pages: number;
+
+  @Field(() => [Notifications])
+  data: Array<Notifications>;
 }

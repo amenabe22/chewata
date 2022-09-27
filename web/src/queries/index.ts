@@ -302,13 +302,40 @@ export const USER_PUBLIC_COMMENTS = gql`
 `;
 
 export const DELETE_POST = gql`
-  mutation deletePost($post: String!){
+  mutation deletePost($post: String!) {
     deletePost(post: $post)
   }
 `;
 
+export const UPDATE_PUSH_TOKEN = gql`
+  mutation updateUserPushToken($token: String!) {
+    updateUserPushToken(token: $token)
+  }
+`;
 
-export const UPDATE_PUSH_TOKEN = gql`mutation updateUserPushToken($token: String!) {
-  updateUserPushToken(token: $token)
-}
-`
+export const NOTIFICATIONS = gql`
+  query notifications($pagination: PaginationInputType!) {
+    notifications(pagination: $pagination) {
+      page
+      per_page
+      total
+      data {
+        id
+        notificationId
+        notificationType
+        message
+        user {
+          id
+          fullName
+        }
+        target {
+          id
+          fullName
+        }
+        cover
+        createdAt
+        link
+      }
+    }
+  }
+`;

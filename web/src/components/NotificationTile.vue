@@ -1,41 +1,23 @@
 <template>
   <div>
-    <div class="flex flex-row mt-4 hover:bg-gray-50">
-      <div class="md:mx-0 lg:mx-0 xl:mx-0 mx-5">
-        <div class="flex flex-row mt-2">
-          <user-avatar />
-          <div></div>
-          <div>
-            <p
-              class="
-                text-xl text-gray-500
-                px-2
-                pt-1
-                font-semibold
-                tracking-wider
-                font-sans
-              "
-            >
-              Samuna
-            </p>
-          </div>
+    <a
+      :href="item.link"
+      class="flex bg-gray-50 rounded-xl p-3 gap-3 hover:bg-green-50 cursor-pointer"
+    >
+      <img :src="item.cover" class="w-20 object-contain rounded-xl" alt="" />
+      <div class="flex flex-col">
+        <p class="font-semibold">{{ item.user.fullName }}</p>
+        <div>
+          <span class="bg-green-100 text-gray-500 w-full rounded-lg text-xs p-1"
+            >202</span
+          >
         </div>
-        <p
-          class="
-            py-2
-            mb-2
-            tracking-wide
-            text-gray-600 text-lg
-            xl:text-xl
-            lg:text-xl
-          "
-          v-text="text"
-        ></p>
-
-        <img v-if="pic" :src="pic" alt="" style="object-fit: contain" />
+        <p class="pt- text-gray-500">
+          {{ item.message }}
+        </p>
       </div>
-    </div>
-    <hr class="mt-2" />
+    </a>
+    <!-- <p>{{ item.message }}</p> -->
   </div>
 </template>
 <script lang="ts">
@@ -45,9 +27,6 @@ import UserAvatar from "./UserAvatar.vue";
 export default defineComponent({
   components: { UserAvatar },
   setup() {},
-  props: {
-    pic: String,
-    text: String,
-  },
+  props: ["item"],
 });
 </script>

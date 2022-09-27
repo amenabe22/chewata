@@ -19,14 +19,16 @@
       </div>
       <!-- start of notifs -->
       <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white">
-        <p class="text-2xl pt-5 font-semibold tracking-wider text-gray-500">
+        <p class="text-3xl pt-5 font-semibold tracking-wider text-gray-500">
           Notifications
         </p>
-        <notification-tile
-          v-for="(not, ix) in notifications"
-          :text="not.annotation"
-          :key="ix"
-        />
+        <div class="flex flex-col gap-3 pt-5">
+          <notification-tile
+            v-for="(not, ix) in notifications"
+            :item="not"
+            :key="ix"
+          />
+        </div>
       </div>
       <!-- end of notifs -->
       <!-- start of side ads -->
@@ -58,17 +60,31 @@
 import { defineComponent } from "vue";
 import Navbar from "../components/Navbar.vue";
 import NotificationTile from "../components/NotificationTile.vue";
+import { NOTIFICATIONS } from "../queries";
 
 export default defineComponent({
   components: { Navbar, NotificationTile },
-  setup() {},
-  data: () => ({
-    showModal: false,
-    notifications: [
-      {
-        annotation: "Amar ++'d your comment!",
+  async created() {
+    const {
+      data: {
+        notifications: { data },
       },
-    ] as any,
+    } = await this.$apollo.query({
+      query: NOTIFICATIONS,
+      fetchPolicy: "network-only",
+      variables: {
+        pagination: this.pagination,
+      },
+    });
+    this.notifications = data;
+  },
+  data: () => ({
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
+    showModal: false,
+    notifications: [] as any,
   }),
 });
 </script>
