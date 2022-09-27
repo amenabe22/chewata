@@ -51,7 +51,7 @@ export const sendCommentNotification = (
   post: Post,
   entityId: string
 ) => {
-  const link = `http://127.0.0.1:4000/game/${post.postId}`;
+  const link = `https://chewata.fun/game/${post.postId}`;
   coreBullQ.add("Add", {
     title: "Notification",
     type: "notification",
@@ -72,7 +72,7 @@ export const sendCommentUpVoteNotification = (
   entityId: string
 ) => {
   const annotation = `Your comment got an upvote from ${user.fullName}`;
-  const link = `http://127.0.0.1:4000/game/${comment.post.postId}`;
+  const link = `https://chewata.fun/game/${comment.post.postId}`;
   coreBullQ.add("Add", {
     title: "Notification",
     type: "notification",
@@ -92,7 +92,7 @@ export const sendUpVoteNotification = (
   entityId: string
 ) => {
   const annotation = `You got an upvote from ${user.fullName}`;
-  const link = `http://127.0.0.1:4000/game/${post.postId}`;
+  const link = `https://chewata.fun/game/${post.postId}`;
   coreBullQ.add("Add", {
     title: "Notification",
     type: "notification",
