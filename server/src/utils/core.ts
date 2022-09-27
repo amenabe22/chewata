@@ -13,6 +13,7 @@ export const sendPushNotification = async (
   cover: string,
   link: string
 ) => {
+  console.log("Push to " + target);
   const data = {
     data: {
       score: "5x1",
@@ -38,6 +39,9 @@ export const sendPushNotification = async (
     })
     .then(({ data }) => {
       console.log(data);
+    })
+    .catch((e) => {
+      console.log("Error sending push", e);
     });
 };
 
