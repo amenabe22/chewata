@@ -8,7 +8,7 @@
         'hover:bg-green-500': !color,
         'w-8 h-6 text-lg': !large,
         'bg-green-200 text-green-400': !vote && voted,
-        'bg-green-500 text-white': vote && voted,
+        'bg-green-400 text-white': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
         'w-10 h-8 text-xl p-1': large,
       }"
@@ -22,7 +22,7 @@
         'hover:bg-green-500': !color,
         'w-8 h-6 text-lg': !large,
         'bg-green-200 text-green-400': !vote && voted,
-        'bg-green-500 text-white': vote && voted,
+        'bg-green-300 text-white': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
         'w-10 h-8 text-xl p-1': large,
       }"
@@ -42,7 +42,7 @@
       :class="{
         'hover:bg-green-500': !color,
         'w-8 h-6 text-lg': !large,
-        'bg-green-500 text-green-200': !vote && voted,
+        'bg-green-400 text-green-200': !vote && voted,
         'bg-green-200 text-green-400': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
         'w-10 h-8 text-xl p-1': large,

@@ -57,7 +57,7 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full" style="background: #5fe18c">
+    <div class="h-1/2 w-full" style="background: #A5DEC4">
       <div
         class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >

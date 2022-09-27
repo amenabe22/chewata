@@ -18,17 +18,6 @@
         />
       </svg>
     </button>
-    <nav
-      class="bg-gradient-to-t from-green-400 to-tranparent text-white"
-      style="
-        position: fixed;
-        width: 100%;
-        height: 60px;
-        bottom: 1px;
-        color: #fff;
-        text-align: center;
-      "
-    ></nav>
   </div>
 </template>
 <script lang="ts">
