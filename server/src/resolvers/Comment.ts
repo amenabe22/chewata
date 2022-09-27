@@ -15,6 +15,7 @@ import { Post } from "../entity/Post";
 import { User } from "../entity/User";
 import { Likes } from "../entity/Likes";
 import { paginator } from "../utils/paginator";
+import { sendCommentNotification } from "../utils/core";
 
 @Resolver(Comment)
 export class CommentResolver {
@@ -88,12 +89,11 @@ export class CommentResolver {
         where: { userId: input.replyTo },
       });
       if (!target) {
-        // reply target not found
         throw Error("Invalid input");
       }
       replyTarget = target;
     }
-    console.log(post, "TF");
+
     const comment = AppDataSource.manager.create(Comment, {
       cover: input.cover,
       message: input.message,
@@ -103,6 +103,9 @@ export class CommentResolver {
       user,
     });
     await AppDataSource.manager.save(comment);
+    if (comment.user.id != user.id) {
+      sendCommentNotification(user, comment, post, comment.commentId);
+    }
     return comment;
   }
 

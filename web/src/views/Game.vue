@@ -67,7 +67,7 @@
             @upvoted="upvoted"
             @downvoted="downvoted"
             :vote="voteData.vote == 1 ?? false"
-            :large="true"
+            :large="!false"
             :count="post.likes"
             :dark="true"
             color="#92daac"

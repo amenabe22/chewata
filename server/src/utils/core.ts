@@ -45,6 +45,47 @@ export const sendPushNotification = async (
     });
 };
 
+export const sendCommentNotification = (
+  user: User,
+  comment: Comment,
+  post: Post,
+  entityId: string
+) => {
+  const link = `http://127.0.0.1:4000/game/${post.postId}`;
+  coreBullQ.add("Add", {
+    title: "Notification",
+    type: "notification",
+    user: user,
+    target: post.user,
+    cover: comment.cover ? comment.cover : post.cover,
+    annotation: `${user.fullName} Commented: ${comment.message}`,
+    notificationType: "comment",
+    data: post.cover,
+    link,
+    entityId,
+  });
+};
+
+export const sendCommentUpVoteNotification = (
+  user: User,
+  comment: Comment,
+  entityId: string
+) => {
+  const annotation = `Your comment got an upvote from ${user.fullName}`;
+  const link = `http://127.0.0.1:4000/game/${comment.post.postId}`;
+  coreBullQ.add("Add", {
+    title: "Notification",
+    type: "notification",
+    user: user,
+    target: comment.user,
+    cover: comment.cover ? comment.cover : user.photo,
+    annotation: annotation,
+    notificationType: "comment",
+    data: comment.cover ? comment.cover : user.photo,
+    link,
+    entityId,
+  });
+};
 export const sendUpVoteNotification = (
   user: User,
   post: Post,

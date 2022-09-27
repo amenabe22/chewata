@@ -9,6 +9,7 @@ import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import {
   calculateTotalCommentVotes,
   calculateTotalPostVotes,
+  sendCommentUpVoteNotification,
   sendUpVoteNotification,
 } from "../utils/core";
 
@@ -78,11 +79,19 @@ export class LikeResolver {
           value: input.vote,
         });
         await AppDataSource.manager.save(likeObj);
+        if (input.vote == 1 && user.id != comment.user.id) {
+          sendCommentUpVoteNotification(user, comment, comment.commentId);
+        }
+
         await calculateTotalCommentVotes(comment, user);
       } else {
         await AppDataSource.manager.getRepository(Likes).update(likes.id, {
           value: input.vote,
         });
+        if (input.vote == 1 && user.id != comment.user.id) {
+          sendCommentUpVoteNotification(user, comment, comment.commentId);
+        }
+
         await calculateTotalCommentVotes(comment, user);
       }
     }
