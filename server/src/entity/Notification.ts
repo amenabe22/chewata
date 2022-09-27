@@ -43,6 +43,10 @@ export class Notifications {
 
   @Field(() => String)
   @Column()
+  entityId: string;
+
+  @Field(() => String)
+  @Column()
   message: string;
 
   @Field(() => User, { nullable: true })

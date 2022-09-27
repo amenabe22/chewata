@@ -15,6 +15,7 @@ export async function setupBullMQProcessor(queueName: string) {
         Notifications,
         {
           where: {
+            entityId: job.data.entityId,
             user: {
               id: job.data.user.id,
             },
@@ -31,6 +32,7 @@ export async function setupBullMQProcessor(queueName: string) {
           message: job.data.annotation,
           cover: job.data.cover,
           link: job.data.link,
+          entityId: job.data.entityId,
           notificationType: job.data.notificationType,
         });
         console.log(job.data, "DATA");
@@ -43,8 +45,8 @@ export async function setupBullMQProcessor(queueName: string) {
         );
         console.log(job.data.user.pushToken, "Token");
         console.log("Reached worker", job.data.annotation);
-      }else{
-        console.log("Notification already sent")
+      } else {
+        console.log("Notification already sent");
       }
     }
     return { jobId: `This is the return value of job (${job.id})` };

@@ -45,7 +45,11 @@ export const sendPushNotification = async (
     });
 };
 
-export const sendUpVoteNotification = (user: User, post: Post) => {
+export const sendUpVoteNotification = (
+  user: User,
+  post: Post,
+  entityId: string
+) => {
   const annotation = `You got an upvote from ${user.fullName}`;
   const link = `http://127.0.0.1:4000/game/${post.postId}`;
   coreBullQ.add("Add", {
@@ -58,6 +62,7 @@ export const sendUpVoteNotification = (user: User, post: Post) => {
     notificationType: "vote",
     data: post.cover,
     link,
+    entityId,
   });
 };
 

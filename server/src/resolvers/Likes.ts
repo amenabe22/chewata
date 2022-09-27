@@ -43,7 +43,7 @@ export class LikeResolver {
         });
         await AppDataSource.manager.save(likeObj);
         if (input.vote == 1 && user.id != post.user.id) {
-          sendUpVoteNotification(user, post);
+          sendUpVoteNotification(user, post, post.postId);
         }
 
         await calculateTotalPostVotes(post, user);
@@ -55,7 +55,7 @@ export class LikeResolver {
         console.log(input.vote == 1, "||", likes.value);
         if (input.vote == 1 && user.id != post.user.id) {
           console.log("check");
-          sendUpVoteNotification(user, post);
+          sendUpVoteNotification(user, post, post.postId);
         }
 
         await calculateTotalPostVotes(post, user);
