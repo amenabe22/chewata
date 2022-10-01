@@ -24,7 +24,7 @@ export const apolloServerSetup = async () => {
     plugins: [
       ApolloServerPluginLandingPageGraphQLPlayground(),
       responseCachePlugin({
-        sessionId: ({ context }) => {
+        sessionId: () => {
           return "sessionId";
         },
       }),
