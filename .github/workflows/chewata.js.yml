@@ -43,6 +43,4 @@ jobs:
 
       - name: Run deployment
         run: |
-          pm2 start server/dist/server.js --watch -i max
-          pm2 save
           pm2 restart all
