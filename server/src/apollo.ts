@@ -23,17 +23,17 @@ export const apolloServerSetup = async () => {
     }),
     plugins: [
       ApolloServerPluginLandingPageGraphQLPlayground(),
-      responseCachePlugin({
-        sessionId: () => {
-          return "sessionId";
-        },
-      }),
-      ApolloServerPluginCacheControl({
-        // Cache everything for 1000 seconds.
-        defaultMaxAge: 1000,
-        // Don't send the `cache-control` response header.
-        calculateHttpHeaders: false,
-      }),
+      // responseCachePlugin({
+      //   sessionId: () => {
+      //     return "sessionId";
+      //   },
+      // }),
+      // ApolloServerPluginCacheControl({
+      //   // Cache everything for 1000 seconds.
+      //   defaultMaxAge: 1000,
+      //   // Don't send the `cache-control` response header.
+      //   calculateHttpHeaders: false,
+      // }),
     ],
     context: ({ req, res, connection }: any) => {
       if (connection) {
