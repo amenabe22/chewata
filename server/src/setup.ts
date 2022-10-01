@@ -10,6 +10,7 @@ import { ExpressAdapter } from "@bull-board/express";
 // @ts-ignore
 import history from "connect-history-api-fallback";
 import { coreBullQ, setupBullMQProcessor } from "./queue";
+import compression from "compression"
 
 export async function startApolloServer() {
   // Same ApolloServer initialization as before
@@ -21,6 +22,7 @@ export async function startApolloServer() {
   const app = express();
   app.use(cookieParser());
   await setupBullMQProcessor(coreBullQ.name);
+  app.use(compression());
 
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/ui");
