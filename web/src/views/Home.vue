@@ -172,7 +172,7 @@
             :post="post"
             @clicked="clicked(post)"
           ></post-tile>
-          <div class="border-t border-gray-200 w-full"></div>
+          <div class="border-t border-gray-100 w-full"></div>
         </div>
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>

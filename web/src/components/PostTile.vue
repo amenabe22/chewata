@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 relative"
+    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 mb-3"
   >
     <vote-clickers
       :readonly="readonly"
@@ -32,15 +32,15 @@
           <loader></loader>
         </template>
       </vue-load-image>
-      <div class="flex items-end justify-between my-1">
-        <div class="flex gap-2 mt-2">
+      <div class="flex items-end justify-between mb-1 mt-3">
+        <div class="flex gap-2">
           <button
             @click.stop="tagClicked(tag)"
             v-for="(tag, ix) in post.tags"
             :key="ix"
           >
             <span
-              class="border-2 rounded-lg py-1 px-2 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
+              class="border-2 rounded-lg p-1 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
               >{{ tag.tagName }}</span
             >
           </button>
