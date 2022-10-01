@@ -82,6 +82,13 @@
               v-model="content"
               placeholder="Your post starts here ..."
             ></textarea>
+            <input
+              type="text"
+              name=""
+              v-model="tags"
+              placeholder="Tags (Love, Joke, Story, Meme, etc.)"
+              class="mt-2 form-control rounded-b-none block w-full resize-none border-none px-3 text-xl py-1.5 font-normal bg-white bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+            />
             <div
               class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
             >
@@ -234,6 +241,7 @@ export default defineComponent({
     PostTile,
   },
   data: () => ({
+    tags: "",
     loadingFeed: false,
     showModal: false,
     loginPopup: false,
@@ -263,62 +271,60 @@ export default defineComponent({
     posts: [] as Array<any>,
     lastSnapshot: null as any,
   }),
-  metaInfo() {
-    return {
-      title: "Chewata Home",
-      htmlAttrs: { lang: "en", amp: true },
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: "Bringing vibrant communities together",
-        },
-        {
-          property: "og:type",
-          content: "website",
-        },
-        {
-          property: "og:url",
-          content: "https://chewata.fun/",
-        },
-        {
-          property: "og:title",
-          content: "Chewata - Vibrant Community",
-        },
-        {
-          property: "og:description",
-          content:
-            "An awesome place to talk connect and have fun without censorship",
-        },
-        {
-          property: "og:image",
-          content:
-            "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
-        },
-        {
-          property: "twitter:card",
-          content: "summary_large_image",
-        },
-        {
-          property: "twitter:url",
-          content: "https://chewata.fun/",
-        },
-        {
-          property: "twitter:title",
-          content: "Chewata - Vibrant Community",
-        },
-        {
-          property: "twitter:description",
-          content:
-            "An awesome place to talk connect and have fun without censorship",
-        },
-        {
-          property: "twitter:image",
-          content:
-            "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
-        },
-      ],
-    };
+  metaInfo: {
+    title: "Chewata Home",
+    htmlAttrs: { lang: "en" },
+    meta: [
+      {
+        vmid: "description",
+        name: "description",
+        content: "Bringing vibrant communities together",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        property: "og:url",
+        content: "https://chewata.fun/",
+      },
+      {
+        property: "og:title",
+        content: "Chewata - Vibrant Community",
+      },
+      {
+        property: "og:description",
+        content:
+          "An awesome place to talk connect and have fun without censorship",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
+      },
+      {
+        property: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        property: "twitter:url",
+        content: "https://chewata.fun/",
+      },
+      {
+        property: "twitter:title",
+        content: "Chewata - Vibrant Community",
+      },
+      {
+        property: "twitter:description",
+        content:
+          "An awesome place to talk connect and have fun without censorship",
+      },
+      {
+        property: "twitter:image",
+        content:
+          "https://res.cloudinary.com/dtabnh5py/image/upload/v1664052836/sblzopyfvapvij9adk9t.png",
+      },
+    ],
   },
   async mounted() {
     await this.loadFeed();
@@ -441,6 +447,7 @@ export default defineComponent({
       this.$router.push({ path: `/game/${post.postId}` });
     },
     async savePost() {
+      const tags = this.tags.split(",").map((e) => e.trim());
       await this.$apollo
         .mutate({
           mutation: ADD_POST,
@@ -448,6 +455,7 @@ export default defineComponent({
             input: {
               content: this.content,
               cover: this.uploadedUrl,
+              tags,
             },
           },
         })

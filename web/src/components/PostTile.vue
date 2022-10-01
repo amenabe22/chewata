@@ -2,10 +2,6 @@
   <div
     class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 relative"
   >
-    <!-- <div class="flex flex-row justify-end absolute top-0 right-0 w-full">
-
-      <div class="border-t border-gray-200 w-full">xx</div>
-    </div> -->
     <vote-clickers
       :readonly="readonly"
       :voted="voteData.voted"
@@ -36,7 +32,19 @@
           <loader></loader>
         </template>
       </vue-load-image>
-      <div class="flex items-end justify-end my-1">
+      <div class="flex items-end justify-between my-1">
+        <div class="flex gap-2">
+          <button
+            @click.stop="tagClicked(tag)"
+            v-for="(tag, ix) in post.tags"
+            :key="ix"
+          >
+            <span
+              class="border-2 rounded-lg px-1 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
+              >{{ tag.tagName }}</span
+            >
+          </button>
+        </div>
         <button class="">
           <div class="flex">
             <svg
@@ -160,6 +168,9 @@ export default defineComponent({
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
       }
+    },
+    tagClicked(tag: any) {
+      alert(tag.tagName);
     },
     async downvoted() {
       console.log("downvoted");

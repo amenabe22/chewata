@@ -8,6 +8,7 @@ import { MyContext, PostsPaginatedResponse, VoteType } from "../types";
 import { Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
 import { Comment } from "../entity/Comment";
 import { Likes } from "../entity/Likes";
+import { Tag } from "../entity/Core";
 
 export class PostResolver {
   @Mutation(() => Boolean)
@@ -73,7 +74,27 @@ export class PostResolver {
       user,
     });
     await AppDataSource.manager.save(post);
-    return { ...post, comments: this.commentsCount(post) };
+    if (input.tags) {
+      input.tags.forEach(async (tag) => {
+        await AppDataSource.manager.save(Tag, {
+          tagName: tag,
+          post,
+        });
+      });
+    }
+
+    // const newPost = await AppDataSource.manager.findOne(Post, {
+    //   where: { id: post.id },
+    //   loadEagerRelations: true,
+    //   relations: { tags: true },
+    // });
+    const newPost = await AppDataSource.manager
+      .createQueryBuilder(Post, "post")
+      .leftJoinAndSelect("post.tags", "tags")
+      .leftJoinAndSelect("post.user", "user")
+      .where("post.id = :id", { id: post.id })
+      .getOne();
+    return { ...newPost, comments: this.commentsCount(post) };
   }
 
   @Query(() => Post)
@@ -112,6 +133,7 @@ export class PostResolver {
     const posts = await AppDataSource.getRepository(Post)
       .createQueryBuilder("posts")
       .leftJoinAndSelect("posts.user", "user")
+      .leftJoinAndSelect("posts.tags", "tags")
       .orderBy("posts.createdAt", "DESC")
       .orderBy("posts.likes", "DESC")
       .getMany();

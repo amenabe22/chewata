@@ -8,7 +8,9 @@ import {
   ManyToOne,
   JoinColumn,
   Generated,
+  OneToMany,
 } from "typeorm";
+import { Tag } from "./Core";
 import { User } from "./User";
 
 @ObjectType()
@@ -41,6 +43,14 @@ export class Post {
 
   @Field(() => Int, { nullable: true })
   comments: number;
+
+  @Field(() => [Tag], { nullable: true })
+  @OneToMany(() => Tag, (tag) => tag.post, {
+    onDelete: "CASCADE",
+    eager: true,
+    nullable: true,
+  })
+  tags: [];
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, { onDelete: "CASCADE", eager: true })

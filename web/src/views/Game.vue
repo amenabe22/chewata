@@ -57,7 +57,7 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full" style="background: #A5DEC4">
+    <div class="h-1/2 w-full" style="background: #a5dec4">
       <div
         class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
@@ -218,7 +218,6 @@ import {
   SET_VOTE,
   DELETE_POST,
 } from "../queries";
-import { useMeta } from "vue-meta";
 
 export default defineComponent({
   components: {

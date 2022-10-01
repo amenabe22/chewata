@@ -7,6 +7,9 @@ export class PostInputType {
 
   @Field({ nullable: true })
   cover: string;
+
+  @Field(() => [String], { nullable: true })
+  tags: string[];
 }
 
 @InputType()

@@ -14,6 +14,10 @@ export const GET_POSTS = gql`
         cover
         likes
         comments
+        tags {
+          id
+          tagName
+        }
         user {
           id
           fullName
@@ -134,6 +138,10 @@ export const ADD_POST = gql`
         fullName
         photo
         totalLikes
+      }
+      tags {
+        id
+        tagName
       }
       createdAt
     }

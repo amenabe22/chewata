@@ -88,3 +88,15 @@ export default defineComponent({
   }),
 });
 </script>
+
+<style scoped>
+.amen-enter-from {
+  opacity: 0;
+}
+.amen-enter-to {
+  opacity: 1;
+}
+.amen-enter-active {
+  transition: opacity 2s ease;
+}
+</style>
