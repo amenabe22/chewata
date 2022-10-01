@@ -17,8 +17,11 @@
   "dependencies": {
     "@bull-board/express": "^4.3.1",
     "@types/bull-board": "^0.6.0",
+    "apollo-server-cache-memcached": "^3.3.1",
     "apollo-server-core": "^3.10.2",
     "apollo-server-express": "^3.10.2",
+    "apollo-server-plugin-response-cache": "^3.7.0",
+    "apollo-server-redis": "^0.1.0-rc.11",
     "axios": "^0.27.2",
     "bull": "^4.9.0",
     "bull-arena": "^3.29.5",

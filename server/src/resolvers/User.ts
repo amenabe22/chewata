@@ -68,7 +68,7 @@ export class UserResolver {
       });
       await AppDataSource.manager.save(user);
       const signedToken = signCookie(user);
-      res.cookie("JWT_COOKIE", signedToken, {
+      res.cookie("JWT", signedToken, {
         maxAge: 800 * 60 * 60 * 1000,
         httpOnly: true,
       });
