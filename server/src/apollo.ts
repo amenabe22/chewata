@@ -6,8 +6,8 @@ import { PostResolver } from "./resolvers/Post";
 import { CommentResolver } from "./resolvers/Comment";
 import { LikeResolver } from "./resolvers/Likes";
 import { NotificationsResolver } from "./resolvers/Notifications";
-import responseCachePlugin from "apollo-server-plugin-response-cache";
-import { ApolloServerPluginCacheControl } from "apollo-server-core";
+// import responseCachePlugin from "apollo-server-plugin-response-cache";
+// import { ApolloServerPluginCacheControl } from "apollo-server-core";
 
 export const apolloServerSetup = async () => {
   return new ApolloServer({
