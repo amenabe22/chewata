@@ -3,7 +3,7 @@ import { ApolloClient, ApolloLink, createHttpLink, HttpLink, InMemoryCache } fro
 
 const prod = true;
 const uri = prod
-  ? "https://chewata.fun/graphql"
+  ? "https://app.chewata.fun/graphql"
   : "http://127.0.0.1:4000/graphql/";
 
 export const httpLink = createHttpLink({
