@@ -35,7 +35,7 @@
         </template>
       </vue-load-image>
       <div class="flex items-end justify-between mb-1 mt-3">
-        <div class="flex gap-2">
+        <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
           <button
             @click.stop="tagClicked(tag)"
             v-for="(tag, ix) in post.tags"
