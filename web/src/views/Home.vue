@@ -35,7 +35,7 @@
             <button
               style="opacity: 12px"
               @click="animateForm"
-              class="bg-green-600 rounded-lg mt-5 w-full font-bold text-white p-16 xl:text-2xl lg:text-2xl text-xl"
+              class="rounded-lg mt-5 w-full font-semibold bg-amber-700 text-white p-16 xl:text-2xl lg:text-2xl text-xl"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
@@ -45,23 +45,25 @@
               </p>
             </button>
             <button
-              class="w-full bg-yellow-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="w-full bg-teal-700 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              @click="animateForm"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                Sport Rant
+                Question
               </p>
             </button>
             <button
-              class="w-full bg-red-600 rounded-lg mt-3 font-bold text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="w-full bg-cyan-600 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              @click="animateForm"
             >
               <p
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                Random Shit
+                Random
               </p>
             </button>
           </div>
@@ -87,7 +89,7 @@
               name=""
               v-model="tags"
               placeholder="Tags (Love, Joke, Story, Meme, etc.)"
-              class="mt-2 form-control rounded-b-none block w-full resize-none border-none px-3 text-xl py-1.5 font-normal bg-white bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+              class="mt-2 form-control rounded-b-none block w-full resize-none border-none px-3 text-lg py-1.5 font-normal bg-white bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
             />
             <div
               class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
@@ -107,13 +109,13 @@
             </div>
             <button
               @click="post"
-              class="bg-green-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="bg-green-700 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Post</p>
             </button>
             <button
               @click="cancelPost"
-              class="bg-red-600 rounded-lg mt-3 font-bold text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+              class="bg-red-400 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
             >
               <p>Cancel</p>
             </button>
@@ -124,15 +126,16 @@
     <div class="flex flex-row justify-center gap-10 mt-24">
       <div
         v-if="$store.state.loggedIn"
-        class="w-1/6 mt-2 hidden lg:block xl:block md:block"
+        class="w-1/5 mt-2 hidden lg:block xl:block md:block"
       >
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
+        <sidebar-items></sidebar-items>
+        <!-- <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
           Welcome to Chewata
         </h1>
         <p class="font-normal text-gray-400 text-lg">
           you can start posting by clicking the ball icon and just go around and
           like and enjoy.
-        </p>
+        </p> -->
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
@@ -185,23 +188,24 @@
         </div>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
-        <h1
-          class="text-gray-500 px-2 pb-4 text-2xl font-semibold tracking-widest"
-        >
-          Top Tags
-        </h1>
-        <div class="grid xl:grid-cols-4 lg:grid-cols-3 gap-1">
-          <div
-            v-for="x in 13"
-            :key="x"
-            class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75"
-          >
-            <p
-              class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75"
-            >
-              Soccer
-            </p>
+        <div class="flex flex-col">
+          <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
+            Top Tags
+          </h1>
+          <!-- <div class="grid xl:grid-cols-5 lg:grid-cols-3 gap-4 chips-wrapper"> -->
+          <div class="flex flex-row gap-2 flex-wrap flex-grow">
+            <div v-for="x in 13" :key="x">
+              <span
+                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75 chip-items"
+              >
+                Soccer
+              </span>
+            </div>
           </div>
+        </div>
+        <!-- suggested chewata -->
+        <div class="pt-12">
+          <suggested-games></suggested-games>
         </div>
       </div>
     </div>
@@ -226,6 +230,8 @@ import PostTile from "../components/PostTile.vue";
 import { getToken, getMessaging } from "@firebase/messaging";
 import { messaging } from "../firebase.config";
 import { ADD_POST, GET_POSTS } from "../queries";
+import SuggestedGames from "../components/SuggestedGames.vue";
+import SidebarItems from "../components/SidebarItems.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -239,6 +245,8 @@ export default defineComponent({
     AccountPopup,
     InfiniteScroll,
     PostTile,
+    SuggestedGames,
+    SidebarItems,
   },
   data: () => ({
     tags: "",
@@ -536,14 +544,13 @@ export default defineComponent({
   float: right;
 }
 
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
+.chips-wrapper {
+}
+.chip-items {
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 3px;
+}
 
 .modal-enter-from {
   opacity: 0;

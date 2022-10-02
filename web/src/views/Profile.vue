@@ -8,7 +8,7 @@
     <div
       class="mt-16 h-3/4 w-full"
       style="
-        background: #5fe18c
+        background: #A5DEC4
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -26,25 +26,12 @@
       </div>
     </div>
     <div class="grid grid-cols-7 xl:mx-52 lg:mx-0 m-3">
-      <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
-        <div class="flex flex-row" v-if="$store.state.loggedIn">
-          <user-avatar :img="$store.state.user.photo" />
-          <div>
-            <p
-              class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
-            >
-              {{ $store.state.user.fullName }}
-            </p>
-            <div
-              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
-            >
-              1099
-            </div>
-          </div>
-        </div>
+      <div
+        class="w-full mt-2 hidden lg:block xl:block md:block col-span-2"
+        v-if="!$store.state.loggedIn"
+      >
         <button
           class="rounded-xl tracking-widest border-2 mt-10 p-2"
-          v-if="!$store.state.loggedIn"
           @click="showModal = true"
         >
           Sign Up

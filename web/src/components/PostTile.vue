@@ -11,9 +11,11 @@
       :large="false"
       :count="post.likes"
       color="#92daac"
-      class="mt-5"
     />
-    <div class="mx-3 pt-2 cursor-pointer w-full" @click="$emit('clicked')">
+    <div
+      class="mx-3 pb-2 cursor-pointer w-full relative"
+      @click="$emit('clicked')"
+    >
       <p
         class="px-2 tracking-wide text-gray-600 text-lg"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
@@ -45,7 +47,7 @@
             >
           </button>
         </div>
-        <button class="">
+        <button>
           <div class="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -171,6 +173,9 @@ export default defineComponent({
     },
     tagClicked(tag: any) {
       alert(tag.tagName);
+    },
+    sharePost() {
+      alert("Share Post");
     },
     async downvoted() {
       console.log("downvoted");

@@ -6,7 +6,7 @@ import {
   RouteLocationNormalized,
   createWebHistory,
 } from "vue-router";
-
+import Post from "../views/Post.vue"
 import Home from "../views/Home.vue";
 import Game from "../views/Game.vue";
 import Profile from "../views/Profile.vue";
@@ -19,6 +19,11 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     name: "Landing",
     component: Home,
+  },
+  {
+    path: "/post",
+    name: "Post",
+    component: Post,
   },
   {
     path: "/game/:id",

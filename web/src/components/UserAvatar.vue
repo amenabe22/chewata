@@ -1,7 +1,8 @@
 <template>
   <router-link class="relative inline-block z-0" :to="path ?? '/user'">
     <img
-      class="inline-block object-cover w-11 h-11 rounded-full"
+      class="inline-block object-cover rounded-full"
+      :class="{ 'w-14': large, 'w-11': !large }"
       :src="img"
       alt="Profile image"
     />
@@ -11,6 +12,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: ["img", "user", "path"],
+  props: ["img", "user", "path", "large"],
 });
 </script>

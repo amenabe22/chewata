@@ -1,7 +1,31 @@
 <template>
   <div>
     <div class="flex flex-row justify-center gap-10 mt-24">
-      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block">
+      <div
+        class="w-1/5 mt-2 hidden lg:block xl:block md:block"
+        v-if="$store.state.loggedIn"
+      >
+        <!-- profile link section -->
+        <div class="w-full text-gray-500">
+          <p class="text-2xl">Profile</p>
+          <div class="flex gap-2 pt-2">
+            <user-avatar :large="true" :img="$store.state.user.photo" />
+            <router-link to="/user">
+              <div class="flex flex-col">
+                <p class="font-semibold text-lg hover:text-green-800">
+                  {{ $store.state.user.fullName }}
+                </p>
+                <div>
+                  <span class="bg-green-700 px-1 rounded-md text-white"
+                    >123</span
+                  >
+                </div>
+              </div>
+            </router-link>
+          </div>
+        </div>
+      </div>
+      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
           Join DevRant
         </h1>
@@ -60,10 +84,11 @@
 import { defineComponent } from "vue";
 import Navbar from "../components/Navbar.vue";
 import NotificationTile from "../components/NotificationTile.vue";
+import UserAvatar from "../components/UserAvatar.vue";
 import { NOTIFICATIONS } from "../queries";
 
 export default defineComponent({
-  components: { Navbar, NotificationTile },
+  components: { Navbar, NotificationTile, UserAvatar },
   async created() {
     const {
       data: {
