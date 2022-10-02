@@ -10,7 +10,7 @@ import { ExpressAdapter } from "@bull-board/express";
 // @ts-ignore
 import history from "connect-history-api-fallback";
 import { coreBullQ, setupBullMQProcessor } from "./queue";
-import compression from "compression"
+import compression from "compression";
 
 export async function startApolloServer() {
   // Same ApolloServer initialization as before
@@ -36,6 +36,8 @@ export async function startApolloServer() {
   const excluded = [
     "/",
     "/user",
+    "/post",
+    "/new",
     "/game/*",
     "/game",
     "/user/*",
