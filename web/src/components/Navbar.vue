@@ -1,7 +1,7 @@
 <template>
   <nav
     class="h-16 sm:h-20 fixed w-full top-0 z-50"
-    style="box-sizing: content-box; background: #A5DEC4"
+    style="box-sizing: content-box; background: #a5dec4"
   >
     <div
       class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between sm:mx-10"
@@ -33,7 +33,27 @@
           </svg>
         </router-link>
       </div>
-      <div class="flex flex-row mx-2 sm:pt-3">
+      <div class="flex flex-row sm:pt-2">
+        <button
+          v-if="$store.state.loggedIn"
+          @click="$router.push('/post')"
+          type="button"
+          class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-full border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200 hidden"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-8"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="text-sm">አዲስ ጨዋታ</span>
+        </button>
         <div
           class="rounded-xl mb-4 mt-2 bg-transparent"
           v-if="$store.state.loggedIn"
@@ -54,9 +74,10 @@
         <div v-else>
           <button
             @click="$emit('clickedLogin')"
-            class="p- bg-white rounded-xl mx-5 mt-3 py-2 px-3 ring-2 hover:bg-green-100 ring-green-500"
+            type="button"
+            class="py-2.5 mt-2 px-5 mr-2 mb-2 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-lg border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200"
           >
-            Login
+            Log In
           </button>
         </div>
         <div

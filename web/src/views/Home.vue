@@ -208,7 +208,11 @@
         </div>
       </div>
     </div>
-    <ground-meda @ballClicked="menuClicked" v-if="!loadingFeed" />
+    <ground-meda
+      @ballClicked="menuClicked"
+      v-if="!loadingFeed"
+      class="block sm:hidden"
+    />
   </div>
 </template>
 
@@ -372,7 +376,7 @@ export default defineComponent({
     },
     menuClicked() {
       if (this.$store.state.loggedIn) {
-        this.$store.commit("SET_MAIN_POP", true);
+        this.$router.push("/post");
       } else {
         this.$store.commit("SET_LOGIN_POP", true);
       }
