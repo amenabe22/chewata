@@ -57,7 +57,7 @@
                 ></path>
               </svg>
 
-              <span class="px-2">Upload Image</span>
+              <div class="px-2">Upload Image</div>
             </button>
             <p class="pt-2">{{ filename }}</p>
           </div>
@@ -91,11 +91,11 @@
           'text-gray-400': !tg.selected,
         }"
       >
-        <span
+        <div
           class="hover:border-green-600 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
         >
           {{ tg.tagName }}
-        </span>
+        </div>
       </button>
     </div>
     <p class="ml-auto text-xs text-gray-500">
@@ -118,11 +118,11 @@
             'text-gray-400': !tg.selected,
           }"
         >
-          <span
+          <div
             class="hover:border-green-600 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
           >
             {{ tg.tagName }}
-          </span>
+          </div>
         </button>
       </div>
     </div>

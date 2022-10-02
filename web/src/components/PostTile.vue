@@ -41,10 +41,11 @@
             v-for="(tag, ix) in post.tags"
             :key="ix"
           >
-            <span
+            <div
               class="border-2 rounded-lg p-1 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
-              >{{ tag.tagName }}</span
             >
+              {{ tag.tagName }}
+            </div>
           </button>
         </div>
         <button>
