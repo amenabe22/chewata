@@ -21,9 +21,13 @@
       <div class="text-gray-500">
         <p class="text-2xl">Notifs</p>
         <div class="pt-5 flex flex-col divide-y gap-3">
-          <div class="flex gap-3 pt-2" v-for="x in 5" :key="x">
-            <user-avatar :large="true" :img="$store.state.user.photo"></user-avatar>
-            <p><b>Jack Harlow</b> Liked your comment !</p>
+          <div
+            class="flex gap-2 pt-2"
+            v-for="(nt, ix) in notifications"
+            :key="ix"
+          >
+            <user-avatar :large="true" :img="nt.user.photo"></user-avatar>
+            <p class="text-lg">{{ nt.message }}</p>
           </div>
         </div>
       </div>
@@ -32,11 +36,29 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import { LATEST_NOTIFICATIONS } from "../queries";
 import UserAvatar from "./UserAvatar.vue";
 
 export default defineComponent({
   components: {
     UserAvatar,
+  },
+  data: () => ({
+    notifications: [] as any,
+  }),
+  async created() {
+    await this.loadNotifications();
+  },
+  methods: {
+    async loadNotifications() {
+      const {
+        data: { latestNotifications },
+      } = await this.$apollo.query({
+        query: LATEST_NOTIFICATIONS,
+        fetchPolicy: "network-only",
+      });
+      this.notifications = latestNotifications;
+    },
   },
 });
 </script>

@@ -192,13 +192,12 @@
           <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
             Top Tags
           </h1>
-          <!-- <div class="grid xl:grid-cols-5 lg:grid-cols-3 gap-4 chips-wrapper"> -->
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
-            <div v-for="x in 13" :key="x">
+            <div v-for="(tg, ix) in topTags" :key="ix">
               <span
-                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
-                Soccer
+                {{ tg.tagName }}
               </span>
             </div>
           </div>
@@ -229,7 +228,7 @@ import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
 import { getToken, getMessaging } from "@firebase/messaging";
 import { messaging } from "../firebase.config";
-import { ADD_POST, GET_POSTS } from "../queries";
+import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
 
@@ -250,6 +249,7 @@ export default defineComponent({
   },
   data: () => ({
     tags: "",
+    topTags: [] as Array<any>,
     loadingFeed: false,
     showModal: false,
     loginPopup: false,
@@ -336,6 +336,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadFeed();
+    await this.loadTags();
     // handle infintie scroll
     window.addEventListener("scroll", this.handleScroll);
   },
@@ -343,6 +344,15 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    async loadTags() {
+      const {
+        data: { topTags },
+      } = await this.$apollo.query({
+        query: TOP_TAGS,
+        fetchPolicy: "network-only",
+      });
+      this.topTags = topTags;
+    },
     prepareFormData() {
       this.formData = new FormData();
       this.formData.append("upload_preset", this.preset);

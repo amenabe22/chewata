@@ -8,6 +8,23 @@ import { PaginationInputType } from "../inputs";
 
 @Resolver(Notifications)
 export class NotificationsResolver {
+  @Query(() => [Notifications])
+  @UseMiddleware(isAuthed)
+  async latestNotifications(@Ctx() { user }: MyContext) {
+    const count = 5;
+    const notifications = await AppDataSource.manager.find(Notifications, {
+      where: {
+        target: {
+          id: user.id,
+        },
+      },
+      order: {
+        createdAt: "DESC",
+      },
+    });
+    return notifications.slice(0, count);
+  }
+
   @Query(() => PaginatedNotificationsResponse)
   @UseMiddleware(isAuthed)
   async notifications(

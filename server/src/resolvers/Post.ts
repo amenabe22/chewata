@@ -48,6 +48,12 @@ export class PostResolver {
     return paginResponse;
   }
 
+  @Query(() => [Tag])
+  async topTags() {
+    const topTags = await AppDataSource.manager.find(Tag);
+    return topTags.slice(0, 20);
+  }
+
   @Query(() => PostsPaginatedResponse)
   @UseMiddleware(isAuthed)
   async userPosts(
@@ -83,11 +89,6 @@ export class PostResolver {
       });
     }
 
-    // const newPost = await AppDataSource.manager.findOne(Post, {
-    //   where: { id: post.id },
-    //   loadEagerRelations: true,
-    //   relations: { tags: true },
-    // });
     const newPost = await AppDataSource.manager
       .createQueryBuilder(Post, "post")
       .leftJoinAndSelect("post.tags", "tags")

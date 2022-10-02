@@ -347,3 +347,35 @@ export const NOTIFICATIONS = gql`
     }
   }
 `;
+
+export const LATEST_NOTIFICATIONS = gql`
+  {
+    latestNotifications {
+      id
+      notificationId
+      notificationType
+      message
+      user {
+        id
+        fullName
+        photo
+      }
+      target {
+        id
+        fullName
+      }
+      cover
+      createdAt
+      link
+    }
+  }
+`;
+
+
+export const TOP_TAGS = gql`query {
+  topTags {
+    id
+    tagName
+  }
+}
+`

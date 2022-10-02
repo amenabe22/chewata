@@ -43,7 +43,7 @@
       </div>
       <!-- start of notifs -->
       <div class="md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white">
-        <p class="text-3xl pt-5 font-semibold tracking-wider text-gray-500">
+        <p class="text-3xl sm:pt-5 font-semibold tracking-wider text-gray-500">
           Notifications
         </p>
         <div class="flex flex-col gap-3 pt-5">
@@ -57,22 +57,18 @@
       <!-- end of notifs -->
       <!-- start of side ads -->
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
-        <h1
-          class="text-gray-500 px-2 pb-4 text-2xl font-semibold tracking-widest"
-        >
-          Top Tags
-        </h1>
-        <div class="grid xl:grid-cols-4 lg:grid-cols-3 gap-1">
-          <div
-            v-for="x in 13"
-            :key="x"
-            class="rounded-md border-2 px-1 hover:border-green-500 duration-300 transition ease-in-out delay-75"
-          >
-            <p
-              class="text-gray-500 text-center text-sm hover:text-green-600 cursor-pointer duration-300 transition ease-in-out delay-75"
-            >
-              Soccer
-            </p>
+        <div class="flex flex-col">
+          <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
+            Top Tags
+          </h1>
+          <div class="flex flex-row gap-2 flex-wrap flex-grow">
+            <div v-for="(tg, ix) in topTags" :key="ix">
+              <span
+                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+              >
+                {{ tg.tagName }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -85,7 +81,7 @@ import { defineComponent } from "vue";
 import Navbar from "../components/Navbar.vue";
 import NotificationTile from "../components/NotificationTile.vue";
 import UserAvatar from "../components/UserAvatar.vue";
-import { NOTIFICATIONS } from "../queries";
+import { NOTIFICATIONS, TOP_TAGS } from "../queries";
 
 export default defineComponent({
   components: { Navbar, NotificationTile, UserAvatar },
@@ -102,15 +98,28 @@ export default defineComponent({
       },
     });
     this.notifications = data;
+    await this.loadTags();
   },
   data: () => ({
     pagination: {
       page: 1,
       pageSize: 10,
     },
+    topTags: [] as any,
     showModal: false,
     notifications: [] as any,
   }),
+  methods: {
+    async loadTags() {
+      const {
+        data: { topTags },
+      } = await this.$apollo.query({
+        query: TOP_TAGS,
+        fetchPolicy: "network-only",
+      });
+      this.topTags = topTags;
+    },
+  },
 });
 </script>
 
@@ -123,5 +132,10 @@ export default defineComponent({
 }
 .amen-enter-active {
   transition: opacity 2s ease;
+}
+.chip-items {
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 3px;
 }
 </style>
