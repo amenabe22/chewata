@@ -5,7 +5,7 @@
         <p class="text-4xl xl:text-5xl lg:text-5xl text-white">More</p>
       </router-link>
       <button
-        @click="$emit('showpost')"
+        @click="$router.push('/post')"
         style="opacity: 12px"
         class="rounded-lg w-full font-semibold hover:bg-green-700 text-white p-3 xl:text-xl lg:text-md text-xl"
       >

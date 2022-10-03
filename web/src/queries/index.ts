@@ -87,6 +87,7 @@ export const SOCIAL_LOGIN = gql`
         userId
         fullName
         email
+        bio
         photo
         socialIdtoken
         totalLikes
@@ -377,5 +378,15 @@ export const TOP_TAGS = gql`query {
     id
     tagName
   }
+}
+`
+
+export const UPDATE_PROFILE = gql`mutation updateProfileBasic($name: String!, $bio: String) {
+  updateProfileBasic(name: $name, bio: $bio)
+}
+`
+
+export const IS_DUPLICATE = gql`mutation isNameDuplicate($name: String!) {
+  isNameDuplicate(name: $name)
 }
 `

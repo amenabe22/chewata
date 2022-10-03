@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-row justify-between">
-      <p class="text-2xl tracking-wider text-gray-500">📝 New Chewata</p>
+      <p class="text-2xl tracking-wider text-gray-700 font-semibold">📝 New Chewata</p>
       <loader v-if="loadingPost" :dark="true"></loader>
 
       <button
@@ -15,12 +15,12 @@
     </div>
     <div class="mt-3">
       <div class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200">
-        <div class="py-2 px-4 rounded-t-lg bg-green-50">
+        <div class="py-2 px-4 rounded-t-lg bg-gray-50">
           <textarea
             id="comment"
             rows="8"
             v-model="content"
-            class="px-0 w-full text-xl text-gray-700 bg-green-50 border-0 focus:ring-0 outline-none"
+            class="px-0 w-full text-xl text-gray-700 bg-gray-50 border-0 focus:ring-0 outline-none"
             placeholder="New chewata ..."
             required
           ></textarea>
@@ -67,7 +67,7 @@
         <input
           v-model="tagItem"
           type="text"
-          id="first_name"
+          id="first_name" @keypress.enter="addNewItem"
           class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
           placeholder="Type in Tags"
         />

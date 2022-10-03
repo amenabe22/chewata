@@ -14,6 +14,7 @@ import {
 import { JWT_KEY } from "../constants";
 import { isAuthed } from "../decorators";
 import { MyContext } from "../types";
+import { Not } from "typeorm";
 
 export const signCookie = (user: User) => {
   return sign(
@@ -42,7 +43,33 @@ export class UserResolver {
       .update(user.id, { pushToken: token });
     return true;
   }
+  // update user push notification token Id
 
+  @Mutation(() => Boolean, { nullable: true })
+  @UseMiddleware(isAuthed)
+  async isNameDuplicate(@Arg("name") name: string, @Ctx() { user }: MyContext) {
+    const usernames = await AppDataSource.manager.find(User, {
+      where: {
+        fullName: name,
+        id: Not(user.id),
+      },
+    });
+    return usernames.length;
+  }
+
+  @Mutation(() => Boolean, { nullable: true })
+  @UseMiddleware(isAuthed)
+  async updateProfileBasic(
+    @Arg("bio", { nullable: true }) bio: string,
+    @Arg("name") name: string,
+    @Ctx() { user }: MyContext
+  ) {
+    await AppDataSource.manager.update(User, user.id, {
+      bio: bio ?? user.bio,
+      fullName: name ?? user.fullName,
+    });
+    return true;
+  }
   @Mutation(() => UserResponse, { nullable: true })
   async socialMediaLoginGoogle(
     @Ctx() { res }: MyContext,

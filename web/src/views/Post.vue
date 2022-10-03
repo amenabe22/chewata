@@ -64,6 +64,8 @@ export default defineComponent({
   data: () => ({ topTags: [] as Array<any> }),
   async created() {
     await this.loadTags();
+    this.$store.commit("SET_PROFILE_POP", false)
+    this.$store.commit("SET_MAIN_POP", false)
   },
   methods: {
     async loadTags() {

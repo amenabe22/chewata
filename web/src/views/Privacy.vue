@@ -4,10 +4,12 @@
       <h1>Privacy Policy for Chewata</h1>
 
       <p>
-        At chewata, accessible from https://chewata.fun/, one of our main
-        priorities is the privacy of our visitors. This Privacy Policy document
-        contains types of information that is collected and recorded by chewata
-        and how we use it.
+        At chewata, accessible from
+        <a href=" https://chewata.fun/" target="_blank" class="text-green-700">
+          https://chewata.fun/</a
+        >, one of our main priorities is the privacy of our visitors. This
+        Privacy Policy document contains types of information that is collected
+        and recorded by chewata and how we use it.
       </p>
 
       <p>

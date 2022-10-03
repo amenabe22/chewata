@@ -26,6 +26,10 @@ export class User {
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
+  bio: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
   email: string;
 
   @Field(() => String, { nullable: true })
