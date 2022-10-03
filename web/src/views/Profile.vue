@@ -262,6 +262,8 @@ export default defineComponent({
     limit: 2,
   }),
   async created() {
+    this.$store.commit("SET_PROFILE_POP", false)
+    this.$store.commit("SET_MAIN_POP", false)
     await this.fetchUserPosts();
     await this.loadComments();
     this.name = this.$store.state.user.fullName;
