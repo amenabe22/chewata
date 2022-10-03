@@ -68,7 +68,7 @@
           v-model="tagItem"
           type="text"
           id="first_name" @keypress.enter="addNewItem"
-          class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
+          class="bg-green-50 border shadow-none border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
           placeholder="Type in Tags"
         />
 
