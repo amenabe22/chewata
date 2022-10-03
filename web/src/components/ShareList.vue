@@ -68,7 +68,7 @@ export default defineComponent({
   },
   data: () => ({
     appid: "123456",
-    link: "https://chewata.fun/game/",
+    link: "https://chewata.fun/game",
     shareLinks: [
       {
         name: "Facebook",
