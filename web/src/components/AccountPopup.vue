@@ -1,8 +1,8 @@
 <template>
   <dialog-modal :show="profileClicked" @close="$emit('close')">
     <div class="flex flex-col w-full gap-3">
-      <router-link to="/">
-        <p class="text-4xl xl:text-5xl lg:text-5xl text-white">More</p>
+      <router-link to="/user">
+        <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Me</p>
       </router-link>
       <button
         @click="$router.push('/post')"
