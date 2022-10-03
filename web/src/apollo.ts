@@ -5,7 +5,7 @@ import {
   InMemoryCache,
 } from "@apollo/client/core";
 
-const prod = !true;
+const prod = true;
 const uri = prod
   ? "https://chewata.fun/graphql"
   : "http://127.0.0.1:4000/graphql/";
