@@ -31,7 +31,7 @@ jobs:
           cd ..
           cp -r web/dist/assets/* server/dist/assets
           cp -r web/firebase-messaging-sw.js server/dist/assets
-          cp -r web/src/assets/favIcon.png server/dist/assets
+          cp -r web/src/assets/favicon.png server/dist/assets
           cp web/dist/index.html server/dist/templates
           touch .env
           echo 'DB_PASS="#Hallelujah"' >> .env
