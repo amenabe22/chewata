@@ -82,6 +82,7 @@ export class UserResolver {
     const user = await AppDataSource.manager.findOne(User, {
       where: {
         socialIdtoken: socialUsr.uid,
+        email: socialUsr.email,
       },
     });
     if (!user) {
