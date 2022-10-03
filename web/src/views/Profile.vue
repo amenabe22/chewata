@@ -251,11 +251,11 @@ export default defineComponent({
     totalCountComments: 0,
     paginationP: {
       page: 1,
-      pageSize: 2,
+      pageSize: 25,
     },
     paginationC: {
       page: 1,
-      pageSize: 4,
+      pageSize: 25,
     },
     comments: [] as any,
     posts: [] as any,
