@@ -136,7 +136,8 @@ export class PostResolver {
       .leftJoinAndSelect("posts.user", "user")
       .leftJoinAndSelect("posts.tags", "tags")
       .orderBy("posts.createdAt", "DESC")
-      .orderBy("posts.likes", "DESC")
+      .orderBy("user.createdAt", "DESC")
+      // .orderBy("posts.likes", "DESC")
       .getMany();
     const all_posts = posts.map(async (e) => {
       return { ...e, comments: await this.commentsCount(e) };
