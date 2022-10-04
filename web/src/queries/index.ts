@@ -196,6 +196,7 @@ export const USER_PUBLIC = gql`
       userId
       fullName
       photo
+      bio
       totalLikes
       createdAt
     }
@@ -296,6 +297,7 @@ export const USER_PUBLIC_COMMENTS = gql`
         likes
         user {
           id
+          userId
           fullName
           photo
           totalLikes

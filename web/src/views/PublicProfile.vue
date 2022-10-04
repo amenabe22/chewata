@@ -8,7 +8,7 @@
     <div
       class="mt-16 h-3/4 w-full"
       style="
-          background: #5fe18c
+          background: #a5dec4;
           background-position: center;
           background-repeat: no-repeat;
           background-size: cover;
@@ -21,7 +21,7 @@
         <div class="flex flex-col gap-4 w-full items-start px-2">
           <p class="pt-5">{{ user.fullName }}</p>
           <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
-            If you treat me like an option, I’ll leave you like a choice.
+            {{ user.bio }}
           </p>
         </div>
       </div>
@@ -84,7 +84,6 @@
         <div v-if="activeTab == 'posts'">
           <post-tile
             v-for="(post, ix) in posts"
-            :postRef="postRef"
             :post="post"
             :key="ix"
             @clicked="clicked(post)"
@@ -215,7 +214,7 @@ export default defineComponent({
       this.activeTab = tab;
     },
     clicked(post: any) {
-      this.$router.push({ path: `/game/${post.id}` });
+      this.$router.push({ path: `/game/${post.postId}` });
     },
     async loadUserData() {
       const {

@@ -21,14 +21,15 @@
       <div class="text-gray-500">
         <p class="text-2xl">Notifs</p>
         <div class="pt-5 flex flex-col divide-y gap-3">
-          <div
+          <a
+            :href="nt.link"
             class="flex gap-2 pt-2"
             v-for="(nt, ix) in notifications"
             :key="ix"
           >
             <user-avatar :large="true" :img="nt.user.photo"></user-avatar>
             <p class="text-lg">{{ nt.message }}</p>
-          </div>
+          </a>
         </div>
       </div>
     </div>
