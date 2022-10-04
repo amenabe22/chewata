@@ -17,10 +17,11 @@
       @click="$emit('clicked')"
     >
       <p
-        class="px-2 tracking-wide text-gray-600 text-lg"
+        class="tracking-wide text-gray-600 text-lg break-all"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
-        v-text="post.content"
-      ></p>
+      >
+        {{ post.content }}
+      </p>
       <vue-load-image :key="compKey">
         <template v-slot:image>
           <img
