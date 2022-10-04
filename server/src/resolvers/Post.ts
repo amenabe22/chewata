@@ -129,17 +129,34 @@ export class PostResolver {
   }
   @Query(() => PostsPaginatedResponse)
   async getPosts(
-    @Arg("input") pagination: PaginationInputType
+    @Arg("input") pagination: PaginationInputType,
+    @Arg("filter", { nullable: true }) filter: String
   ): Promise<PostsPaginatedResponse> {
-    const posts = await AppDataSource.getRepository(Post)
-      .createQueryBuilder("posts")
-      .leftJoinAndSelect("posts.user", "user")
-      .leftJoinAndSelect("posts.tags", "tags")
-      .orderBy("posts.createdAt", "DESC")
-      .orderBy("user.createdAt", "DESC")
-      // .orderBy("posts.likes", "DESC")
-      .getMany();
-    const all_posts = posts.map(async (e) => {
+    let posts: any;
+    if (!filter) {
+      posts = await AppDataSource.getRepository(Post)
+        .createQueryBuilder("posts")
+        .leftJoinAndSelect("posts.user", "user")
+        .leftJoinAndSelect("posts.tags", "tags")
+        .orderBy("posts.createdAt", "DESC")
+        .orderBy("user.createdAt", "DESC")
+        .getMany();
+    } else if (filter === "recent") {
+      posts = await AppDataSource.getRepository(Post)
+        .createQueryBuilder("posts")
+        .leftJoinAndSelect("posts.user", "user")
+        .leftJoinAndSelect("posts.tags", "tags")
+        .orderBy("posts.createdAt", "DESC")
+        .getMany();
+    } else if (filter === "top") {
+      posts = await AppDataSource.getRepository(Post)
+        .createQueryBuilder("posts")
+        .leftJoinAndSelect("posts.user", "user")
+        .leftJoinAndSelect("posts.tags", "tags")
+        .orderBy("posts.likes", "DESC")
+        .getMany();
+    }
+    const all_posts = posts.map(async (e: any) => {
       return { ...e, comments: await this.commentsCount(e) };
     });
     let paginResponse = paginator(

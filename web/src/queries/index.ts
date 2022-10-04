@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const GET_POSTS = gql`
-  query getPosts($input: PaginationInputType!) {
-    getPosts(input: $input) {
+  query getPosts($input: PaginationInputType!, $filter: String) {
+    getPosts(input: $input, filter: $filter) {
       page
       per_page
       total

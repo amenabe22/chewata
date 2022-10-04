@@ -159,9 +159,15 @@
             Cheweta
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
-            <a class="font-bold">All</a>
-            <a href="">Recent</a>
-            <a href="">Top</a>
+            <button
+              :class="{ 'font-bold text-green-600': it.selected }"
+              class="hover:text-green-500"
+              v-for="(it, ix) in filterTypes"
+              :key="ix"
+              @click="feedFilterSelected(it)"
+            >
+              {{ it.label }}
+            </button>
           </div>
         </div>
 
@@ -262,6 +268,7 @@ export default defineComponent({
     uploadedUrl: null,
     noResult: false,
     page: 1,
+    filter: null,
     progress: 0,
     formData: null as any,
     totalCount: 0,
@@ -280,6 +287,11 @@ export default defineComponent({
       page: 1,
       pageSize: 25,
     },
+    filterTypes: [
+      { label: "Algo", value: null, selected: true },
+      { label: "Recent", value: "recent", selected: false },
+      { label: "Top", value: "top", selected: false },
+    ],
     posts: [] as Array<any>,
     lastSnapshot: null as any,
   }),
@@ -398,6 +410,7 @@ export default defineComponent({
           fetchPolicy: "network-only",
           variables: {
             input: this.pagination,
+            filter: this.filter,
           },
         })
         .finally(() => {
@@ -408,6 +421,17 @@ export default defineComponent({
       posts.forEach((p: any) => {
         this.posts.push(p);
       });
+    },
+    async feedFilterSelected(it: any) {
+      this.filterTypes.forEach((e) => {
+        if (e.label != it.label) {
+          e.selected = false;
+        }
+      });
+      it.selected = true;
+      this.filter = it.value;
+      this.posts = [];
+      await this.loadFeed();
     },
     clickFileRef() {
       (this.$refs.file as any).click();
