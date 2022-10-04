@@ -97,7 +97,9 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <p class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
+              <p
+                class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal break-all"
+              >
                 {{ post.content }}
               </p>
               <div class="mr-3 mb-3">
