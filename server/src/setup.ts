@@ -41,6 +41,7 @@ export async function startApolloServer() {
     "/game/*",
     "/game",
     "/user/*",
+    "/tag/*",
     "/notification",
     "/privacy",
   ];

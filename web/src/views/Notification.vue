@@ -62,7 +62,7 @@
             Top Tags
           </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
-            <div v-for="(tg, ix) in topTags" :key="ix">
+            <div v-for="(tg, ix) in topTags" :key="ix" @click="tagSelected(tg)">
               <span
                 class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
@@ -110,6 +110,9 @@ export default defineComponent({
     notifications: [] as any,
   }),
   methods: {
+    tagSelected(tg: any) {
+      this.$router.push(`/tag/${tg.tagName}`)
+    },
     async loadTags() {
       const {
         data: { topTags },

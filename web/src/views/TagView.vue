@@ -155,7 +155,9 @@
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700">
+          <p
+            class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700"
+          >
             #{{ $route.params.tag }}
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
@@ -199,7 +201,7 @@
             Top Tags
           </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
-            <div v-for="(tg, ix) in topTags" :key="ix">
+            <div v-for="(tg, ix) in topTags" :key="ix" @click="tagSelected(tg)">
               <span
                 class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
@@ -284,6 +286,7 @@ export default defineComponent({
       page: 1,
       pageSize: 25,
     },
+    currentTag: null as any,
     filterTypes: [
       { label: "Algo", value: null, selected: true },
       { label: "Recent", value: "recent", selected: false },
@@ -348,6 +351,7 @@ export default defineComponent({
     ],
   },
   async mounted() {
+    this.currentTag = this.$route.params.tag;
     await this.loadFeed();
     await this.loadTags();
     // handle infintie scroll
@@ -365,6 +369,15 @@ export default defineComponent({
         fetchPolicy: "network-only",
       });
       this.topTags = topTags;
+    },
+    async tagSelected(tg: any) {
+      this.$router.replace({
+        path: `/tag/${tg.tagName}`,
+        params: { tag: tg.tagName },
+      });
+      this.currentTag = tg.tagName;
+      this.posts = [];
+      await this.loadFeed();
     },
     prepareFormData() {
       this.formData = new FormData();
@@ -407,7 +420,7 @@ export default defineComponent({
           fetchPolicy: "network-only",
           variables: {
             input: this.pagination,
-            tag: this.$route.params.tag,
+            tag: this.currentTag,
           },
         })
         .finally(() => {
