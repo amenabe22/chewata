@@ -372,21 +372,51 @@ export const LATEST_NOTIFICATIONS = gql`
   }
 `;
 
-
-export const TOP_TAGS = gql`query {
-  topTags {
-    id
-    tagName
+export const TOP_TAGS = gql`
+  query {
+    topTags {
+      id
+      tagName
+    }
   }
-}
-`
+`;
 
-export const UPDATE_PROFILE = gql`mutation updateProfileBasic($name: String!, $bio: String) {
-  updateProfileBasic(name: $name, bio: $bio)
-}
-`
+export const UPDATE_PROFILE = gql`
+  mutation updateProfileBasic($name: String!, $bio: String) {
+    updateProfileBasic(name: $name, bio: $bio)
+  }
+`;
 
-export const IS_DUPLICATE = gql`mutation isNameDuplicate($name: String!) {
-  isNameDuplicate(name: $name)
-}
-`
+export const IS_DUPLICATE = gql`
+  mutation isNameDuplicate($name: String!) {
+    isNameDuplicate(name: $name)
+  }
+`;
+
+export const TAG_POSTS = gql`
+  query tagPostFilter($tag: String!, $input: PaginationInputType!) {
+    tagPostFilter(tag: $tag, input: $input) {
+      page
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        comments
+        tags {
+          id
+          tagName
+        }
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;

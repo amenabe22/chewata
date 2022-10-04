@@ -14,8 +14,6 @@ export class PostResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuthed)
   async deletePost(@Arg("post") post: string, @Ctx() { user }: MyContext) {
-    console.log(post, user.id);
-
     const postObj = await AppDataSource.manager.find(Post, {
       where: { postId: post, user: { id: user.id } },
     });
@@ -127,6 +125,29 @@ export class PostResolver {
     });
     return posts;
   }
+  @Query(() => PostsPaginatedResponse)
+  async tagPostFilter(
+    @Arg("input") pagination: PaginationInputType,
+    @Arg("tag", { nullable: true }) tag: string
+  ): Promise<PostsPaginatedResponse> {
+    const posts = await AppDataSource.getRepository(Post)
+      .createQueryBuilder("posts")
+      .leftJoinAndSelect("posts.user", "user")
+      .leftJoinAndSelect("posts.tags", "tag")
+      .where("tag.tagName = :tag", { tag })
+      .getMany();
+
+    const all_posts = posts.map(async (e: any) => {
+      return { ...e, comments: await this.commentsCount(e) };
+    });
+    let paginResponse = paginator(
+      all_posts,
+      pagination.page,
+      pagination.pageSize
+    );
+    return paginResponse;
+  }
+
   @Query(() => PostsPaginatedResponse)
   async getPosts(
     @Arg("input") pagination: PaginationInputType,

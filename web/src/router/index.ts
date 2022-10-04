@@ -6,9 +6,10 @@ import {
   RouteLocationNormalized,
   createWebHistory,
 } from "vue-router";
-import Post from "../views/Post.vue"
+import Post from "../views/Post.vue";
 import Home from "../views/Home.vue";
 import Game from "../views/Game.vue";
+import TagView from "../views/TagView.vue";
 import Profile from "../views/Profile.vue";
 import PublicProfile from "../views/PublicProfile.vue";
 import Notification from "../views/Notification.vue";
@@ -19,6 +20,11 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     name: "Landing",
     component: Home,
+  },
+  {
+    path: "/tag/:tag",
+    name: "TagView",
+    component: TagView,
   },
   {
     path: "/post",

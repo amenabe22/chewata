@@ -173,10 +173,7 @@ export default defineComponent({
       }
     },
     tagClicked(tag: any) {
-      alert(tag.tagName);
-    },
-    sharePost() {
-      alert("Share Post");
+      this.$router.push(`/tag/${tag.tagName}`);
     },
     async downvoted() {
       console.log("downvoted");

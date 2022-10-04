@@ -130,12 +130,12 @@
       >
         <sidebar-items></sidebar-items>
         <!-- <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
-          Welcome to Chewata
-        </h1>
-        <p class="font-normal text-gray-400 text-lg">
-          you can start posting by clicking the ball icon and just go around and
-          like and enjoy.
-        </p> -->
+            Welcome to Chewata
+          </h1>
+          <p class="font-normal text-gray-400 text-lg">
+            you can start posting by clicking the ball icon and just go around and
+            like and enjoy.
+          </p> -->
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
@@ -143,8 +143,8 @@
         </h1>
 
         <p class="font-normal text-gray-400 text-lg">
-          Do all the things like ++ or -- rants, post your own rants, comment on
-          others' rants and just have fun.
+          Do all the things like ++ or -- posts, post your own posts, comment on
+          others' posts and just have fun.
         </p>
         <button
           class="rounded-xl tracking-widest border-2 mt-2 p-2"
@@ -155,13 +155,13 @@
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-2xl font-semibold tracking-wider text-gray-500">
-            Cheweta
+          <p class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700">
+            #{{ $route.params.tag }}
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
             <button
               :class="{ 'font-bold text-green-600': it.selected }"
-              class="hover:text-green-600"
+              class="hover:text-green-500"
               v-for="(it, ix) in filterTypes"
               :key="ix"
               @click="feedFilterSelected(it)"
@@ -234,11 +234,8 @@ import Loader from "../components/Loader.vue";
 import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
-import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
-import { getToken, getMessaging } from "@firebase/messaging";
-import { messaging } from "../firebase.config";
-import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
+import { ADD_POST, GET_POSTS, TAG_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
 
@@ -351,19 +348,6 @@ export default defineComponent({
     ],
   },
   async mounted() {
-    const filterParam: any = this.$route.query.f;
-    if (filterParam) {
-      this.filterTypes.forEach((e) => {
-        if (e.value != filterParam) {
-          e.selected = false;
-        } else {
-          e.selected = true;
-        }
-      });
-
-      this.filter = filterParam;
-    }
-
     await this.loadFeed();
     await this.loadTags();
     // handle infintie scroll
@@ -415,15 +399,15 @@ export default defineComponent({
       this.loadingFeed = true;
       const {
         data: {
-          getPosts: { data, total },
+          tagPostFilter: { data, total },
         },
       } = await this.$apollo
         .query({
-          query: GET_POSTS,
+          query: TAG_POSTS,
           fetchPolicy: "network-only",
           variables: {
             input: this.pagination,
-            filter: this.filter,
+            tag: this.$route.params.tag,
           },
         })
         .finally(() => {
@@ -443,10 +427,6 @@ export default defineComponent({
       });
       it.selected = true;
       this.filter = it.value;
-      this.$router.replace({
-        path: "/",
-        query: { f: this.filter },
-      });
       this.posts = [];
       await this.loadFeed();
     },
@@ -628,7 +608,7 @@ export default defineComponent({
   transition: all 0.29s cubic-bezier(0, 0, 0.97, 1);
 }
 .slide-fade-enter-from, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+  /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(-220px);
   opacity: 0;
 }
@@ -640,7 +620,7 @@ export default defineComponent({
   transition: all 0.23s cubic-bezier(0, 0, 0.97, 1);
 }
 .slide-form-enter-from, .slide-form-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+  /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(220px);
   opacity: 0;
 }
