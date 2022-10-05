@@ -97,12 +97,7 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <!-- <p
-                class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal break-all"
-              >
-                {{ post.content }}
-              </p> -->
-              <div class="prose" v-html="post.content"></div>
+              <div class="prose text-white text-xl font-sans" v-html="post.content"></div>
               <div class="mr-3 mb-3">
                 <vue-load-image>
                   <template v-slot:image>
