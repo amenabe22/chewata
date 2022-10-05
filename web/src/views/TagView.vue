@@ -373,6 +373,7 @@ export default defineComponent({
       });
       this.currentTag = tg.tagName;
       this.page = 1;
+      this.pagination.page = 1;
       this.posts = [];
       await this.loadFeed();
     },
