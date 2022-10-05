@@ -173,10 +173,13 @@ export const ADD_COMMENT = gql`
 export const ME = gql`
   query {
     me {
+      id
       userId
       fullName
       email
+      bio
       photo
+      socialIdtoken
       totalLikes
       createdAt
     }

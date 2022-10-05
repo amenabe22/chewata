@@ -11,6 +11,7 @@ import {
   calculateTotalPostVotes,
   sendCommentUpVoteNotification,
   sendUpVoteNotification,
+  updateUserCredit,
 } from "../utils/core";
 
 @Resolver(Likes)
@@ -45,11 +46,12 @@ export class LikeResolver {
         await AppDataSource.manager.save(likeObj);
         if (input.vote == 1 && user.id != post.user.id) {
           sendUpVoteNotification(user, post, post.postId);
+          // update target's credit if like is new 
+          updateUserCredit(post.user);
         }
 
         await calculateTotalPostVotes(post, user);
       } else {
-        console.log("Vote", input.vote);
         await AppDataSource.manager.getRepository(Likes).update(likes.id, {
           value: input.vote,
         });
@@ -81,6 +83,7 @@ export class LikeResolver {
         await AppDataSource.manager.save(likeObj);
         if (input.vote == 1 && user.id != comment.user.id) {
           sendCommentUpVoteNotification(user, comment, comment.commentId);
+          updateUserCredit(comment.user);
         }
 
         await calculateTotalCommentVotes(comment, user);

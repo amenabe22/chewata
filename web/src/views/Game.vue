@@ -191,10 +191,13 @@
             >
               {{ post.user.fullName }}
             </p>
-            <div
-              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
-            >
-              1099
+            <div class="mx-2">
+              <span
+                class="px-1 rounded-md text-white text-sm"
+                style="background: #5fd49f"
+              >
+                {{ post.user.totalLikes }}
+              </span>
             </div>
           </div>
         </div>
@@ -405,16 +408,6 @@ export default defineComponent({
         this.$store.commit("SET_LOGIN_POP", true);
       }
     },
-    sortedArray: function () {
-      function compare(a: any, b: any) {
-        if (new Date(a.comment.createdAt) < new Date(b.comment.createdAt))
-          return -1;
-        if (new Date(a.comment.createdAt) > new Date(b.comment.createdAt))
-          return 1;
-        return 0;
-      }
-      return this.comments.sort(compare);
-    },
     async loadComments() {
       this.loadingComments = true;
       const {
@@ -489,13 +482,13 @@ export default defineComponent({
             input: {
               message: this.content,
               cover: this.uploadedUrl,
-              replyTo: this.replyTarget ? this.replyTarget.user.id : "",
+              replyTo: this.replyTarget ? this.replyTarget.user.userId : "",
               post: this.$route.params.id,
             },
           },
         })
         .then(({ data: { addComment } }) => {
-          this.comments.unshift(addComment);
+          this.comments.push(addComment);
         })
         .finally(() => {
           this.loadingPost = false;

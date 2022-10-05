@@ -8,18 +8,27 @@
     <div
       class="mt-16 h-3/4 w-full"
       style="
-          background: #a5dec4;
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: cover;
-        "
+        background: #a5dec4;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      "
     >
       <div
         v-if="user"
         class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
-        <div class="flex flex-col gap-4 w-full items-start px-2">
+        <div class="flex flex-col w-full items-start px-2">
           <p class="pt-5">{{ user.fullName }}</p>
+          <div class="pb-4 pt-2">
+            <p
+              class="text-xl text-center font-normal rounded-xl px-2"
+              style="background: #14532d73"
+            >
+              +{{ $store.state.user.totalLikes }}
+            </p>
+          </div>
+
           <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
             {{ user.bio }}
           </p>
@@ -39,11 +48,6 @@
             >
               {{ user.fullName }}
             </p>
-            <div
-              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
-            >
-              {{ user.totalLikes }}
-            </div>
           </div>
         </div>
         <button

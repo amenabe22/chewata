@@ -129,13 +129,6 @@
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
       >
         <sidebar-items></sidebar-items>
-        <!-- <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
-          Welcome to Chewata
-        </h1>
-        <p class="font-normal text-gray-400 text-lg">
-          you can start posting by clicking the ball icon and just go around and
-          like and enjoy.
-        </p> -->
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
@@ -297,7 +290,7 @@ export default defineComponent({
     lastSnapshot: null as any,
   }),
   metaInfo: {
-    title: "Chewata Home",
+    title: "Home",
     htmlAttrs: { lang: "en" },
     meta: [
       {

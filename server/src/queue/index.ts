@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { Notifications } from "../entity/Notification";
 import { redisConig } from "../config.redis";
 import { sendPushNotification } from "../utils/core";
+import { User } from "../entity/User";
 
 // const sleep = (t: any) =>
 //   new Promise((resolve) => setTimeout(resolve, t * 1000));
@@ -48,6 +49,12 @@ export async function setupBullMQProcessor(queueName: string) {
       } else {
         console.log("Notification already sent");
       }
+    } else if (job.data.type === "updateCredit") {
+      const userObj = job.data.user;
+      await AppDataSource.manager.update(User, userObj.id, {
+        totalLikes: userObj.totalLikes + 1,
+      });
+      // update user credit value here
     }
     return { jobId: `This is the return value of job (${job.id})` };
   });

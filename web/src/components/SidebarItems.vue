@@ -11,7 +11,11 @@
               {{ $store.state.user.fullName }}
             </p>
             <div>
-              <span class="bg-green-700 px-1 rounded-md text-white">123</span>
+              <span
+                class="px-1 rounded-md text-white"
+                style="background: #5fd49f"
+                >{{ $store.state.user.totalLikes }}</span
+              >
             </div>
           </div>
         </router-link>
@@ -37,7 +41,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { LATEST_NOTIFICATIONS } from "../queries";
+import { LATEST_NOTIFICATIONS, ME } from "../queries";
 import UserAvatar from "./UserAvatar.vue";
 
 export default defineComponent({
@@ -48,9 +52,21 @@ export default defineComponent({
     notifications: [] as any,
   }),
   async created() {
-    await this.loadNotifications();
+    await this.persistUserData(), await this.loadNotifications();
   },
   methods: {
+    async persistUserData() {
+      const {
+        data: { me },
+      } = await this.$apollo.query({
+        query: ME,
+        fetchPolicy: "network-only",
+      });
+      if (me) {
+        this.$store.commit("SET_USER", me);
+        this.$emit("loggedin");
+      }
+    },
     async loadNotifications() {
       const {
         data: { latestNotifications },

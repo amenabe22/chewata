@@ -119,7 +119,7 @@ export class CommentResolver {
         post: { postId: post },
       },
       order: {
-        createdAt: "DESC",
+        createdAt: "ASC",
       },
     });
     const paginatedResponse = paginator(

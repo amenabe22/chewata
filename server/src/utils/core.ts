@@ -86,6 +86,7 @@ export const sendCommentUpVoteNotification = (
     entityId,
   });
 };
+
 export const sendUpVoteNotification = (
   user: User,
   post: Post,
@@ -104,6 +105,14 @@ export const sendUpVoteNotification = (
     data: post.cover,
     link,
     entityId,
+  });
+};
+
+export const updateUserCredit = (user: User) => {
+  coreBullQ.add("updateCredit", {
+    type: "updateCredit",
+    user: user,
+    data: 1,
   });
 };
 

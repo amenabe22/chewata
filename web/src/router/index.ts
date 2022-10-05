@@ -14,6 +14,7 @@ import Profile from "../views/Profile.vue";
 import PublicProfile from "../views/PublicProfile.vue";
 import Notification from "../views/Notification.vue";
 import Privacy from "../views/Privacy.vue";
+import { authguard } from "../utils";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -30,6 +31,9 @@ const routes: RouteRecordRaw[] = [
     path: "/post",
     name: "Post",
     component: Post,
+    beforeEnter: (to, from, next) => {
+      authguard(to, from, next);
+    },
   },
   {
     path: "/game/:id",
@@ -40,6 +44,9 @@ const routes: RouteRecordRaw[] = [
     path: "/user",
     name: "User",
     component: Profile,
+    beforeEnter: (to, from, next) => {
+      authguard(to, from, next);
+    },
   },
   {
     path: "/privacy",
@@ -55,6 +62,9 @@ const routes: RouteRecordRaw[] = [
     path: "/notification",
     name: "Notification",
     component: Notification,
+    beforeEnter: (to, from, next) => {
+      authguard(to, from, next);
+    },
   },
 ];
 

@@ -36,10 +36,13 @@
             >
               {{ comment.user.fullName }}
             </p>
-            <div
-              class="mx-2 w-1/2 text-center font-black text-sm rounded-md text-white bg-green-500"
-            >
-              {{ comment.user.totalLikes }}
+            <div class="mx-2">
+              <span
+                class="px-1 rounded-md text-white text-sm"
+                style="background: #5fd49f"
+              >
+                {{ comment.user.totalLikes }}
+              </span>
             </div>
           </div>
         </div>

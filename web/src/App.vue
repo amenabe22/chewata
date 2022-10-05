@@ -2,7 +2,7 @@
   <main>
     <metainfo>
       <template v-slot:title="{ content }">{{
-        content ? `${content} | SITE_NAME` : `SITE_NAME`
+        content ? `${content} | Chewata` : `Chewata`
       }}</template>
     </metainfo>
     <login-popup

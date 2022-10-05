@@ -102,9 +102,12 @@
       <div
         class="text-white font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
       >
-        <div class="flex flex-col gap-4 w-full items-start px-2">
+        <div class="flex flex-col w-full items-start px-2">
           <div class="flex">
-            <p class="pt-5">{{ $store.state.user.fullName }}</p>
+            <div class="pt-5 flex flex-col">
+              <p>{{ $store.state.user.fullName }}</p>
+            </div>
+
             <button
               @click="editPopup = true"
               class="mx-2 rounded-full mt-6 h-8 w-8"
@@ -124,6 +127,15 @@
               </svg>
             </button>
           </div>
+          <div class="pb-4 pt-2">
+            <p
+              class="text-xl text-center font-normal rounded-xl px-2"
+              style="background: #14532d73"
+            >
+              +{{ $store.state.user.totalLikes }}
+            </p>
+          </div>
+
           <p class="pb-20 pt-2 text-xl xl:text-2xl lg:text-2xl font-normal">
             {{ $store.state.user.bio }}
           </p>
@@ -219,6 +231,7 @@ import PostTile from "../components/PostTile.vue";
 import Loader from "../components/Loader.vue";
 import {
   IS_DUPLICATE,
+  ME,
   UPDATE_PROFILE,
   USER_COMMENTS,
   USER_POSTS,
@@ -262,8 +275,9 @@ export default defineComponent({
     limit: 2,
   }),
   async created() {
-    this.$store.commit("SET_PROFILE_POP", false)
-    this.$store.commit("SET_MAIN_POP", false)
+    this.$store.commit("SET_PROFILE_POP", false);
+    this.$store.commit("SET_MAIN_POP", false);
+    await this.persistUserData()
     await this.fetchUserPosts();
     await this.loadComments();
     this.name = this.$store.state.user.fullName;
@@ -276,6 +290,18 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    async persistUserData() {
+      const {
+        data: { me },
+      } = await this.$apollo.query({
+        query: ME,
+        fetchPolicy: "network-only",
+      });
+      if (me) {
+        this.$store.commit("SET_USER", me);
+        this.$emit("loggedin");
+      }
+    },
     submitForm() {
       if (this.dupError) {
         alert("this username is already taken");
