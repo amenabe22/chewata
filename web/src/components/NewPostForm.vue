@@ -167,12 +167,12 @@ export default defineComponent({
         .split(".")
         [sFileName.split(".").length - 1].toLowerCase();
       var iFileSize = file.size;
-      var iConvert = (file.size / 1048576).toFixed(2);
+      // var iConvert = (file.size / 1048576).toFixed(2);
 
       /// OR together the accepted extensions and NOT it. Then OR the size cond.
       /// It's easier to see this way, but just a suggestion - no requirement.
       const allowed = ["webp", "jpg", "jpeg", "png", "gif"];
-      if (!allowed.includes(sFileExtension) || iFileSize > 2485760) {
+      if (!allowed.includes(sFileExtension) || iFileSize > 10485760) {
         /// 10 mb
         txt +=
           "Please make sure your file is in image format and less than 2 MB.\n\n";
