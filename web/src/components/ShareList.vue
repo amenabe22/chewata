@@ -47,9 +47,15 @@ import { defineComponent } from "vue";
 export default defineComponent({
   props: ["post"],
   methods: {
+    stripHtml(html) {
+      let tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    },
     getLink(link: any) {
       let shareLink;
-      const content = this.post.content.substring(0, 200) + "\n\n";
+      const content =
+        this.stripHtml(this.post.content).substring(0, 200) + "\n\n";
       if (link.name === "Facebook") {
         shareLink = `https://www.facebook.com/sharer/sharer.php?u=${this.link}/${this.post.postId}&quote=${content}...`;
       } else if (link.name === "Telegram") {
