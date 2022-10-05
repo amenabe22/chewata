@@ -17,7 +17,7 @@
       @click="$emit('clicked')"
     >
       <p
-        class="tracking-wide text-gray-600 text-sm sm:text-lg break-all"
+        class="tracking-wide text-gray-600 text-lg break-all"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
