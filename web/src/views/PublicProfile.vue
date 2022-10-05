@@ -25,7 +25,7 @@
               class="text-xl text-center font-normal rounded-xl px-2"
               style="background: #14532d73"
             >
-              +{{ $store.state.user.totalLikes }}
+              +{{ user.totalLikes }}
             </p>
           </div>
 
