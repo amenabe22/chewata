@@ -210,10 +210,6 @@
             </div>
           </div>
         </div>
-        <!-- suggested chewata -->
-        <div class="pt-12">
-          <suggested-games></suggested-games>
-        </div>
       </div>
     </div>
     <ground-meda
