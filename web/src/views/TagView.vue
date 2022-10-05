@@ -372,6 +372,7 @@ export default defineComponent({
         params: { tag: tg.tagName },
       });
       this.currentTag = tg.tagName;
+      this.page = 1;
       this.posts = [];
       await this.loadFeed();
     },
