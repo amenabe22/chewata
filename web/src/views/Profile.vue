@@ -130,7 +130,7 @@
           <div class="pb-4 pt-2">
             <p
               class="text-xl text-center font-normal rounded-xl px-2"
-              style="background: #14532d73"
+              style="background: #14532d2e"
             >
               +{{ $store.state.user.totalLikes }}
             </p>
