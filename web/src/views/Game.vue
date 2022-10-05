@@ -97,7 +97,7 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <div class="prose text-white text-xl font-sans" v-html="post.content"></div>
+              <div class="prose text-white text-xl font-normal font-sans" v-html="post.content"></div>
               <div class="mr-3 mb-3">
                 <vue-load-image>
                   <template v-slot:image>
@@ -653,7 +653,7 @@ export default defineComponent({
   padding-bottom: 0px;
   font-size: 20px;
   font-family: sans-serif;
-  font-weight: 600;
+  font-weight: normal;
   color: #ffffff;
 }
 @media (min-width: 768px) {
