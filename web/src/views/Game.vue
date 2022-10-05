@@ -78,9 +78,9 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full" style="background: #a5dec4">
+    <div class="h-1/2 w-full mt-14 sm:mt-20" style="background: linear-gradient(360deg, rgb(117, 191, 159),rgb(165 222 197));">
       <div
-        class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10 pt-20"
+      class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
       >
         <div class="flex flex-row gap-4" v-if="post">
           <vote-clickers
@@ -97,11 +97,12 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <p
+              <!-- <p
                 class="pt-2 text-xl xl:text-2xl lg:text-2xl font-normal break-all"
               >
                 {{ post.content }}
-              </p>
+              </p> -->
+              <div class="prose" v-html="post.content"></div>
               <div class="mr-3 mb-3">
                 <vue-load-image>
                   <template v-slot:image>
@@ -598,3 +599,94 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.prose ::v-deep h1 {
+  padding-top: 0px;
+  margin: 0px;
+  padding-bottom: 0px;
+  font-weight: normal;
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.prose ::v-deep h2 {
+  padding-top: 0px;
+  margin: 0px;
+  padding-bottom: 0px;
+  font-weight: normal;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.prose ::v-deep p {
+  padding-top: 0px;
+  margin: 0px;
+  padding-bottom: 0px;
+  font-size: 18px;
+  font-family: sans-serif;
+  font-weight: normal;
+  color: #ffffff;
+  line-height: 25px;
+}
+.prose ::v-deep li {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+  font-size: 15px;
+  font-weight: normal;
+  color: #ffffff;
+}
+
+.prose ::v-deep strong {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+}
+.prose ::v-deep b {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+}
+.prose ::v-deep a {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+}
+@media (min-width: 768px) {
+  .prose ::v-deep h2 {
+    padding-top: 0px;
+    margin: 0px;
+    padding-bottom: 0px;
+    font-weight: normal;
+    font-size: 30px;
+    color: #ffffff;
+  }
+  .prose ::v-deep h1 {
+    padding-top: 0px;
+    margin: 0px;
+    padding-bottom: 0px;
+    font-weight: normal;
+    font-size: 30px;
+    color: #ffffff;
+  }
+  .prose ::v-deep p {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+    font-size: 25px;
+    font-family: sans-serif;
+    font-weight: normal;
+    color: #ffffff;
+    line-height: 35px;
+  }
+}
+</style>

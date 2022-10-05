@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="flex flex-row justify-between">
-      <p class="text-2xl tracking-wider text-gray-700 font-semibold">📝 New Chewata</p>
+      <p class="text-2xl tracking-wider text-gray-700 font-semibold">
+        📝 New Chewata
+      </p>
       <loader v-if="loadingPost" :dark="true"></loader>
 
       <button
@@ -16,14 +18,12 @@
     <div class="mt-3">
       <div class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200">
         <div class="py-2 px-4 rounded-t-lg bg-gray-50">
-          <textarea
-            id="comment"
-            rows="8"
-            v-model="content"
-            class="px-0 w-full text-xl text-gray-700 bg-gray-50 border-0 focus:ring-0 outline-none"
-            placeholder="New chewata ..."
-            required
-          ></textarea>
+          <quill-editor
+            theme="snow"
+            style="height: 200px"
+            v-model:content="content"
+            contentType="html"
+          ></quill-editor>
         </div>
         <div class="flex justify-between items-center py-2 px-3 border-t">
           <div class="flex pl-0 space-x-1 sm:pl-2 justify-between">
@@ -40,7 +40,7 @@
               class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
             >
               <div class="w-10 h-10 object-contain" v-if="dataUrl">
-                <img :src="dataUrl" class="rounded-lg" />
+                <img :src="dataUrl" class="rounded-lg h-10 w-10" />
               </div>
               <svg
                 v-else
@@ -57,9 +57,11 @@
                 ></path>
               </svg>
 
-              <div class="px-2">Upload Image</div>
+              <div class="px-2" v-if="!file">Upload Image</div>
             </button>
-            <p class="pt-2">{{ filename }}</p>
+            <div v-if="filename">
+              <p class="pt-2">{{ filename.substring(0,40) }}{{filename.length>40?'...':''}}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -67,7 +69,8 @@
         <input
           v-model="tagItem"
           type="text"
-          id="first_name" @keypress.enter="addNewItem"
+          id="first_name"
+          @keypress.enter="addNewItem"
           class="bg-green-50 border shadow-none border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
           placeholder="Type in Tags"
         />
@@ -296,6 +299,27 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss">
+.ql-editor p {
+  font-size: 18px;
+}
+.ql-editor h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.ql-editor h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.ql-editor h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.ql-editor li {
+  font-size: 18px;
+}
+
+</style>
 <style lang="scss" scoped>
 .chip-items {
   border-radius: 5px;
