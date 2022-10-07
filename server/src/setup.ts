@@ -70,6 +70,12 @@ export async function startApolloServer() {
       path.resolve(__dirname, "assets/", "firebase-messaging-sw.js")
     );
   });
+  app.get("/sitemap.xml", (_req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, "assets/", "sitemap.xml")
+    );
+  });
+
   // app.use("/static", express.static("static")!);
   server.applyMiddleware({
     app,

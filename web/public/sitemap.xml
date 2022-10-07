@@ -1,0 +1,13 @@
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <link type="text/css" rel="stylesheet" id="dark-mode-custom-link"/>
+    <link type="text/css" rel="stylesheet" id="dark-mode-general-link"/>
+    <style lang="en" type="text/css" id="dark-mode-custom-style"/>
+    <style lang="en" type="text/css" id="dark-mode-native-style"/>
+    <style lang="en" type="text/css" id="dark-mode-native-sheet"/>
+    <url>
+        <loc>https://chewata.fun/</loc>
+    </url>
+    <url>
+        <loc>https://chewata.fun/privacy</loc>
+    </url>
+</urlset>
