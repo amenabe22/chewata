@@ -49,7 +49,6 @@ export default defineComponent({
             "SET_NOTIFICATION",
             this.$store.state.notifications + 1
           );
-          store.commit("SET_NOTIFICATION", 12);
           // alert(notif.message);
         },
       },
