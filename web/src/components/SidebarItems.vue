@@ -31,7 +31,7 @@
             v-for="(nt, ix) in notifications"
             :key="ix"
           >
-            <user-avatar  :large="true" :img="nt.user.photo"></user-avatar>
+            <user-avatar :large="true" :img="nt.user.photo"></user-avatar>
             <p class="text-lg w-full">{{ nt.message }}</p>
           </a>
         </div>
@@ -63,7 +63,8 @@ export default defineComponent({
         fetchPolicy: "network-only",
       });
       if (me) {
-        this.$store.commit("SET_USER", me);
+        this.$store.commit("SET_USER", me.user);
+        this.$store.commit("SET_NOTIFICATION", me.notificationsCount);
         this.$emit("loggedin");
       }
     },

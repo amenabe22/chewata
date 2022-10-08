@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Post } from "../entity/Post";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { User } from "../entity/User";
 import { Comment } from "../entity/Comment";
 import { Notifications } from "../entity/Notification";
@@ -68,6 +68,15 @@ export class CommentsPaginatedType {
 
   @Field(() => [Comment])
   data: Array<Comment>;
+}
+
+@ObjectType()
+export class UserDataResponse {
+  @Field(() => User)
+  user: User;
+
+  @Field(() => Int)
+  notificationsCount: number;
 }
 
 @ObjectType()

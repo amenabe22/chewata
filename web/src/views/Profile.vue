@@ -277,7 +277,7 @@ export default defineComponent({
   async created() {
     this.$store.commit("SET_PROFILE_POP", false);
     this.$store.commit("SET_MAIN_POP", false);
-    await this.persistUserData()
+    await this.persistUserData();
     await this.fetchUserPosts();
     await this.loadComments();
     this.name = this.$store.state.user.fullName;
@@ -298,8 +298,9 @@ export default defineComponent({
         fetchPolicy: "network-only",
       });
       if (me) {
-        this.$store.commit("SET_USER", me);
-        this.$emit("loggedin");
+        this.$store.commit("SET_USER", me.user);
+        this.$store.commit("SET_NOTIFICATION", me.notificationsCount);
+       this.$emit("loggedin");
       }
     },
     submitForm() {

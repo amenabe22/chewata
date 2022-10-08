@@ -41,6 +41,9 @@ export class NotificationsResolver {
         createdAt: "DESC",
       },
     });
+    notifications.forEach(async (nt: Notifications) => {
+      await AppDataSource.manager.update(Notifications, nt.id, { read: true });
+    });
     return paginator(notifications, pagination.page, pagination.pageSize);
   }
 }

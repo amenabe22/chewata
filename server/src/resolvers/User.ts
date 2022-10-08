@@ -13,8 +13,9 @@ import {
 } from "type-graphql";
 import { JWT_KEY } from "../constants";
 import { isAuthed } from "../decorators";
-import { MyContext } from "../types";
+import { MyContext, UserDataResponse } from "../types";
 import { Not } from "typeorm";
+import { Notifications } from "../entity/Notification";
 
 export const signCookie = (user: User) => {
   return sign(
@@ -128,10 +129,18 @@ export class UserResolver {
     };
   }
 
-  @Query(() => User)
+  @Query(() => UserDataResponse)
   @UseMiddleware(isAuthed)
-  async me(@Ctx() { user }: MyContext) {
-    return user;
+  async me(@Ctx() { user }: MyContext): Promise<UserDataResponse> {
+    const notifications = await AppDataSource.manager.find(Notifications, {
+      where: {
+        target: {
+          id: user.id,
+        },
+        read: false,
+      },
+    });
+    return { user, notificationsCount: notifications.length };
   }
 
   @Query(() => User)

@@ -58,10 +58,10 @@
           class="rounded-xl mb-4 mt-2 bg-transparent"
           v-if="$store.state.loggedIn"
         >
-          <router-link to="/notification" class="ont-black">
+          <router-link to="/notification" class="ont-black relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-8 m-2 text-white"
+              class="w-9 m-2 text-white"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -69,6 +69,12 @@
                 d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
               />
             </svg>
+            <div
+              class="inline-flex absolute top-1 right-1 justify-center items-center w-5 h-5 text-xs font-semibold text-white rounded-full border-white dark:border-gray-900"
+              style="background: #307046"
+            >
+              {{ $store.state.notifications }}
+            </div>
           </router-link>
         </div>
         <div v-else>

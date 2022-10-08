@@ -33,6 +33,10 @@ export class Notifications {
   @Generated("uuid")
   notificationId: string;
 
+  @Field(() => Boolean)
+  @Column({ nullable: true, type: "boolean", default: false })
+  read: boolean;
+
   @Field(() => String, { nullable: true })
   @Column({
     type: "enum",
