@@ -13,7 +13,6 @@ export const sendPushNotification = async (
   cover: string,
   link: string
 ) => {
-  console.log("Push to " + target);
   const data = {
     data: {
       score: "5x1",

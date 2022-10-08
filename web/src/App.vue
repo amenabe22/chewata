@@ -29,26 +29,36 @@ import { defineComponent } from "vue";
 import LoginPopup from "./components/LoginPopup.vue";
 import Navbar from "./components/Navbar.vue";
 import AccountPopup from "./components/AccountPopup.vue";
-import { Head, useHead } from "@vueuse/head";
+import { Head } from "@vueuse/head";
 import { getAuth, signOut } from "@firebase/auth";
-import { LOGOUT, SOCIAL_LOGIN } from "./queries";
-import { getMessaging, onMessage } from "@firebase/messaging";
+import { LOGOUT, NOTIFICATION_LISTENER } from "./queries";
+import { store } from "./store";
 
 export default defineComponent({
   components: { LoginPopup, Navbar, AccountPopup, Head },
+  apollo: {
+    $subscribe: {
+      notificationListener: {
+        query: NOTIFICATION_LISTENER,
+        result({ data: { notificationAdded } }) {
+          console.clear();
+          console.log(notificationAdded.notification);
+          const notif = notificationAdded.notification;
+          // update notification count
+          this.$store.commit(
+            "SET_NOTIFICATION",
+            this.$store.state.notifications + 1
+          );
+          // store.commit("SET_NOTIFICATION", 12);
+          alert(notif.message);
+        },
+      },
+    },
+  },
   data: () => ({
     loginPopup: false,
     profileClicked: false,
   }),
-  mounted() {
-    const messaging = getMessaging();
-    onMessage(messaging, (payload: any) => {
-      console.log("Message received. ", payload);
-      // show notification here
-      alert(payload.notification.body);
-      // ...
-    });
-  },
   methods: {
     menuClicked() {
       if (this.$store.state.loggedIn) {

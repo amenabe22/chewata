@@ -5,6 +5,7 @@ export type State = {
   notifications: number;
   profilePopup: boolean;
   user: any;
+  ctk: string | null;
 };
 
 export const state: State = {
@@ -12,6 +13,7 @@ export const state: State = {
   profilePopup: false,
   notifications: 0,
   loggedIn: false,
+  ctk: null,
   loginPopup: false,
   user: null,
 };

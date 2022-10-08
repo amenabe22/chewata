@@ -85,6 +85,7 @@ export default defineComponent({
               console.log("Logged In", socialMediaLoginGoogle);
               this.$store.commit("SET_LOGGEDIN", true);
               this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+
               this.$emit("loggedin");
             })
             .finally(() => {
@@ -113,8 +114,8 @@ export default defineComponent({
               },
             })
             .then(({ data: { socialMediaLoginGoogle } }) => {
-              console.log("Logged In", socialMediaLoginGoogle);
               this.$store.commit("SET_LOGGEDIN", true);
+              this.$store.commit("SET_CTK", socialMediaLoginGoogle.token);
               this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
               this.$emit("loggedin");
             })

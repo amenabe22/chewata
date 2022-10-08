@@ -80,6 +80,12 @@ export class UserDataResponse {
 }
 
 @ObjectType()
+export class NotificationResponse {
+  @Field(() => Notifications)
+  notification: Notifications;
+}
+
+@ObjectType()
 export class PaginatedNotificationsResponse {
   @Field()
   page: number;

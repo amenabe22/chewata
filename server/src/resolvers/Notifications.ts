@@ -1,10 +1,33 @@
-import { Notifications } from "../entity/Notification";
-import { Arg, Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  ObjectType,
+  Query,
+  Resolver,
+  Root,
+  Subscription,
+  UseMiddleware,
+} from "type-graphql";
 import { AppDataSource } from "../data-source";
+import { Notifications } from "../entity/Notification";
 import { isAuthed } from "../decorators";
-import { MyContext, PaginatedNotificationsResponse } from "../types";
+import {
+  MyContext,
+  NotificationResponse,
+  PaginatedNotificationsResponse,
+} from "../types";
 import { paginator } from "../utils/paginator";
 import { PaginationInputType } from "../inputs";
+
+@ObjectType()
+export class MessageResponseType {
+  item: String;
+  // @Field(() => Message)
+  // mes: Message;
+
+  // @Field(() => User)
+  // target: User;
+}
 
 @Resolver(Notifications)
 export class NotificationsResolver {
@@ -45,5 +68,22 @@ export class NotificationsResolver {
       await AppDataSource.manager.update(Notifications, nt.id, { read: true });
     });
     return paginator(notifications, pagination.page, pagination.pageSize);
+  }
+
+  // notification listener subscription
+  @Subscription({
+    topics: "NOTIFICATION_ADDED",
+    filter: async ({ context, payload }: any) => {
+      // handle direct interactions
+      if(payload.notification.target.id == context.user.id){
+        return true
+      }
+      return false;
+    },
+  })
+  notificationAdded(
+    @Root() response: NotificationResponse
+  ): NotificationResponse {
+    return response;
   }
 }

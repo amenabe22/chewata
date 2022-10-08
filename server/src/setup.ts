@@ -11,6 +11,7 @@ import { ExpressAdapter } from "@bull-board/express";
 import history from "connect-history-api-fallback";
 import { coreBullQ, setupBullMQProcessor } from "./queue";
 import compression from "compression";
+import http from "http";
 
 export async function startApolloServer() {
   // Same ApolloServer initialization as before
@@ -26,6 +27,7 @@ export async function startApolloServer() {
 
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/ui");
+  const httpServer = http.createServer(app);
 
   createBullBoard({
     queues: [new BullMQAdapter(coreBullQ)],
@@ -71,9 +73,7 @@ export async function startApolloServer() {
     );
   });
   app.get("/sitemap.xml", (_req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, "assets/", "sitemap.xml")
-    );
+    res.sendFile(path.resolve(__dirname, "assets/", "sitemap.xml"));
   });
 
   // app.use("/static", express.static("static")!);
@@ -107,6 +107,11 @@ export async function startApolloServer() {
     })
   );
   // Modified server startup
-  await new Promise((resolve: any) => app.listen({ port: 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+  // await new Promise((resolve: any) => app.listen({ port: 4000 }, resolve));
+  httpServer.listen(4000, () => {
+    server.installSubscriptionHandlers(httpServer);
+    console.log(
+      `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
+    );
+  });
 }

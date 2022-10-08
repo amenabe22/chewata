@@ -4,6 +4,7 @@ import { Notifications } from "../entity/Notification";
 import { redisConig } from "../config.redis";
 import { sendPushNotification } from "../utils/core";
 import { User } from "../entity/User";
+import { pubSub } from "../pubsub";
 
 // const sleep = (t: any) =>
 //   new Promise((resolve) => setTimeout(resolve, t * 1000));
@@ -27,16 +28,22 @@ export async function setupBullMQProcessor(queueName: string) {
         }
       );
       if (!notification_query.length) {
-        await AppDataSource.manager.save(Notifications, {
-          target: job.data.target,
-          user: job.data.user,
-          message: job.data.annotation,
-          cover: job.data.cover,
-          link: job.data.link,
-          entityId: job.data.entityId,
-          notificationType: job.data.notificationType,
-        });
+        const notificationObject = await AppDataSource.manager.save(
+          Notifications,
+          {
+            target: job.data.target,
+            user: job.data.user,
+            message: job.data.annotation,
+            cover: job.data.cover,
+            link: job.data.link,
+            entityId: job.data.entityId,
+            notificationType: job.data.notificationType,
+          }
+        );
         console.log(job.data, "DATA");
+        await pubSub.publish("NOTIFICATION_ADDED", {
+          notification: notificationObject,
+        });
         await sendPushNotification(
           job.data.target.pushToken,
           job.data.annotation,

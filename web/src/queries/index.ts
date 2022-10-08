@@ -173,7 +173,7 @@ export const ADD_COMMENT = gql`
 export const ME = gql`
   query {
     me {
-      user{
+      user {
         id
         userId
         fullName
@@ -424,6 +424,30 @@ export const TAG_POSTS = gql`
           totalLikes
         }
         createdAt
+      }
+    }
+  }
+`;
+
+export const NOTIFICATION_LISTENER = gql`
+  subscription {
+    notificationAdded {
+      notification {
+        id
+        notificationId
+        notificationType
+        message
+        user {
+          id
+          fullName
+        }
+        target {
+          id
+          fullName
+        }
+        cover
+        createdAt
+        link
       }
     }
   }
