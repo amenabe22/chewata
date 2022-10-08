@@ -344,7 +344,7 @@ export default defineComponent({
     replyTarget: null as any,
     showSide: true,
     totalCount: 0,
-    pagination: { page: 1, pageSize: 2 },
+    pagination: { page: 1, pageSize: 30 },
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
