@@ -28,7 +28,7 @@ export const apolloServerSetup = async () => {
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground() as any],
     subscriptions: {
       path: "/subscriptions",
-      onConnect: async (auth: any, ws: any, context) => {
+      onConnect: async (auth: any, _ws: any, _context) => {
         // console.log(Object.keys(ws), "Context");
         // const wsSession = await new Promise((resolve) => {
         // use same session parser as normal gql queries

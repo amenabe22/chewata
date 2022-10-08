@@ -11,8 +11,5 @@ const options = {
     // You can leave it blank if you're just using the redis server installed on your system.
 };
 
-export const pubSub = new RedisPubSub({
-    ...,
-    publisher: new Redis(options),
-    subscriber: new Redis(options)
-});
+// @ts-ignore
+export const pubSub = new RedisPubSub({publisher: new Redis(options), subscriber: new Redis(options)});
