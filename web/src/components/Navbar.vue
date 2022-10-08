@@ -70,7 +70,7 @@
               />
             </svg>
             <div
-              class="inline-flex absolute top-1 right-1 justify-center items-center w-5 h-5 text-xs font-semibold text-white rounded-full border-white dark:border-gray-900"
+              class="inline-flex absolute sm:top-1 sm:right-1 -top-7 -right-5 justify-center items-center w-5 h-5 text-xs font-semibold text-white rounded-full border-white dark:border-gray-900"
               style="background: #307046"
             >
               {{ $store.state.notifications }}
