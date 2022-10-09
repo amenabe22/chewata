@@ -17,7 +17,7 @@
       @click="$emit('clicked')"
     >
       <p
-        class="tracking-wide tile-txt text-lg break-all"
+        class="tracking-wide tile-txt text-lg break-words"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
