@@ -47,7 +47,7 @@
           </div>
         </div>
         <p
-          class="pt-2 tracking-wide text-gray-600 text-lg"
+          class="pt-2 tracking-wide tile-txt text-lg"
           v-text="comment.message"
         ></p>
         <div v-if="$store.state.user">
@@ -212,3 +212,10 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.tile-txt {
+  font-weight: 300;
+  color: #2f2f32;
+}
+
+</style>

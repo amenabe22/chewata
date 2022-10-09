@@ -191,7 +191,7 @@
           <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
             Top Tags
           </h1>
-          <div class="flex flex-row gap-2 flex-wrap flex-grow">
+            <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <button
               v-for="(tg, ix) in topTags"
               :key="ix"

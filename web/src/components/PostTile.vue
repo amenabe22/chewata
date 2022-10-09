@@ -17,7 +17,7 @@
       @click="$emit('clicked')"
     >
       <p
-        class="tracking-wide text-gray-600 font-sans font-normal text-lg break-all"
+        class="tracking-wide tile-txt text-lg break-all"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
@@ -38,7 +38,8 @@
       </vue-load-image>
       <div class="flex items-end justify-between mb-1 mt-3">
         <div class="sm:grid sm:grid-cols-4 gap-2">
-          <button class="sm:mx-0 sm:mt-0 mx-1 mt-2"
+          <button
+            class="sm:mx-0 sm:mt-0 mx-1 mt-2"
             @click.stop="tagClicked(tag)"
             v-for="(tag, ix) in post.tags"
             :key="ix"
@@ -199,3 +200,9 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.tile-txt {
+  font-weight: 300;
+  color: #2f2f32;
+}
+</style>

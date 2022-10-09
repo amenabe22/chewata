@@ -683,5 +683,4 @@ export default defineComponent({
     color: #ffffff;
     line-height: 35px;
   }
-}
-</style>
+}</style>
