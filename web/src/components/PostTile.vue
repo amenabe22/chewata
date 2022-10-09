@@ -17,7 +17,7 @@
       @click="$emit('clicked')"
     >
       <p
-        class="tracking-wide text-gray-600 font-sans font-normal text-sm sm:text-lg break-all"
+        class="tracking-wide text-gray-600 font-sans font-normal text-lg break-all"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
@@ -37,8 +37,8 @@
         </template>
       </vue-load-image>
       <div class="flex items-end justify-between mb-1 mt-3">
-        <div class="grid grid-cols-4 sm:grid-cols-4 gap-2">
-          <button
+        <div class="sm:grid sm:grid-cols-4 gap-2">
+          <button class="sm:mx-0 sm:mt-0 mx-1 mt-2"
             @click.stop="tagClicked(tag)"
             v-for="(tag, ix) in post.tags"
             :key="ix"
