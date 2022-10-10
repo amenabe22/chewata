@@ -40,15 +40,6 @@ import {
   signInWithRedirect,
   getRedirectResult,
 } from "firebase/auth";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "@firebase/firestore";
 import { db } from "../firebase.config";
 import { SOCIAL_LOGIN } from "../queries";
 
