@@ -11,6 +11,7 @@ import { JWT_KEY } from "./constants";
 import { AppDataSource } from "./data-source";
 import { User } from "./entity/User";
 import { pubSub } from "./pubsub";
+import { CommunityResolver } from "./resolvers/Community";
 
 export const apolloServerSetup = async () => {
   return new ApolloServer({
@@ -21,6 +22,7 @@ export const apolloServerSetup = async () => {
         CommentResolver,
         LikeResolver,
         NotificationsResolver,
+        CommunityResolver,
       ],
       pubSub,
       validate: false,

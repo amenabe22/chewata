@@ -33,27 +33,53 @@
           </svg>
         </router-link>
       </div>
-      <div class="flex flex-row sm:pt-2">
-        <button
-          v-if="$store.state.loggedIn"
-          @click="$router.push('/post')"
-          type="button"
-          class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-full border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200 hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-8"
+      <div class="flex sm:pt-2">
+        <div class="flex gap-3" v-if="$store.state.loggedIn">
+          <router-link
+            to="/post"
+            @click="$router.push('/post')"
+            type="button"
+            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-full border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200 hidden"
           >
-            <path
-              fill-rule="evenodd"
-              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span class="text-sm">አዲስ ጨዋታ</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-8"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="text-sm">አዲስ ጨዋታ</span>
+          </router-link>
+          <router-link
+            v-if="false"
+            to="/post"
+            type="button"
+            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-teal-900 focus:outline-none bg-cyan-200 rounded-full border border-green-200 hover:bg-cyan-300 hover:text-cyan-700 focus:z-10 focus:ring-4 focus:ring-cyan-200 hidden"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-8"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z"
+                clip-rule="evenodd"
+              />
+              <path
+                d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z"
+              />
+            </svg>
+            <span class="text-sm">ጀማ</span>
+          </router-link>
+        </div>
+
         <div
           class="rounded-xl mb-4 mt-2 bg-transparent"
           v-if="$store.state.loggedIn"

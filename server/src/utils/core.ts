@@ -5,6 +5,8 @@ import { Post } from "../entity/Post";
 import { Comment } from "../entity/Comment";
 import { coreBullQ } from "../queue";
 import axios from "axios";
+import { Community } from "../entity/Community";
+import slugify from "slugify";
 
 export const sendPushNotification = async (
   target: string,
@@ -157,4 +159,20 @@ export const calculateTotalCommentVotes = async (
     .update(comment.id, { likes: total });
   console.log("Total: ", total);
   return total;
+};
+
+export const userCreatedCommunities = async (user: User) => {
+  const community = await AppDataSource.manager.find(Community, {
+    where: {
+      user: { id: user.id },
+    },
+  });
+  return community;
+};
+
+export const slugifyTitle = (title: string) => {
+  return slugify(title as string, {
+    replacement: "_",
+    remove: /[*+~.()'"!:@]/g,
+  });
 };

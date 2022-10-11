@@ -452,3 +452,22 @@ export const NOTIFICATION_LISTENER = gql`
     }
   }
 `;
+
+export const ADD_COMMUNITY = gql`
+  mutation addCommunity($input: CommunityInputType!) {
+    addCommunity(input: $input) {
+      id
+      name
+      communityId
+      description
+      logo
+      cover
+      type
+      category {
+        id
+        name
+      }
+      createdAt
+    }
+  }
+`;

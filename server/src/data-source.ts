@@ -6,6 +6,7 @@ import { Notifications } from "./entity/Notification";
 import { Comment } from "./entity/Comment";
 import { Likes } from "./entity/Likes";
 import { Tag } from "./entity/Core";
+import { Category, Community, CommunityMember } from "./entity/Community";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,7 +17,17 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
-  entities: [User, Post, Comment, Likes, Notifications, Tag],
+  entities: [
+    User,
+    Post,
+    Comment,
+    Likes,
+    Notifications,
+    Tag,
+    Category,
+    Community,
+    CommunityMember,
+  ],
   subscribers: [],
   migrations: [],
 });

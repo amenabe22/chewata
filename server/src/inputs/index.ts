@@ -50,3 +50,18 @@ export class CommentInput {
   @Field({ nullable: true })
   isReply?: boolean;
 }
+
+@InputType()
+export class CommunityInputType {
+  @Field({ nullable: true })
+  name?: string;
+
+  @Field({ nullable: true })
+  category: string;
+
+  @Field({ nullable: true })
+  description: string;
+
+  @Field({ nullable: true })
+  type: string;
+}

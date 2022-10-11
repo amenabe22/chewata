@@ -10,6 +10,7 @@ import {
   Generated,
   OneToMany,
 } from "typeorm";
+import { Community } from "./Community";
 import { Tag } from "./Core";
 import { User } from "./User";
 
@@ -56,6 +57,11 @@ export class Post {
   @ManyToOne(() => User, { onDelete: "CASCADE", eager: true })
   @JoinColumn({ name: "user" })
   user: User;
+
+  @Field(() => Community, { nullable: true })
+  @ManyToOne(() => Community, { onDelete: "CASCADE", eager: true })
+  @JoinColumn({ name: "community" })
+  community: Community;
 
   @Field(() => String)
   @CreateDateColumn()
