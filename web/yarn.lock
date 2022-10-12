@@ -526,6 +526,16 @@
     "protobufjs" "^7.0.0"
     "yargs" "^16.2.0"
 
+"@headlessui/vue@^1.7.3":
+  "integrity" "sha512-Is4iakKts9u9E0+jEZNzoJpBjwq2SamwEIoEl2RlyYSu6Zco536GsPXaQEfg/o7Eyc1GUUlcL+dJd4Rt7qyf7A=="
+  "resolved" "https://registry.npmjs.org/@headlessui/vue/-/vue-1.7.3.tgz"
+  "version" "1.7.3"
+
+"@heroicons/vue@^2.0.12":
+  "integrity" "sha512-ypuQl/Wei7BoShO65AdRVikXDaSt6hJBRuKs2pVd/6HvxfEz18oXraH+J5G/QPIwObMEVhMb6nkOs9l3WZv/gA=="
+  "resolved" "https://registry.npmjs.org/@heroicons/vue/-/vue-2.0.12.tgz"
+  "version" "2.0.12"
+
 "@isaacs/string-locale-compare@^1.1.0":
   "version" "1.1.0"
 
@@ -2958,6 +2968,16 @@
   "integrity" "sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw=="
   "resolved" "https://registry.npmjs.org/he/-/he-1.2.0.tgz"
   "version" "1.2.0"
+
+"headlessui@^0.0.0":
+  "integrity" "sha512-CHvacVPbl8AqIg2sBNKySUmumu7o15jSrCaTrIh9GW2Eq4y/krCN/vZFOsKCwlrhWQbO4267a8xvvP8bs+qREQ=="
+  "resolved" "https://registry.npmjs.org/headlessui/-/headlessui-0.0.0.tgz"
+  "version" "0.0.0"
+
+"heroicons@^2.0.12":
+  "integrity" "sha512-fqK3k5a1F5eUf74cebh2Ng82lCskDwMbMno9f/BCyZQjSJ8bXKl7jK3507pOSIvB2QrZjF9SD0YQzkKUx1iiNw=="
+  "resolved" "https://registry.npmjs.org/heroicons/-/heroicons-2.0.12.tgz"
+  "version" "2.0.12"
 
 "hoist-non-react-statics@^3.3.2":
   "integrity" "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw=="
@@ -5974,7 +5994,7 @@
     "@types/uuid" "^8.3.4"
     "uuid" "^8.3.2"
 
-"vue@^3", "vue@^3.0.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.2", "vue@^3.0.5", "vue@^3.1.0", "vue@^3.2.0", "vue@^3.2.10", "vue@^3.2.25", "vue@^3.2.37", "vue@>= 3.0.0", "vue@>= 3.0.0 < 4", "vue@>=2.7 || >=3", "vue@3.2.40":
+"vue@^3", "vue@^3.0.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.2", "vue@^3.0.5", "vue@^3.1.0", "vue@^3.2.0", "vue@^3.2.10", "vue@^3.2.25", "vue@^3.2.37", "vue@>= 3", "vue@>= 3.0.0", "vue@>= 3.0.0 < 4", "vue@>=2.7 || >=3", "vue@3.2.40":
   "integrity" "sha512-1mGHulzUbl2Nk3pfvI5aXYYyJUs1nm4kyvuz38u4xlQkLUn1i2R7nDbI4TufECmY8v1qNBHYy62bCaM+3cHP2A=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.2.40.tgz"
   "version" "3.2.40"

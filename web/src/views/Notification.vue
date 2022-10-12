@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row justify-center gap-10 mt-24">
+    <div class="flex flex-row justify-center gap-10 pt-20">
       <div
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
         v-if="$store.state.loggedIn"
@@ -27,7 +27,7 @@
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
         <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
-          Join DevRant
+          Join Chewata
         </h1>
 
         <p class="font-normal text-gray-400 text-lg">

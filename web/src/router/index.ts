@@ -2,12 +2,13 @@ import {
   createRouter,
   RouteRecordRaw,
   NavigationGuardNext,
-  createWebHashHistory,
   RouteLocationNormalized,
   createWebHistory,
 } from "vue-router";
 import Post from "../views/Post.vue";
 import Home from "../views/Home.vue";
+import Community from "../views/Community.vue";
+import CommunityPage from "../views/CommunityPage.vue";
 import Game from "../views/Game.vue";
 import TagView from "../views/TagView.vue";
 import Profile from "../views/Profile.vue";
@@ -31,6 +32,14 @@ const routes: RouteRecordRaw[] = [
     path: "/post",
     name: "Post",
     component: Post,
+    beforeEnter: (to, from, next) => {
+      authguard(to, from, next);
+    },
+  },
+  {
+    path: "/jema",
+    name: "Community",
+    component: Community,
     beforeEnter: (to, from, next) => {
       authguard(to, from, next);
     },
@@ -65,6 +74,11 @@ const routes: RouteRecordRaw[] = [
     beforeEnter: (to, from, next) => {
       authguard(to, from, next);
     },
+  },
+  {
+    path: "/:community",
+    name: "CommunityPage",
+    component: CommunityPage,
   },
 ];
 

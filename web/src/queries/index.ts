@@ -461,6 +461,7 @@ export const ADD_COMMUNITY = gql`
       communityId
       description
       logo
+      slug
       cover
       type
       category {
@@ -471,3 +472,12 @@ export const ADD_COMMUNITY = gql`
     }
   }
 `;
+
+export const CATEGORIES = gql`query {
+  categories {
+    id
+    catId
+    name
+  }
+}
+`

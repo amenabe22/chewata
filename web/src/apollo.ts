@@ -10,7 +10,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { split } from "apollo-link";
 import { store } from "./store";
 
-const prod = true;
+const prod = !true;
 const uri = prod
   ? "https://chewata.fun/graphql"
   : "http://127.0.0.1:4000/graphql/";

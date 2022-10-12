@@ -1,7 +1,7 @@
 <template>
   <nav
     class="h-16 sm:h-20 fixed w-full top-0 z-50"
-    style="box-sizing: content-box; background: #a5dec4"
+    :style="`box-sizing: content-box;background: #a5dec4`"
   >
     <div
       class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between sm:mx-10"
@@ -56,8 +56,7 @@
             <span class="text-sm">አዲስ ጨዋታ</span>
           </router-link>
           <router-link
-            v-if="false"
-            to="/post"
+            to="/jema"
             type="button"
             class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-teal-900 focus:outline-none bg-cyan-200 rounded-full border border-green-200 hover:bg-cyan-300 hover:text-cyan-700 focus:z-10 focus:ring-4 focus:ring-cyan-200 hidden"
           >
