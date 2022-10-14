@@ -1,6 +1,8 @@
 <template>
   <div
-    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 mb-3"
+    class="flex px-2 flex-row mt-4 hover:border-green-300 relative mb-3 rounded-lg border border-gray-100"
+    :class="{ 'hover:bg-gray-50': false }"
+    style="background: white;"
   >
     <vote-clickers
       :readonly="readonly"
@@ -17,7 +19,7 @@
       @click="$emit('clicked')"
     >
       <p
-        class="tracking-wide tile-txt text-lg break-words"
+        class="tracking-wide tile-txt break-words"
         :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
@@ -29,6 +31,7 @@
             v-if="post.cover"
             :src="post.cover"
             alt=""
+            class="rounded-lg"
             style="object-fit: contain"
           />
         </template>
@@ -45,7 +48,7 @@
             :key="ix"
           >
             <div
-              class="border-2 rounded-lg p-1 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
+              class="border rounded-md text-xs p-1 text-gray-400 border-green-200 hover:border-green-300"
             >
               {{ tag.tagName }}
             </div>
@@ -202,6 +205,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .tile-txt {
+  font-size: 16px;
   font-weight: 300;
   color: #2f2f32;
 }

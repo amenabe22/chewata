@@ -123,7 +123,7 @@
         </transition>
       </div>
     </dialog-modal>
-    <div class="flex flex-row justify-center gap-10 mt-24">
+    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
       <div
         v-if="$store.state.loggedIn"
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -146,7 +146,7 @@
           Sign Up
         </button>
       </div>
-      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
+      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
           <p class="text-2xl font-semibold tracking-wider text-gray-500">
             Cheweta
@@ -191,14 +191,14 @@
           <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
             Top Tags
           </h1>
-            <div class="flex flex-row gap-2 flex-wrap flex-grow">
+          <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <button
               v-for="(tg, ix) in topTags"
               :key="ix"
               @click="$router.push(`/tag/${tg.tagName}`)"
             >
               <span
-                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
                 {{ tg.tagName }}
               </span>

@@ -78,9 +78,9 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full mt-14 sm:mt-20" style="background: linear-gradient(360deg, rgb(117, 191, 159),rgb(165 222 197));">
+    <div class="h-1/2 w-full mt-14 sm:mt-20 game-content">
       <div
-      class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
+        class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
       >
         <div class="flex flex-row gap-4" v-if="post">
           <vote-clickers
@@ -97,7 +97,10 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <div class="prose text-white text-xl font-normal font-sans" v-html="post.content"></div>
+              <div
+                class="prose text-white text-xl font-normal font-sans"
+                v-html="post.content"
+              ></div>
               <div class="mr-3 mb-3">
                 <vue-load-image>
                   <template v-slot:image>
@@ -213,7 +216,7 @@
         </button>
       </div>
       <!-- comments section -->
-      <div class="w-full bg-white mb-20 col-span-7 md:col-span-6 xl:col-span-5">
+      <div class="w-full mb-20 col-span-7 md:col-span-6 xl:col-span-5">
         <div class="flex items-start justify-start" v-if="loadingComments">
           <loader></loader>
         </div>
@@ -656,6 +659,9 @@ export default defineComponent({
   font-weight: normal;
   color: #ffffff;
 }
+.game-content {
+  background: linear-gradient(360deg, rgb(117, 191, 159), rgb(165 222 197));
+}
 @media (min-width: 768px) {
   .prose ::v-deep h2 {
     padding-top: 0px;
@@ -683,4 +689,5 @@ export default defineComponent({
     color: #ffffff;
     line-height: 35px;
   }
-}</style>
+}
+</style>

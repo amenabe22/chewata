@@ -123,7 +123,7 @@
         </transition>
       </div>
     </dialog-modal>
-    <div class="flex flex-row justify-center gap-10 mt-24">
+    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
       <div
         v-if="$store.state.loggedIn"
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -153,7 +153,7 @@
           Sign Up
         </button>
       </div>
-      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
+      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
           <p
             class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700"

@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main style="background: #f8fdfa">
     <metainfo>
       <template v-slot:title="{ content }">{{
         content ? `${content} | Chewata` : `Chewata`
@@ -95,3 +95,8 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+body {
+  background: #f8fdfa;
+}
+</style>

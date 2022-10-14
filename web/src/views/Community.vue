@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row mt-20 h-full">
+  <div class="flex flex-row mt-20 h-full bg-green-50">
     <div class="w-full sm:block hidden">
       <img
         class="h-screen object-cover"

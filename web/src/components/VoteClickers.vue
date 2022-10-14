@@ -6,7 +6,7 @@
       @click="$emit('upvoted')"
       :class="{
         'hover:bg-green-500': !color,
-        'w-8 h-6 text-lg': !large,
+        'w-7 h-6 text-lg': !large,
         'bg-green-200 text-green-400': !vote && voted,
         'bg-green-400 text-white': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
@@ -20,11 +20,11 @@
       v-else
       :class="{
         'hover:bg-green-500': !color,
-        'w-8 h-6 text-lg': !large,
+        'w-7 h-6 text-lg': !large,
         'bg-green-200 text-green-400': !vote && voted,
         'bg-green-300 text-white': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
-        'w-10 h-8 text-xl p-1': large,
+        'w-6 h-6 text-xl p-1': large,
       }"
       class="duration-300 transition ease-in-out delay-75 font-semibold text-center cursor-pointer rounded-t-full"
     >
@@ -41,7 +41,7 @@
       @click="$emit('downvoted')"
       :class="{
         'hover:bg-green-500': !color,
-        'w-8 h-6 text-lg': !large,
+        'w-7 h-6 text-lg': !large,
         'bg-green-400 text-green-200': !vote && voted,
         'bg-green-200 text-green-400': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
@@ -52,14 +52,15 @@
       --
     </div>
 
-    <div v-else
+    <div
+      v-else
       :class="{
         'hover:bg-green-500': !color,
-        'w-8 h-6 text-lg': !large,
+        'w-7 h-6 text-lg': !large,
         'bg-green-500 text-green-200': !vote && voted,
         'bg-green-200 text-green-400': vote && voted,
         'bg-green-100 text-green-400': !voted && !vote,
-        'w-10 h-8 text-xl p-1': large,
+        'w-7 h-8 text-xl p-1': large,
       }"
       class="duration-300 text-xl transition ease-in-out delay-75 font-semibold text-center cursor-pointer rounded-b-full"
     >

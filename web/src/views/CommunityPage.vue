@@ -1,145 +1,60 @@
 <template>
-  <div class="w-full">
+  <div class="w-full" style="background: #f8fdfa">
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
-    <dialog-modal :show="$store.state.showMainDialog" @close="closeDialog">
-      <div class="px-2 relative w-full">
-        <div
-          v-if="loadingPost"
-          class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
-        >
-          <div class="flex flex-col mt-32 justify-center items-center">
-            <p class="text-xl font-bold text-white tracking-wider">
-              Loading...
-            </p>
-            <loader :dark="true"></loader>
-          </div>
-        </div>
-
-        <transition name="slide-fade">
-          <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96 z-0">
-            <router-link
-              to="/"
-              :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-            >
-              <p
-                class="text-4xl xl:text-5xl lg:text-5xl text-white"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                አዲስ ጨዋታ
-              </p>
-            </router-link>
-            <button
-              style="opacity: 12px"
-              @click="animateForm"
-              class="rounded-lg mt-5 w-full font-semibold bg-amber-700 text-white p-16 xl:text-2xl lg:text-2xl text-xl"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Meme / Story
-              </p>
-            </button>
-            <button
-              class="w-full bg-teal-700 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Question
-              </p>
-            </button>
-            <button
-              class="w-full bg-cyan-600 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Random
-              </p>
-            </button>
-          </div>
-        </transition>
-        <transition name="slide-form">
-          <div
-            v-if="showFormx"
-            class="w-full relative"
-            :style="{ filter: loadingPost ? 'blur(2px)' : '' }"
-            :class="{ 'opacity-70': loadingPost }"
-          >
-            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Post Here</p>
-
-            <textarea
-              class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
-              id="exampleFormControlTextarea1"
-              rows="3"
-              v-model="content"
-              placeholder="Your post starts here ..."
-            ></textarea>
-            <input
-              type="text"
-              name=""
-              v-model="tags"
-              placeholder="Tags (Love, Joke, Story, Meme, etc.)"
-              class="mt-2 form-control rounded-b-none block w-full resize-none border-none px-3 text-lg py-1.5 font-normal bg-white bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
-            />
-            <div
-              class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
-            >
-              <input
-                type="file"
-                @change="uploaded"
-                class="hidden"
-                ref="file"
-                accept="image/png, image/gif, image/jpeg"
-              />
-              <p>5000</p>
-              <button @click="clickFileRef">
-                <span v-if="!filename">Attach Img/Gif</span>
-                <span v-else>{{ filename }}</span>
-              </button>
-            </div>
-            <button
-              @click="post"
-              class="bg-green-700 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-            >
-              <p>Post</p>
-            </button>
-            <button
-              @click="cancelPost"
-              class="bg-red-400 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-            >
-              <p>Cancel</p>
-            </button>
-          </div>
-        </transition>
-      </div>
-    </dialog-modal>
-    <div class="mt-16 w-full">
+    <div class="mt-16 w-full relative backdrop-blur-sm">
       <img
         class="sm:object-cover h-full w-full"
-        src="https://styles.redditmedia.com/t5_3gdh7/styles/bannerBackgroundImage_044h89ll7tf91.png?width=4000&s=953b20011c202556b37c9b34aa617a95f97d5a77"
+        src="https://styles.redditmedia.com/t5_2xd5g/styles/bannerBackgroundImage_xke9ikfe78051.jpg?width=4000&format=pjpg&s=6f8b92ba577468de58f3ca09f1f8b9882790c5c3"
       />
-
+      <div class="relative">
+        <!--  community header section -->
+        <div
+          class="flex justify-start h-16 sm:pt-4 end-items profile-name-section"
+          style="background: #e5f6ee"
+        >
+          <div class="flex px-2">
+            <p
+              class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap"
+            >
+              Kendrick Lamar
+            </p>
+            <button
+              @click="$emit('clickedLogin')"
+              type="button"
+              style="background: rgb(18 78 74)"
+              class="sm:mx-3 mx-2 px-7 sm:mb-3 text-white sm:my-0 my-3 text-lg font-medium focus:outline-none bg-green-200 rounded-3xl hover:bg-green-300 focus:z-10 focus:ring-4 focus:ring-green-200"
+            >
+              Join
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="absolute community-profile left-0 com-header">
+        <img
+          class="h-20 w-20 rounded-full object-cover border-4"
+          style="border-color: #e5f6ee"
+          src="https://styles.redditmedia.com/t5_2xd5g/styles/communityIcon_r1ozfu3scgy71.jpg?width=256&format=pjpg&s=db7240145654fa4dfc787634e0ef0f2be944e429"
+        />
+      </div>
       <div class="flex flex-row justify-start gap-10 mt-10">
         <div class="w-1/5 mt-2 lg:block hidden"></div>
-        <div class="w-full md:w-5/6 lg:w-2/5 xl:w-2/5 bg-white p-2">
+        <div class="w-full md:w-5/6 lg:w-2/5 xl:w-2/5 p-2">
           <div class="flex flex-row justify-between">
             <p class="text-2xl font-semibold tracking-wider text-gray-500">
               Kendrick Lamar
             </p>
             <div class="flex gap-3 text-gray-500 text-lg font-light">
               <button
-                :class="{ 'font-bold text-green-600': it.selected }"
-                class="hover:text-green-600"
+                :class="{
+                  'font-bold text-gray-500 border border-green-300':
+                    it.selected,
+                }"
+                class="hover:text-green-600 rounded-xl px-2"
+                style="background: #e5f6ee"
                 v-for="(it, ix) in filterTypes"
                 :key="ix"
                 @click="feedFilterSelected(it)"
@@ -202,8 +117,6 @@ import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
-import { getToken, getMessaging } from "@firebase/messaging";
-import { messaging } from "../firebase.config";
 import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
@@ -611,5 +524,63 @@ export default defineComponent({
 /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(220px);
   opacity: 0;
+}
+.community-profile {
+  margin-top: -70px;
+}
+.com-header {
+  margin-left: 3%;
+}
+.end-items {
+  padding-right: 5%;
+}
+.community-content {
+  background: url(https://images.unsplash.com/photo-1487147264018-f937fba0c817?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80);
+  background-repeat: no-repeat;
+  background-size: cover;
+  backdrop-filter: blur(10px);
+}
+.profile-name-section {
+  /* mobile */
+  padding-left: 15.5%;
+}
+@media (min-width: 300px) {
+  .profile-name-section {
+    /* mobile */
+    padding-left: 20.5%;
+  }
+  .com-header {
+    margin-left: 1%;
+  }
+}
+/* tablet */
+@media (min-width: 768px) {
+  .profile-name-section {
+    padding-left: 20%;
+  }
+  .end-items {
+    padding-right: 12%;
+  }
+  .com-header {
+    margin-left: 8%;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* laptop */
+  .profile-name-section {
+    padding-left: 28%;
+  }
+  .end-items {
+    padding-right: 14%;
+  }
+  .com-header {
+    margin-left: 21%;
+  }
+  @media (min-width: 1045px) {
+    .com-header {
+      margin-left: 22%;
+    }
+  }
 }
 </style>
