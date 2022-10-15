@@ -63,7 +63,6 @@ export class CommunityResolver {
         .leftJoinAndSelect("post.user", "user")
         .leftJoinAndSelect("post.community", "community")
         .leftJoinAndSelect("community.category", "category")
-        .where("community.type = :type", { type: "public" })
         .andWhere("category.catId = :catId", { catId: cat })
         .andWhere("post.community IS NOT NULL")
         .getMany();
@@ -74,7 +73,6 @@ export class CommunityResolver {
         .leftJoinAndSelect("post.user", "user")
         .leftJoinAndSelect("post.community", "community")
         .leftJoinAndSelect("community.category", "community.category")
-        .where("community.type = :type", { type: "public" })
         .andWhere("post.community IS NOT NULL")
         .getMany();
     }
