@@ -42,7 +42,7 @@
               >
                 <div class="flex justify-start gap-3">
                   <img
-                    :src="comm.logo ? comm.logo : '../src/assets/favicon.png'"
+                    :src="comm.logo ? comm.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
                     alt=""
                     class="w-7 h-7 rounded-full"
                   />

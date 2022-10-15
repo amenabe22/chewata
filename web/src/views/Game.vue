@@ -346,7 +346,7 @@ export default defineComponent({
   }),
   methods: {
     getLogoPath(com: any) {
-      return com.logo ? com.logo : "../src/assets/favicon.png";
+      return com.logo ? com.logo : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
     },
     async handleScroll(e: any) {
       if (

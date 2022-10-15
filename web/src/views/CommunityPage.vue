@@ -141,7 +141,7 @@
           <img
             class="h-20 w-20 rounded-full object-cover border-4"
             style="border-color: #e5f6ee"
-            :src="community.logo ? community.logo : '../src/assets/favicon.png'"
+            :src="community.logo ? community.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
           />
           <button
             v-if="stat.stat == 'admin'"

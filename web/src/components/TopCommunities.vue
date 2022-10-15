@@ -16,7 +16,7 @@
         :class="{ 'p-3': large, 'p-1': !large }"
       >
         <img
-          :src="com.logo ? com.logo : '../src/assets/favicon.png'"
+          :src="com.logo ? com.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
           class="w-8 rounded-full h-8 object-cover"
         />
         <router-link

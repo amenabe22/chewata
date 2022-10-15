@@ -25,7 +25,7 @@
           :src="
             post.community.logo
               ? post.community.logo
-              : '../src/assets/favicon.png'
+              : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'
           "
         />
         <router-link
@@ -38,7 +38,7 @@
         <img
           class="h-5 w-5 mt-1 rounded-full object-cover"
           style="border-color: #e5f6ee"
-          src="../../src/assets/favicon.png"
+          src="https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png"
         />
         <p
           class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
