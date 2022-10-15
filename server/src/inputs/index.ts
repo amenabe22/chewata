@@ -5,6 +5,9 @@ export class PostInputType {
   @Field()
   content: string;
 
+  @Field()
+  community: string;
+
   @Field({ nullable: true })
   cover: string;
 

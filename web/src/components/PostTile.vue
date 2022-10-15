@@ -2,7 +2,7 @@
   <div
     class="flex px-2 flex-row mt-4 hover:border-green-300 relative mb-3 rounded-lg border border-gray-100"
     :class="{ 'hover:bg-gray-50': false }"
-    style="background: white;"
+    style="background: white"
   >
     <vote-clickers
       :readonly="readonly"
@@ -14,13 +14,26 @@
       :count="post.likes"
       color="#92daac"
     />
-    <div
-      class="mx-3 pb-2 cursor-pointer w-full relative"
-      @click="$emit('clicked')"
-    >
+    <div class="pb-2 cursor-pointer w-full relative mx-3" @click="$emit('clicked')">
+      <div v-if="post.community" class="pt-2 flex pb-1">
+        <img
+          class="h-5 w-5 mt-1 rounded-full object-cover"
+          style="border-color: #e5f6ee"
+          :src="
+            post.community.logo
+              ? post.community.logo
+              : '../src/assets/favicon.png'
+          "
+        />
+        <router-link
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+          :to="`/${post.community.slug}`"
+          >{{ post.community.name }}</router-link
+        >
+      </div>
       <p
         class="tracking-wide tile-txt break-words"
-        :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
+        :class="{ 'pb-2': post.cover, '': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
         }}{{ post.content.length > 600 ? "..." : "" }}

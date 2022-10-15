@@ -14,8 +14,13 @@
               <p class="font-semibold text-lg hover:text-green-800">
                 {{ $store.state.user.fullName }}
               </p>
-              <div>
-                <span class="bg-green-700 px-1 rounded-md text-white">123</span>
+              <div class="mx-2">
+                <span
+                  class="px-1 rounded-md text-white text-sm"
+                  style="background: #5fd49f"
+                >
+                  {{ $store.state.user.totalLikes }}
+                </span>
               </div>
             </div>
           </router-link>

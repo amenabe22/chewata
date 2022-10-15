@@ -11,6 +11,7 @@ import Community from "../views/Community.vue";
 import CommunityPage from "../views/CommunityPage.vue";
 import Game from "../views/Game.vue";
 import TagView from "../views/TagView.vue";
+import PathErr from "../views/PathErr.vue"
 import Profile from "../views/Profile.vue";
 import PublicProfile from "../views/PublicProfile.vue";
 import Notification from "../views/Notification.vue";
@@ -66,6 +67,11 @@ const routes: RouteRecordRaw[] = [
     path: "/user/:uid",
     name: "UserPublic",
     component: PublicProfile,
+  },
+  {
+    path: "/page-err",
+    name: "PathErr",
+    component: PathErr,
   },
   {
     path: "/notification",

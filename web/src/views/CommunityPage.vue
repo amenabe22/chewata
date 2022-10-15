@@ -5,11 +5,17 @@
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
-    <div class="mt-16 w-full relative backdrop-blur-sm">
-      <img
-        class="sm:object-cover h-full w-full"
-        src="https://styles.redditmedia.com/t5_2xd5g/styles/bannerBackgroundImage_xke9ikfe78051.jpg?width=4000&format=pjpg&s=6f8b92ba577468de58f3ca09f1f8b9882790c5c3"
-      />
+    <div class="mt-16 w-full relative backdrop-blur-sm" v-if="community">
+      <div v-if="community.cover">
+        <img class="sm:object-cover bg-repeat w-full" :src="community.cover" />
+      </div>
+      <div
+        v-else
+        class="h-20 w-full"
+        style="background: rgb(229, 246, 238)"
+      ></div>
+      <!-- {{ community }} dud -->
+
       <div class="relative">
         <!--  community header section -->
         <div
@@ -20,7 +26,7 @@
             <p
               class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap"
             >
-              Kendrick Lamar
+              {{ community.name }}
             </p>
             <button
               @click="$emit('clickedLogin')"
@@ -34,19 +40,35 @@
         </div>
       </div>
       <div class="absolute community-profile left-0 com-header">
-        <img
-          class="h-20 w-20 rounded-full object-cover border-4"
-          style="border-color: #e5f6ee"
-          src="https://styles.redditmedia.com/t5_2xd5g/styles/communityIcon_r1ozfu3scgy71.jpg?width=256&format=pjpg&s=db7240145654fa4dfc787634e0ef0f2be944e429"
-        />
+        <div class="relative">
+          <img
+            class="h-20 w-20 rounded-full object-cover border-4"
+            style="border-color: #e5f6ee"
+            :src="community.logo ? community.logo : '../src/assets/favicon.png'"
+          />
+          <button
+            class="absolute border-green-600 border-2 text-center h-6 w-6 bottom-0 right-0 bg-white rounded-full flex items-center justify-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-4 text-green-500"
+            >
+              <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+              <path
+                fill-rule="evenodd"
+                d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="flex flex-row justify-start gap-10 mt-10">
         <div class="w-1/5 mt-2 lg:block hidden"></div>
         <div class="w-full md:w-5/6 lg:w-2/5 xl:w-2/5 p-2">
           <div class="flex flex-row justify-between">
-            <p class="text-2xl font-semibold tracking-wider text-gray-500">
-              Kendrick Lamar
-            </p>
             <div class="flex gap-3 text-gray-500 text-lg font-light">
               <button
                 :class="{
@@ -70,14 +92,19 @@
           >
             <loader></loader>
           </div>
+          <div v-if="posts.length">
+            <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
+              <post-tile
+                :compKey="post.postId"
+                :post="post"
+                @clicked="clicked(post)"
+              ></post-tile>
+              <div class="border-t border-gray-100 w-full"></div>
+            </div>
+          </div>
 
-          <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
-            <post-tile
-              :compKey="post.postId"
-              :post="post"
-              @clicked="clicked(post)"
-            ></post-tile>
-            <div class="border-t border-gray-100 w-full"></div>
+          <div v-else class="flex justify-center items-center flex-col">
+            <p>No posts yet</p>
           </div>
           <div v-if="loadComplete" class="text-center pb-32 pt-10">
             <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
@@ -117,7 +144,13 @@ import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
-import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
+import {
+  ADD_POST,
+  COMMUNITY,
+  COMMUNITY_POSTS,
+  GET_POSTS,
+  TOP_TAGS,
+} from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
 import CommunityInfoSection from "../components/CommunityInfoSection.vue";
@@ -169,12 +202,13 @@ export default defineComponent({
       pageSize: 25,
     },
     filterTypes: [
-      { label: "Algo", value: null, selected: true },
-      { label: "Recent", value: "recent", selected: false },
-      { label: "Top", value: "top", selected: false },
+      // { label: "Algo", value: null, selected: true },
+      // { label: "Recent", value: "recent", selected: false },
+      // { label: "Top", value: "top", selected: false },
     ],
     posts: [] as Array<any>,
     lastSnapshot: null as any,
+    community: null as any,
   }),
   metaInfo: {
     title: "Home",
@@ -232,6 +266,7 @@ export default defineComponent({
     ],
   },
   async mounted() {
+    await this.loadCommunity();
     const filterParam: any = this.$route.query.f;
     if (filterParam) {
       this.filterTypes.forEach((e) => {
@@ -246,7 +281,6 @@ export default defineComponent({
     }
 
     await this.loadFeed();
-    await this.loadTags();
     // handle infintie scroll
     window.addEventListener("scroll", this.handleScroll);
   },
@@ -254,6 +288,19 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    async loadCommunity() {
+      const { data } = await this.$apollo.query({
+        query: COMMUNITY,
+        variables: {
+          title: this.$route.params.community,
+        },
+      });
+      if (data.community) {
+        this.community = data.community;
+      } else {
+        this.$router.push("/page-err");
+      }
+    },
     async loadTags() {
       const {
         data: { topTags },
@@ -296,15 +343,15 @@ export default defineComponent({
       this.loadingFeed = true;
       const {
         data: {
-          getPosts: { data, total },
+          communityPosts: { data, total },
         },
       } = await this.$apollo
         .query({
-          query: GET_POSTS,
+          query: COMMUNITY_POSTS,
           fetchPolicy: "network-only",
           variables: {
-            input: this.pagination,
-            filter: this.filter,
+            title: this.$route.params.community,
+            pagination: this.pagination,
           },
         })
         .finally(() => {
@@ -312,6 +359,7 @@ export default defineComponent({
         });
       this.totalCount = data.length;
       const posts = JSON.parse(JSON.stringify(data));
+      console.log(posts, "POSTATSS");
       posts.forEach((p: any) => {
         this.posts.push(p);
       });

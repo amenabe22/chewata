@@ -32,7 +32,7 @@
             :key="ix"
           >
             <user-avatar :large="true" :img="nt.user.photo"></user-avatar>
-            <p class="text-lg w-full">{{ nt.message }}</p>
+            <p class="text-md w-full">{{ nt.message }}</p>
           </a>
         </div>
       </div>

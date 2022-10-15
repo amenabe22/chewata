@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-3">
     <div class="flex flex-row justify-between">
       <p class="text-2xl tracking-wider text-gray-700 font-semibold">
         📝 New Chewata
@@ -15,17 +15,22 @@
         Publish Post 🚀
       </button>
     </div>
+    <div class="mt-4">
+      <p class="text-sm font-semibold text-green-900">Select Community</p>
+      <selector :com="$route.query.j" @selected="selected"></selector>
+    </div>
     <div class="mt-3">
-      <div class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200">
-        <div class="py-2 px-4 rounded-t-lg bg-gray-50">
-          <quill-editor
-            theme="snow"
-            style="height: 200px"
-            v-model:content="content"
-            contentType="html"
-          ></quill-editor>
-        </div>
-        <div class="flex justify-between items-center py-2 px-3 border-t">
+      <div class="mb-4 w-full bg-white rounded-lg">
+        <quill-editor
+          theme="snow"
+          style="height: 200px; background: white"
+          v-model:content="content"
+          contentType="html"
+        ></quill-editor>
+
+        <div
+          class="flex justify-between items-center py-2 px-3 border-b border-r border-l"
+        >
           <div class="flex pl-0 space-x-1 sm:pl-2 justify-between">
             <input
               type="file"
@@ -60,7 +65,10 @@
               <div class="px-2" v-if="!file">Upload Image</div>
             </button>
             <div v-if="filename">
-              <p class="pt-2">{{ filename.substring(0,40) }}{{filename.length>40?'...':''}}</p>
+              <p class="pt-2">
+                {{ filename.substring(0, 40)
+                }}{{ filename.length > 40 ? "..." : "" }}
+              </p>
             </div>
           </div>
         </div>
@@ -136,9 +144,10 @@ import { defineComponent } from "vue";
 import { ADD_POST, TOP_TAGS } from "../queries";
 import axios from "axios";
 import Loader from "./Loader.vue";
+import Selector from "./Selector.vue";
 
 export default defineComponent({
-  components: { Loader },
+  components: { Loader, Selector },
   data: () => ({
     progress: 0,
     tagItem: "",
@@ -147,6 +156,7 @@ export default defineComponent({
     preset: "c4o7elzd",
     loadingPost: false,
     topTags: [] as any,
+    selectedCommunity: null as any,
     dataUrl: null as any,
     formData: null as any,
     userTags: [] as any,
@@ -251,7 +261,7 @@ export default defineComponent({
       });
     },
     async savePost() {
-      const tags = this.userTags.map((e) => e.tagName);
+      const tags = this.userTags.map((e: any) => e.tagName);
       await this.$apollo
         .mutate({
           mutation: ADD_POST,
@@ -259,19 +269,27 @@ export default defineComponent({
             input: {
               content: this.content,
               cover: this.uploadedUrl,
+              community: this.selectedCommunity.communityId,
               tags,
             },
           },
         })
         .then(({ data: { addPost } }) => {
           console.log("post", addPost);
-          this.$router.push(`/game/${addPost.postId}`);
+          if (this.$route.query.j) {
+            this.$router.push(`/${this.$route.query.j}`);
+          } else {
+            this.$router.push(`/game/${addPost.postId}`);
+          }
         })
         .finally(() => {
           this.loadingPost = false;
         });
     },
-
+    selected(e: any) {
+      this.selectedCommunity = e;
+      this.$router.replace({ name: "Post", query: { j: e.slug } });
+    },
     async post() {
       if (this.invalidImage) {
         alert("Invalid file size and format: make sure it's below 2mb");
@@ -318,7 +336,9 @@ export default defineComponent({
 .ql-editor li {
   font-size: 18px;
 }
-
+.ql-container.ql-snow {
+  border: none;
+}
 </style>
 <style lang="scss" scoped>
 .chip-items {

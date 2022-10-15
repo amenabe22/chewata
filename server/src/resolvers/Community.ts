@@ -1,5 +1,5 @@
 import { isAuthed } from "../decorators";
-import { Category, Community } from "../entity/Community";
+import { Category, Community, CommunityMember } from "../entity/Community";
 import {
   Arg,
   Ctx,
@@ -19,11 +19,18 @@ export class CommunityResolver {
   @Query(() => [Community], { nullable: true })
   @UseMiddleware(isAuthed)
   async userCommunities(@Ctx() { user }: MyContext): Promise<Community[]> {
-    const communities = await AppDataSource.manager.find(Community, {
+    let communities: any = [];
+    communities = await AppDataSource.manager.find(Community, {
       where: {
         user: { id: user.id },
       },
     });
+    const memberships = await AppDataSource.manager.find(CommunityMember, {
+      where: {
+        user: { id: user.id },
+      },
+    });
+    communities = [...communities, ...memberships.map((m) => m.community)];
     return communities;
   }
 
@@ -31,7 +38,7 @@ export class CommunityResolver {
   async community(@Arg("title") title: string): Promise<Community | null> {
     const community = await AppDataSource.manager.find(Community, {
       where: {
-        slug: slugifyTitle(title),
+        slug: slugifyTitle(title.toLowerCase()),
       },
     });
     return community.length ? community[0] : null;
@@ -55,7 +62,7 @@ export class CommunityResolver {
     }
     const communityQry = await AppDataSource.manager.find(Community, {
       where: {
-        slug: slugifyTitle(title as string),
+        slug: slugifyTitle(title.toLowerCase() as string),
         communityId: Not(community[0].communityId),
       },
     });
@@ -68,7 +75,7 @@ export class CommunityResolver {
 
     await AppDataSource.manager.update(Community, community[0].id, {
       name: title,
-      slug: slugifyTitle(title),
+      slug: slugifyTitle(title.toLowerCase()),
     });
     return true;
   }
@@ -92,7 +99,7 @@ export class CommunityResolver {
 
     await AppDataSource.manager.update(Community, community[0].id, {
       name: desc,
-      slug: slugifyTitle(desc),
+      slug: slugifyTitle(desc.toLowerCase()),
     });
     return true;
   }
@@ -133,7 +140,7 @@ export class CommunityResolver {
     }
     const communityQry = await AppDataSource.manager.find(Community, {
       where: {
-        slug: slugifyTitle(input.name as string),
+        slug: slugifyTitle(input.name as string).toLowerCase(),
       },
     });
     if (communityQry.length) {
@@ -151,7 +158,7 @@ export class CommunityResolver {
     }
     const community = await AppDataSource.manager.save(Community, {
       name: input.name,
-      slug: slugifyTitle(input.name as string),
+      slug: slugifyTitle(input.name as string).toLowerCase(),
       description: input.description,
       type: input.type,
       user: user,

@@ -98,7 +98,7 @@
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
               <div
-                class="prose text-white text-xl font-normal font-sans"
+                class="prose text-white text-lg font-normal font-sans"
                 v-html="post.content"
               ></div>
               <div class="mr-3 mb-3">
@@ -676,18 +676,18 @@ export default defineComponent({
     margin: 0px;
     padding-bottom: 0px;
     font-weight: normal;
-    font-size: 30px;
+    font-size: 29px;
     color: #ffffff;
   }
   .prose ::v-deep p {
     padding-top: 0px;
     padding-bottom: 0px;
     margin: 0px;
-    font-size: 25px;
+    font-size: 20px;
     font-family: sans-serif;
     font-weight: normal;
     color: #ffffff;
-    line-height: 35px;
+    line-height: 28px;
   }
 }
 </style>
