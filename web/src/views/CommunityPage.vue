@@ -422,7 +422,7 @@ export default defineComponent({
       this.$refs.profile.click();
     },
     leaveCommunity() {
-      if (!this.$store.loggedIn) {
+      if (this.$store.loggedIn) {
         this.$apollo
           .mutate({
             mutation: LEAVE_COMMUNITY,
@@ -444,7 +444,7 @@ export default defineComponent({
       }
     },
     joinCommunity() {
-      if (!this.$store.loggedIn) {
+      if (this.$store.loggedIn) {
         this.$apollo
           .mutate({
             mutation: JOIN_COMMUNITY,
