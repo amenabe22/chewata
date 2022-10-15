@@ -36,10 +36,13 @@ export async function startApolloServer() {
 
   app.use("/ui", serverAdapter.getRouter());
   const excluded = [
-    "/",
+    "/*",
     "/user",
     "/post",
     "/new",
+    "/jema",
+    "/explore",
+    "/login",
     "/game/*",
     "/game",
     "/user/*",
