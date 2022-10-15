@@ -154,7 +154,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     tagClicked(tag: any) {
@@ -171,7 +171,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
   },

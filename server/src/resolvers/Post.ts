@@ -47,7 +47,6 @@ export class PostResolver {
     if (!community.length) {
       throw Error("Invalid Request");
     }
-    console.log(community, "dd");
     const posts = await AppDataSource.manager.find(Post, {
       where: { community: { id: community[0].id } },
       order: { createdAt: "DESC" },

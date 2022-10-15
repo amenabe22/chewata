@@ -141,14 +141,14 @@
         </p>
         <button
           class="rounded-xl tracking-widest border-2 mt-2 p-2"
-          @click="$store.commit('SET_LOGIN_POP', true)"
+          @click="$router.push('/login')"
         >
           Sign Up
         </button>
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-2xl font-semibold tracking-wider text-gray-500">
+          <p class="text-xl font-semibold tracking-wider text-gray-500">
             Cheweta
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
@@ -188,7 +188,8 @@
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <div class="flex flex-col">
-          <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
+          <top-communities></top-communities>
+          <h1 class="text-gray-500 pb-3 text-xl font-normal pt-5">
             Top Tags
           </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
@@ -235,6 +236,7 @@ import { messaging } from "../firebase.config";
 import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
+import TopCommunities from "../components/TopCommunities.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -250,6 +252,7 @@ export default defineComponent({
     PostTile,
     SuggestedGames,
     SidebarItems,
+    TopCommunities,
   },
   data: () => ({
     tags: "",
@@ -397,7 +400,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$router.push("/post");
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadMoreFeed() {

@@ -701,7 +701,7 @@ const _sfc_main$i = defineComponent({
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     cleanStates() {
@@ -1090,7 +1090,7 @@ const _sfc_main$d = defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async downvoted() {
@@ -1104,7 +1104,7 @@ const _sfc_main$d = defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     }
   }
@@ -1241,7 +1241,7 @@ const _sfc_main$c = defineComponent({
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async loadMoreFeed() {
@@ -1716,7 +1716,7 @@ const _sfc_main$9 = defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async downvoted() {
@@ -1729,7 +1729,7 @@ const _sfc_main$9 = defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     }
   }
@@ -1989,7 +1989,7 @@ const _sfc_main$5 = defineComponent({
         this.content = `@${this.replyTarget.user.name}`;
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async postComment() {
@@ -2017,7 +2017,7 @@ const _sfc_main$5 = defineComponent({
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     sortedArray: function() {
@@ -2140,7 +2140,7 @@ const _sfc_main$5 = defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async downvoted() {
@@ -2153,7 +2153,7 @@ const _sfc_main$5 = defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+              this.$router.push("/login");;
       }
     },
     async getPostVote() {

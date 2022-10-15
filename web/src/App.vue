@@ -16,8 +16,8 @@
       @close="$store.commit('SET_PROFILE_POP', false)"
       :profileClicked="$store.state.profilePopup"
     ></account-popup>
-
     <navbar
+      v-if="!$route.meta.hideNav"
       @clickedLogin="$store.commit('SET_LOGIN_POP', true)"
       @profileClicked="$store.commit('SET_PROFILE_POP', true)"
     ></navbar>
@@ -63,7 +63,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     cleanStates() {

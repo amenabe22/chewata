@@ -45,6 +45,21 @@ export const POST = gql`
       content
       cover
       likes
+      community {
+        id
+        name
+        slug
+        communityId
+        description
+        logo
+        cover
+        type
+        category {
+          id
+          name
+        }
+        createdAt
+      }
       user {
         id
         userId
@@ -522,19 +537,25 @@ export const COMMUNITY_POSTS = gql`
 export const COMMUNITY = gql`
   query community($title: String!) {
     community(title: $title) {
-      id
-      name
-      slug
-      communityId
-      description
-      logo
-      cover
-      type
-      category {
+      community {
         id
         name
+        slug
+        communityId
+        description
+        logo
+        cover
+        type
+        category {
+          id
+          name
+        }
+        createdAt
       }
-      createdAt
+      stat {
+        joined
+        stat
+      }
     }
   }
 `;
@@ -558,3 +579,26 @@ export const USER_COMMUNITIES = gql`
     }
   }
 `;
+
+export const JOIN_COMMUNITY = gql`
+  mutation joinCommunity($input: String!) {
+    joinCommunity(input: $input)
+  }
+`;
+
+export const LEAVE_COMMUNITY = gql`mutation leaveCommunity($input: String!) {
+  leaveCommunity(input: $input)
+}
+`
+
+export const TOP_COMMUNITIES = gql`query topCommunities($pagination: PaginationInputType!) {
+  topCommunities(pagination: $pagination) {
+    data {
+      id
+      name
+      slug
+      logo
+    }
+  }
+}
+`

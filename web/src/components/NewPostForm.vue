@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3">
+  <div class="mt-3 mb-32">
     <div class="flex flex-row justify-between">
       <p class="text-2xl tracking-wider text-gray-700 font-semibold">
         📝 New Chewata
@@ -17,7 +17,20 @@
     </div>
     <div class="mt-4">
       <p class="text-sm font-semibold text-green-900">Select Community</p>
-      <selector :com="$route.query.j" @selected="selected"></selector>
+      <div>
+        <selector
+          @empty="setState"
+          :com="$route.query.j"
+          @selected="selected"
+        ></selector>
+      </div>
+      <button
+        @click="$router.push('/explore')"
+        v-if="empty"
+        class="border-2 rounded-xl mt-2 py-1 text-sm text-green-800 border-green-600 px-2 hover:bg-green-100"
+      >
+        Explore More Communities
+      </button>
     </div>
     <div class="mt-3">
       <div class="mb-4 w-full bg-white rounded-lg">
@@ -151,6 +164,7 @@ export default defineComponent({
   data: () => ({
     progress: 0,
     tagItem: "",
+    empty: true,
     content: "",
     uploadedUrl: null,
     preset: "c4o7elzd",
@@ -285,6 +299,9 @@ export default defineComponent({
         .finally(() => {
           this.loadingPost = false;
         });
+    },
+    setState(state: any) {
+      this.empty = state;
     },
     selected(e: any) {
       this.selectedCommunity = e;

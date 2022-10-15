@@ -102,6 +102,9 @@ export default defineComponent({
           this.selected = userCommunities[0];
         }
         this.$emit("selected", this.selected);
+        this.$emit("empty", false);
+      } else {
+        this.$emit("empty", true);
       }
     },
   },

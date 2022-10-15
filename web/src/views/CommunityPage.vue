@@ -22,19 +22,28 @@
           class="flex justify-start h-16 sm:pt-4 end-items profile-name-section"
           style="background: #e5f6ee"
         >
-          <div class="flex px-2">
+          <div class="flex px-2" v-if="stat">
             <p
               class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap"
             >
               {{ community.name }}
             </p>
             <button
-              @click="$emit('clickedLogin')"
+              v-if="!stat.stat"
+              @click="joinCommunity()"
               type="button"
               style="background: rgb(18 78 74)"
               class="sm:mx-3 mx-2 px-7 sm:mb-3 text-white sm:my-0 my-3 text-lg font-medium focus:outline-none bg-green-200 rounded-3xl hover:bg-green-300 focus:z-10 focus:ring-4 focus:ring-green-200"
             >
               Join
+            </button>
+            <button
+              v-else-if="stat.stat != 'admin'"
+              @click="leaveCommunity()"
+              type="button"
+              class="sm:mx-3 mx-2 px-7 sm:mb-3 border-green-600 border-2 text-gray-500 sm:my-0 my-3 text-lg font-medium focus:outline-none bg-green-200 rounded-3xl hover:bg-green-300 focus:z-10 focus:ring-4 focus:ring-green-200"
+            >
+              Leave
             </button>
           </div>
         </div>
@@ -47,6 +56,7 @@
             :src="community.logo ? community.logo : '../src/assets/favicon.png'"
           />
           <button
+            v-if="stat.stat == 'admin'"
             class="absolute border-green-600 border-2 text-center h-6 w-6 bottom-0 right-0 bg-white rounded-full flex items-center justify-center"
           >
             <svg
@@ -65,7 +75,7 @@
           </button>
         </div>
       </div>
-      <div class="flex flex-row justify-start gap-10 mt-10">
+      <div class="flex flex-row justify-start gap-10 mt-4">
         <div class="w-1/5 mt-2 lg:block hidden"></div>
         <div class="w-full md:w-5/6 lg:w-2/5 xl:w-2/5 p-2">
           <div class="flex flex-row justify-between">
@@ -116,7 +126,7 @@
             <loader></loader>
           </div>
         </div>
-        <div class="w-1/5 mt-2 hidden lg:block xl:block">
+        <div class="w-1/5 mt-6 hidden lg:block xl:block">
           <CommunityInfoSection></CommunityInfoSection>
           <!-- suggested chewata -->
         </div>
@@ -149,6 +159,8 @@ import {
   COMMUNITY,
   COMMUNITY_POSTS,
   GET_POSTS,
+  JOIN_COMMUNITY,
+  LEAVE_COMMUNITY,
   TOP_TAGS,
 } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
@@ -209,6 +221,7 @@ export default defineComponent({
     posts: [] as Array<any>,
     lastSnapshot: null as any,
     community: null as any,
+    stat: null as any,
   }),
   metaInfo: {
     title: "Home",
@@ -288,15 +301,61 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    leaveCommunity() {
+      if (!this.$store.loggedIn) {
+        this.$apollo
+          .mutate({
+            mutation: LEAVE_COMMUNITY,
+            variables: {
+              input: this.community.communityId,
+            },
+          })
+          .then(async ({ data }) => {
+            if (data) {
+              await this.loadCommunity();
+              alert("Left");
+            }
+          })
+          .catch((e) => {
+            alert("Failed to join");
+          });
+      } else {
+        this.$router.push("/login");
+      }
+    },
+    joinCommunity() {
+      if (!this.$store.loggedIn) {
+        this.$apollo
+          .mutate({
+            mutation: JOIN_COMMUNITY,
+            variables: {
+              input: this.community.communityId,
+            },
+          })
+          .then(async ({ data }) => {
+            if (data) {
+              await this.loadCommunity();
+              alert("Joined");
+            }
+          })
+          .catch((e) => {
+            alert("Failed to join");
+          });
+      } else {
+        this.$router.push("/login");
+      }
+    },
     async loadCommunity() {
       const { data } = await this.$apollo.query({
         query: COMMUNITY,
+        fetchPolicy: "no-cache",
         variables: {
           title: this.$route.params.community,
         },
       });
-      if (data.community) {
-        this.community = data.community;
+      if (data.community.community) {
+        this.community = data.community.community;
+        this.stat = data.community.stat;
       } else {
         this.$router.push("/page-err");
       }
@@ -331,7 +390,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$router.push("/post");
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadMoreFeed() {
@@ -365,7 +424,7 @@ export default defineComponent({
       });
     },
     async feedFilterSelected(it: any) {
-      this.filterTypes.forEach((e) => {
+      this.filterTypes.forEach((e: any) => {
         if (e.label != it.label) {
           e.selected = false;
         }
@@ -437,51 +496,6 @@ export default defineComponent({
     },
     clicked(post: any) {
       this.$router.push({ path: `/game/${post.postId}` });
-    },
-    async savePost() {
-      const tags = this.tags.split(",").map((e) => e.trim());
-      await this.$apollo
-        .mutate({
-          mutation: ADD_POST,
-          variables: {
-            input: {
-              content: this.content,
-              cover: this.uploadedUrl,
-              tags,
-            },
-          },
-        })
-        .then(({ data: { addPost } }) => {
-          this.posts.unshift(addPost);
-        })
-        .finally(() => {
-          this.loadingPost = false;
-          this.closeDialog();
-        });
-    },
-    async post() {
-      if (this.invalidImage) {
-        alert("Invalid file size and format: make sure it's below 2mb");
-        return;
-      }
-      if (this.content == "") {
-        alert("Message can't be empty");
-        return;
-      }
-      this.loadingPost = true;
-      if (this.file) {
-        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
-        const { data } = await axios({
-          url,
-          method: "POST",
-          data: this.formData,
-          onUploadProgress: (e) => {
-            this.progress = Math.round((e.loaded * 100) / e.total);
-          },
-        });
-        this.uploadedUrl = data.secure_url;
-      }
-      await this.savePost();
     },
   },
 });

@@ -168,36 +168,28 @@
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
         <div class="flex flex-row" v-if="post && post.user">
           <div v-if="$store.state.loggedIn">
-            <user-avatar
-              :path="
-                $store.state.user.userId == post.user.userId
-                  ? '/user'
-                  : `/user/${post.user.userId}`
+            <avatar
+              :path="post.community ? `/${post.community.slug}` : $route.path"
+              :img="
+                post.community ? getLogoPath(post.community) : post.user.photo
               "
-              :img="post.user.photo"
               :user="post.user"
             />
           </div>
           <user-avatar
             v-else
             :path="'/'"
-            :img="post.user.photo"
+            :img="
+              post.community ? getLogoPath(post.community) : post.user.photo
+            "
             :user="post.user"
           />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ post.user.fullName }}
+              {{ post.community ? post.community.name : post.user.fullName }}
             </p>
-            <div class="mx-2">
-              <span
-                class="px-1 rounded-md text-white text-sm"
-                style="background: #5fd49f"
-              >
-                {{ post.user.totalLikes }}
-              </span>
-            </div>
           </div>
         </div>
         <div class="pt-2 text-gray-400">
@@ -266,6 +258,7 @@ import {
   DELETE_POST,
 } from "../queries";
 import ShareList from "../components/ShareList.vue";
+import Avatar from "../components/Avatar.vue";
 
 export default defineComponent({
   components: {
@@ -281,6 +274,7 @@ export default defineComponent({
     Head,
     "vue-load-image": VueLoadImage,
     ShareList,
+    Avatar,
   },
   metaInfo() {
     const ptitle = this.post ? this.post.content : "";
@@ -351,6 +345,9 @@ export default defineComponent({
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
+    getLogoPath(com: any) {
+      return com.logo ? com.logo : "../src/assets/favicon.png";
+    },
     async handleScroll(e: any) {
       if (
         window.scrollY + window.innerHeight >=
@@ -374,7 +371,7 @@ export default defineComponent({
         this.content = `@${this.replyTarget.user.fullName}`;
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async postComment() {
@@ -404,7 +401,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadComments() {
@@ -534,7 +531,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async downvoted() {
@@ -547,7 +544,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async getPostVote() {

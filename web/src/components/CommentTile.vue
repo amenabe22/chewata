@@ -193,7 +193,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async downvoted() {
@@ -206,7 +206,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
   },
@@ -217,5 +217,4 @@ export default defineComponent({
   font-weight: 300;
   color: #2f2f32;
 }
-
 </style>

@@ -88,6 +88,7 @@ export async function startApolloServer() {
       credentials: true,
       origin: [
         "http://127.0.0.1:3000",
+        "http://192.168.1.10:3000",
         "http://127.0.0.1:4000",
         "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",
@@ -98,6 +99,7 @@ export async function startApolloServer() {
     cors({
       origin: [
         "http://127.0.0.1:3000",
+        "http://192.168.1.10:3000",
         "http://127.0.0.1:4000",
         "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",

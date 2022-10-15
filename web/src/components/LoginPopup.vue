@@ -64,7 +64,7 @@ export default defineComponent({
       const auth = getAuth();
       const provider = new FacebookAuthProvider();
       await signInWithPopup(auth, provider)
-        .then(async (result: any) => {
+        .then((result: any) => {
           this.$apollo
             .mutate({
               mutation: SOCIAL_LOGIN,
@@ -76,7 +76,7 @@ export default defineComponent({
               console.log("Logged In", socialMediaLoginGoogle);
               this.$store.commit("SET_LOGGEDIN", true);
               this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
-
+              console.log(socialMediaLoginGoogle, "UDATA");
               this.$emit("loggedin");
             })
             .finally(() => {
@@ -95,7 +95,7 @@ export default defineComponent({
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider)
-        .then(async (result: any) => {
+        .then((result: any) => {
           console.log("Result", result);
           this.$apollo
             .mutate({
@@ -108,6 +108,7 @@ export default defineComponent({
               this.$store.commit("SET_LOGGEDIN", true);
               this.$store.commit("SET_CTK", socialMediaLoginGoogle.token);
               this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
+              console.log(socialMediaLoginGoogle, "UDATA");
               this.$emit("loggedin");
             })
             .finally(() => {

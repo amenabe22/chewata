@@ -33,14 +33,14 @@
       </div>
       <hr class="w-full" />
       <div class="flex mx-3">
-        <router-link
-          :to="`/post?j=${$route.params.community}`"
+        <button
+          @click="toPost"
           type="button"
           style="background: #a5dec4"
           class="py-2.5 my-3 text-center w-full px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
         >
           Create Post
-        </router-link>
+        </button>
       </div>
     </div>
     <div class="border mt-4">
@@ -78,7 +78,15 @@ export default defineComponent({
     notifications: [] as any,
   }),
   async created() {},
-  methods: {},
+  methods: {
+    toPost() {
+      if (this.$store.state.loggedIn) {
+        this.$router.push(`/post?j=${this.$route.params.community}`);
+      } else {
+        this.$router.push("/login");
+      }
+    },
+  },
 });
 </script>
 

@@ -398,7 +398,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$router.push("/post");
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadMoreFeed() {

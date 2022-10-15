@@ -14,7 +14,10 @@
       :count="post.likes"
       color="#92daac"
     />
-    <div class="pb-2 cursor-pointer w-full relative mx-3" @click="$emit('clicked')">
+    <div
+      class="pb-2 cursor-pointer w-full relative mx-3"
+      @click="$emit('clicked')"
+    >
       <div v-if="post.community" class="pt-2 flex pb-1">
         <img
           class="h-5 w-5 mt-1 rounded-full object-cover"
@@ -30,6 +33,18 @@
           :to="`/${post.community.slug}`"
           >{{ post.community.name }}</router-link
         >
+      </div>
+      <div v-else class="pt-2 flex pb-1">
+        <img
+          class="h-5 w-5 mt-1 rounded-full object-cover"
+          style="border-color: #e5f6ee"
+          src="../../src/assets/favicon.png"
+        />
+        <p
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+        >
+          chewata
+        </p>
       </div>
       <p
         class="tracking-wide tile-txt break-words"
@@ -71,7 +86,7 @@
           <div class="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-green-400 mt-1"
+              class="h-5 w-5 text-green-400"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -82,7 +97,7 @@
                 d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
               />
             </svg>
-            <p class="text-green-400 text-lg px-1">{{ post.comments }}</p>
+            <p class="text-green-400 text-sm px-1">{{ post.comments }}</p>
           </div>
         </button>
       </div>
@@ -193,7 +208,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     tagClicked(tag: any) {
@@ -210,7 +225,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
   },

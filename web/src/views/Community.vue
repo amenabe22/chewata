@@ -85,6 +85,7 @@
 
               <div class="flex items-center mb-4">
                 <input
+                  disabled
                   v-model="private"
                   required
                   id="country-option-2"
@@ -95,9 +96,9 @@
                 />
                 <label
                   for="country-option-2"
-                  class="block ml-2 text-sm font-medium text-gray-900"
+                  class="block ml-2 text-sm font-medium text-gray-500"
                 >
-                  Private
+                  Private <span class=""><small>coming soon</small></span>
                 </label>
               </div>
             </fieldset>

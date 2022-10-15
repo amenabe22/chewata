@@ -8,14 +8,51 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { MyContext } from "../types";
-import { CommunityInputType } from "../inputs";
+import {
+  CommunityPaginatedResponse,
+  CommunityResponse,
+  MyContext,
+} from "../types";
+import { CommunityInputType, PaginationInputType } from "../inputs";
 import { slugifyTitle, userCreatedCommunities } from "../utils/core";
 import { AppDataSource } from "../data-source";
 import { Not } from "typeorm";
+import { Post } from "../entity/Post";
+import { paginator } from "../utils/paginator";
 
 @Resolver(Community)
 export class CommunityResolver {
+  @Query(() => CommunityPaginatedResponse, { nullable: true })
+  @UseMiddleware(isAuthed)
+  async topCommunities(
+    @Ctx() { user }: MyContext,
+    @Arg("pagination") pagination: PaginationInputType
+  ): Promise<CommunityPaginatedResponse> {
+    const posts = await AppDataSource.manager
+      .createQueryBuilder(Post, "post")
+      .leftJoinAndSelect("post.tags", "tags")
+      .leftJoinAndSelect("post.user", "user")
+      .leftJoinAndSelect("post.community", "community")
+      .where("community.type = :type", { type: "public" })
+      .andWhere("post.community IS NOT NULL")
+      .getMany();
+    console.log(posts, "psts");
+    const arr = posts.map((c) => c.community);
+    const result = Array.from(
+      arr.reduce(
+        (map: any, item: any) => (map.get(item.slug).count++, map),
+        new Map(arr.map((o) => [o.slug, Object.assign({}, o, { count: 0 })]))
+      ),
+      ([k, o]) => o
+    )
+      .sort((a, b) => b.count - a.count)
+      .map((o) => o);
+
+    const response = paginator(result, pagination.page, pagination.pageSize);
+
+    return response;
+  }
+
   @Query(() => [Community], { nullable: true })
   @UseMiddleware(isAuthed)
   async userCommunities(@Ctx() { user }: MyContext): Promise<Community[]> {
@@ -34,14 +71,102 @@ export class CommunityResolver {
     return communities;
   }
 
-  @Query(() => Community, { nullable: true })
-  async community(@Arg("title") title: string): Promise<Community | null> {
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async leaveCommunity(
+    @Ctx() { user }: MyContext,
+    @Arg("input") input: string
+  ) {
+    const com = await AppDataSource.manager.find(Community, {
+      where: { communityId: input },
+    });
+    if (!com.length) {
+      throw Error("Invalid input");
+    }
+    const memberships = await AppDataSource.manager.find(CommunityMember, {
+      where: {
+        community: { id: com[0].id },
+        user: { id: user.id },
+      },
+    });
+    if (!memberships.length) {
+      throw Error("User is not a member");
+    }
+    await AppDataSource.manager.delete(CommunityMember, memberships[0].id);
+    return true;
+  }
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async joinCommunity(@Ctx() { user }: MyContext, @Arg("input") input: string) {
+    const com = await AppDataSource.manager.find(Community, {
+      where: { communityId: input },
+    });
+    if (!com.length) {
+      throw Error("Invalid input");
+    }
+    const memberships = await AppDataSource.manager.find(CommunityMember, {
+      where: {
+        community: { id: com[0].id },
+        user: { id: user.id },
+      },
+    });
+    if (memberships.length) {
+      throw Error("User is already a member");
+    }
+    const comObj = AppDataSource.manager.create(CommunityMember, {
+      user: user,
+      community: com[0],
+    });
+    await AppDataSource.manager.save(CommunityMember, comObj);
+    return true;
+  }
+
+  @Query(() => CommunityResponse, { nullable: true })
+  async community(
+    @Arg("title") title: string,
+    @Ctx() { user }: MyContext
+  ): Promise<CommunityResponse | null> {
+    console.log(user, "USER");
+    let membershipStat: any = {};
     const community = await AppDataSource.manager.find(Community, {
       where: {
         slug: slugifyTitle(title.toLowerCase()),
       },
     });
-    return community.length ? community[0] : null;
+    if (community.length) {
+      if (!user) {
+        membershipStat = { joined: false, stat: null };
+      } else {
+        // check if user is member
+        const joinStat = await AppDataSource.manager.find(CommunityMember, {
+          where: {
+            user: { id: user.id },
+            community: { id: community[0].id },
+          },
+        });
+        // check if user is admin
+        const adminStat = await AppDataSource.manager.find(Community, {
+          where: {
+            user: { id: user.id },
+            id: community[0].id,
+          },
+        });
+        if (adminStat.length) {
+          membershipStat = {
+            joined: true,
+            stat: "admin",
+          };
+        } else {
+          membershipStat = {
+            joined: joinStat.length > 0,
+            stat: joinStat.length > 0 ? joinStat[0].memberType : null,
+          };
+        }
+      }
+    }
+    return community.length
+      ? { community: community[0], stat: membershipStat }
+      : null;
   }
 
   @Mutation(() => Boolean)
