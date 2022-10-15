@@ -50,20 +50,6 @@ export async function startApolloServer() {
     "/notification",
     "/privacy",
   ];
-  app.get(excluded, function (_, res) {
-    const templatePath = join(__dirname, "/templates/index.html");
-    console.log(templatePath, "path");
-    fs.readFile(templatePath, "utf-8", (err, content) => {
-      if (err) {
-        console.log("can't open file");
-      }
-      res.writeHead(200, {
-        "Content-Type": "text/html; charset=utf-8",
-      });
-      return res.end(content);
-    });
-    // res.sendFile(join());
-  });
   app.use("/", express.static(__dirname));
 
   app.get("/", function (_req, res) {
@@ -78,6 +64,7 @@ export async function startApolloServer() {
   app.get("/sitemap.xml", (_req, res) => {
     res.sendFile(path.resolve(__dirname, "assets/", "sitemap.xml"));
   });
+
 
   // app.use("/static", express.static("static")!);
   server.applyMiddleware({
@@ -98,6 +85,21 @@ export async function startApolloServer() {
       ],
     },
   });
+  app.get(excluded, function (_, res) {
+    const templatePath = join(__dirname, "/templates/index.html");
+    console.log(templatePath, "path");
+    fs.readFile(templatePath, "utf-8", (err, content) => {
+      if (err) {
+        console.log("can't open file");
+      }
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+      return res.end(content);
+    });
+    // res.sendFile(join());
+  });
+
   app.use(
     cors({
       origin: [
