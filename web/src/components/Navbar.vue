@@ -107,8 +107,10 @@
           </router-link>
         </div>
         <div v-else>
-          <router-link to="/login"
+          <router-link
+            to="/login"
             type="button"
+            v-if="!$route.meta.hideNav"
             class="py-2.5 mt-2 px-5 mr-2 mb-2 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-lg border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200"
           >
             Log In

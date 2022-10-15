@@ -17,7 +17,6 @@
       :profileClicked="$store.state.profilePopup"
     ></account-popup>
     <navbar
-      v-if="!$route.meta.hideNav"
       @clickedLogin="$store.commit('SET_LOGIN_POP', true)"
       @profileClicked="$store.commit('SET_PROFILE_POP', true)"
     ></navbar>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-full bg-green-50">
+  <div class="flex flex-row h-full sm:bg-green-50 mt-20">
     <div class="w-full sm:block hidden">
       <img
         class="h-screen object-cover"
@@ -12,7 +12,7 @@
         @submit.prevent="saveLogin"
       >
         <div class="w-full">
-          <p class="text-4xl">Log In</p>
+          <p class="text-2xl sm:text-3xl">Log In</p>
           <p class="py-5">
             By continuing, you agree to our User Agreement and
             <a href="/privacy" class="text-green-600">Privacy Policy</a>.

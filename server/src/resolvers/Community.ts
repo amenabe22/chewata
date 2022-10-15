@@ -23,6 +23,36 @@ import { MAX_COMMUNITIES_LIMIT } from "../constants";
 
 @Resolver(Community)
 export class CommunityResolver {
+  @Mutation(() => Boolean)
+  async addCategory(@Ctx() { user }: MyContext, @Arg("input") input: string) {
+    const obj = AppDataSource.manager.create(Category, {
+      name: input,
+    });
+    await AppDataSource.manager.save(obj);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateCategory(
+    @Ctx() { user }: MyContext,
+    @Arg("input") input: string,
+    @Arg("cat") cat: string
+  ) {
+    const category = await AppDataSource.manager.find(Category, {
+      where: {
+        catId: cat,
+      },
+    });
+    if (!category.length) {
+      throw Error("category not found");
+    }
+
+    await AppDataSource.manager.update(Category, category[0].id, {
+      name: input,
+    });
+    return true;
+  }
+
   @Query(() => CommunityPaginatedResponse, { nullable: true })
   async topCommunities(
     @Arg("cat", { nullable: true }) cat: string,
@@ -332,7 +362,6 @@ export class CommunityResolver {
         catId: input.category,
       },
     });
-    console.log(category, "whoa");
     if (!category.length) {
       throw Error("category not found");
     }
