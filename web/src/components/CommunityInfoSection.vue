@@ -90,7 +90,7 @@
       <hr class="w-full" />
       <div class="p-4 flex flex-col gap-3">
         <p>Members</p>
-        <div class="flex text-gray-800 font-bold text-3xl"><p>12k</p></div>
+        <div class="flex text-gray-800 font-bold text-3xl"><p>-</p></div>
       </div>
       <hr class="w-full" />
       <div class="flex mx-3">
