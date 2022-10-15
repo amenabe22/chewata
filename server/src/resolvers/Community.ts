@@ -24,7 +24,7 @@ import { MAX_COMMUNITIES_LIMIT } from "../constants";
 @Resolver(Community)
 export class CommunityResolver {
   @Mutation(() => Boolean)
-  async addCategory(@Ctx() { user }: MyContext, @Arg("input") input: string) {
+  async addCategory(@Arg("input") input: string) {
     const obj = AppDataSource.manager.create(Category, {
       name: input,
     });
@@ -33,11 +33,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Boolean)
-  async updateCategory(
-    @Ctx() { user }: MyContext,
-    @Arg("input") input: string,
-    @Arg("cat") cat: string
-  ) {
+  async updateCategory(@Arg("input") input: string, @Arg("cat") cat: string) {
     const category = await AppDataSource.manager.find(Category, {
       where: {
         catId: cat,
@@ -91,7 +87,7 @@ export class CommunityResolver {
           arr.map((o: any) => [o.slug, Object.assign({}, o, { count: 0 })])
         )
       ),
-      ([k, o]) => o
+      ([_, o]: any) => o
     )
       .sort((a, b) => b.count - a.count)
       .map((o) => o);
