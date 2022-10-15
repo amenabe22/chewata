@@ -7,7 +7,26 @@
       />
     </div>
     <div class="mt-3 w-full">
-      <form class="p-4 flex flex-col gap-3" @submit.prevent="addCommunity">
+      <div v-if="limitPassed" class="p-4 text-gray-700 flex flex-col gap-4">
+        <p class="text-2xl sm:text-4xl font-semibold">Community Limit Passed</p>
+        <p class="sm:text-2xl text-xl">
+          You have created more than the allowed amount of communities
+        </p>
+        <div style="width: 500px">
+          <button
+            type="submit"
+            @click="$router.push('/explore')"
+            class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-3 text-center"
+          >
+            Explore More
+          </button>
+        </div>
+      </div>
+      <form
+        class="p-4 flex flex-col gap-3"
+        @submit.prevent="addCommunity"
+        v-else
+      >
         <p class="text-4xl">አዲስ ጀማ</p>
         <div class="relative z-0 mb-6 w-full group">
           <div class="flex flex-col mb-3">
@@ -117,16 +136,17 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import DropDown from "../components/DropDown.vue";
-import { ADD_COMMUNITY, CATEGORIES } from "../queries";
+import { ADD_COMMUNITY, CATEGORIES, USER_COM_LIMIT } from "../queries";
 
 export default defineComponent({
   components: { DropDown },
   data: () => ({
     name: "",
-    public: false,
+    public: true,
     private: false,
     category: "",
     description: "",
+    limitPassed: false,
     categories: [] as any,
     selected: null as any,
   }),
@@ -149,8 +169,18 @@ export default defineComponent({
         alert("community not found");
       }
     },
+    async passedLimit() {
+      const {
+        data: { userCommunitiesCount },
+      } = await this.$apollo.query({
+        query: USER_COM_LIMIT,
+        fetchPolicy: "no-cache",
+      });
+      this.limitPassed = userCommunitiesCount;
+    },
   },
   async created() {
+    await this.passedLimit();
     const {
       data: { categories },
     } = await this.$apollo.query({

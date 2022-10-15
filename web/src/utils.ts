@@ -11,3 +11,7 @@ export const authguard = (to: any, form: any, next: any) => {
   }
   next();
 };
+
+export const parseDate = (timestamp: any) => {
+  return new Date(timestamp).toLocaleDateString();
+};

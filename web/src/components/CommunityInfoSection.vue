@@ -2,11 +2,70 @@
   <div>
     <div class="border border-green-100">
       <!-- profile link section -->
-      <div class="flex p-4 bg-green-100 flex-col">
+      <div class="flex p-4 bg-green-100 flex justify-between">
         <p class="text-lg">About community</p>
+        <button
+          v-if="!editMode"
+          class="bg-white border rounded-full"
+          @click="editMode = true"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-7 h-7 p-1 text-green-700"
+          >
+            <path
+              d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"
+            />
+          </svg>
+        </button>
+        <div class="flex gap-2" v-else>
+          <button
+            class="bg-white border rounded-full"
+            @click="editMode = false"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-7 h-7 p-1 font-semibold text-red-700"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <button class="bg-white border rounded-full" @click="saveDescription">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-7 h-7 p-1 font-semibold text-lg text-green-700"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.5 12.75l6 6 9-13.5"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="p-4 flex flex-col gap-3 text-gray-700">
-        <p>A place where you can discuss Kendrick Lamar!</p>
+      <div class="p-4 flex flex-col gap-3 text-gray-700 relative">
+        <textarea
+          type="text"
+          v-model="description"
+          class="outline-none border px-2"
+          v-if="editMode"
+        />
+        <p v-else>{{ data.description }}</p>
         <div class="flex gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +82,9 @@
             />
           </svg>
 
-          <p class="text-gray-400">Created at 12/02/2024</p>
+          <p class="text-gray-400">
+            Created at {{ parseDate(data.createdAt) }}
+          </p>
         </div>
       </div>
       <hr class="w-full" />
@@ -43,7 +104,7 @@
         </button>
       </div>
     </div>
-    <div class="border mt-4">
+    <div class="border mt-4 hidden">
       <div class="flex p-4 bg-green-100 flex-col">
         <p class="text-lg">Community Rules</p>
       </div>
@@ -62,12 +123,15 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import { UPDATE_DESC } from "../queries";
+import { parseDate } from "../utils";
 import UserAvatar from "./UserAvatar.vue";
 
 export default defineComponent({
   components: {
     UserAvatar,
   },
+  props: ["data"],
   data: () => ({
     rules: [
       "No US Internal News or Politics",
@@ -75,10 +139,31 @@ export default defineComponent({
       "No Feature stories",
       "No Feature stories",
     ],
+    description: "",
+    editMode: false,
     notifications: [] as any,
   }),
-  async created() {},
+  async created() {
+    this.description = this.data.description;
+  },
   methods: {
+    parseDate,
+    saveDescription() {
+      this.$apollo
+        .mutate({
+          mutation: UPDATE_DESC,
+          variables: {
+            desc: this.description,
+            community: this.data.communityId,
+          },
+        })
+        .then(({ data }) => {
+          if (data) {
+            this.$emit("updatedDesc");
+          }
+          this.editMode = false;
+        });
+    },
     toPost() {
       if (this.$store.state.loggedIn) {
         this.$router.push(`/post?j=${this.$route.params.community}`);

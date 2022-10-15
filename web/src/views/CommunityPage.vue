@@ -1,13 +1,101 @@
 <template>
   <div class="w-full" style="background: #f8fdfa">
+    <dialog-modal
+      :persistent="!true"
+      @close="showBannerEditor = false"
+      :show="showBannerEditor"
+    >
+      <div>
+        <BannerEditor
+          src="https://styles.redditmedia.com/t5_2rd9v/styles/bannerBackgroundImage_d6bghfs9mz311.jpg?width=4000&format=pjpg&s=980db63b3967e1be6fa14018b6a48bc62ab8e43f"
+        />
+      </div>
+    </dialog-modal>
+
     <login-popup
       @loggedin="$store.commit('SET_LOGIN_POP', false)"
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
     <div class="mt-16 w-full relative backdrop-blur-sm" v-if="community">
-      <div v-if="community.cover">
-        <img class="sm:object-cover bg-repeat w-full" :src="community.cover" />
+      <div
+        class="absolute top-0 m-3 sm:m-10 right-0"
+        v-if="stat.stat == 'admin' && !community.cover"
+      >
+        <button
+          @click="clickFileRef"
+          class="bg-green-300 p-1 rounded-full border-4 border-green-800 shadow-2xl hover:bg-green-100"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"
+            />
+          </svg>
+        </button>
+      </div>
+      <input
+        type="file"
+        @change="uploadedProfile"
+        class="hidden"
+        ref="profile"
+        accept="image/png, image/gif, image/jpeg"
+      />
+
+      <input
+        type="file"
+        @change="uploaded"
+        class="hidden"
+        ref="file"
+        accept="image/png, image/gif, image/jpeg"
+      />
+
+      <div v-if="community.cover || dataUrl" class="relative">
+        <vue-load-image>
+          <template v-slot:image>
+            <img
+              class="bg-repeat w-full max-h-32 object-cover sm:max-h-64"
+              :class="{ 'loading-darken': loadingCoverUpload }"
+              :src="dataUrl ?? community.cover"
+            />
+          </template>
+          <template v-slot:preloader>
+            <div class="py-16">
+              <loader></loader>
+            </div>
+          </template>
+        </vue-load-image>
+
+        <div
+          class="absolute top-0 left-0 right-0 mt-7"
+          v-if="loadingCoverUpload"
+        >
+          <loader></loader>
+        </div>
+        <div
+          class="absolute top-0 m-3 sm:m-10 right-0"
+          v-if="stat.stat == 'admin'"
+        >
+          <button
+            @click="clickFileRef"
+            class="bg-green-300 p-1 rounded-full border-4 border-green-800 shadow-2xl hover:bg-green-100"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       <div
         v-else
@@ -57,6 +145,7 @@
           />
           <button
             v-if="stat.stat == 'admin'"
+            @click="uploadProfilePic"
             class="absolute border-green-600 border-2 text-center h-6 w-6 bottom-0 right-0 bg-white rounded-full flex items-center justify-center"
           >
             <svg
@@ -126,8 +215,11 @@
             <loader></loader>
           </div>
         </div>
-        <div class="w-1/5 mt-6 hidden lg:block xl:block">
-          <CommunityInfoSection></CommunityInfoSection>
+        <div class="w-1/5 mt-6 hidden lg:block xl:block" v-if="community">
+          <CommunityInfoSection
+            @updatedDesc="loadCommunity"
+            :data="community"
+          ></CommunityInfoSection>
           <!-- suggested chewata -->
         </div>
       </div>
@@ -149,10 +241,10 @@ import GroundMeda from "../components/GroundMeda.vue";
 import Navbar from "../components/Navbar.vue";
 import axios from "axios";
 import Loader from "../components/Loader.vue";
+import VueLoadImage from "vue-load-image";
 import LoginPopup from "../components/LoginPopup.vue";
 import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
-import { useMeta } from "vue-meta";
 import PostTile from "../components/PostTile.vue";
 import {
   ADD_POST,
@@ -162,10 +254,14 @@ import {
   JOIN_COMMUNITY,
   LEAVE_COMMUNITY,
   TOP_TAGS,
+  UPDATE_COVER,
+  UPDATE_LOGO,
 } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
 import CommunityInfoSection from "../components/CommunityInfoSection.vue";
+import { VueCropper } from "vue-cropper";
+import BannerEditor from "../components/BannerEditor.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -177,11 +273,14 @@ export default defineComponent({
     Loader,
     LoginPopup,
     AccountPopup,
+    VueCropper,
+    VueLoadImage,
     InfiniteScroll,
     PostTile,
     SuggestedGames,
     SidebarItems,
     CommunityInfoSection,
+    BannerEditor,
   },
   data: () => ({
     tags: "",
@@ -191,11 +290,15 @@ export default defineComponent({
     loginPopup: false,
     content: "",
     message: "",
+    loadingProfileUpload: false,
+    loadingCoverUpload: false,
     uploadedUrl: null,
+    uploadedPUrl: null,
     noResult: false,
     page: 1,
     filter: null,
     progress: 0,
+    pformData: null as any,
     formData: null as any,
     totalCount: 0,
     invalidImage: false,
@@ -207,12 +310,16 @@ export default defineComponent({
     limit: 10,
     preset: "c4o7elzd",
     loaded: false,
+    showBannerEditor: false,
     filename: null as any,
     file: null as any,
+    pfile: null as any,
     pagination: {
       page: 1,
       pageSize: 25,
     },
+    pDataUrl: null as any,
+    dataUrl: null as any,
     filterTypes: [
       // { label: "Algo", value: null, selected: true },
       // { label: "Recent", value: "recent", selected: false },
@@ -301,6 +408,19 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    prepareFormData() {
+      this.formData = new FormData();
+      this.formData.append("upload_preset", this.preset);
+      this.formData.append("file", this.file);
+    },
+    prepareProfileFormData() {
+      this.pformData = new FormData();
+      this.pformData.append("upload_preset", this.preset);
+      this.pformData.append("file", this.pfile);
+    },
+    uploadProfilePic() {
+      this.$refs.profile.click();
+    },
     leaveCommunity() {
       if (!this.$store.loggedIn) {
         this.$apollo
@@ -353,7 +473,7 @@ export default defineComponent({
           title: this.$route.params.community,
         },
       });
-      if (data.community.community) {
+      if (data.community) {
         this.community = data.community.community;
         this.stat = data.community.stat;
       } else {
@@ -368,11 +488,6 @@ export default defineComponent({
         fetchPolicy: "network-only",
       });
       this.topTags = topTags;
-    },
-    prepareFormData() {
-      this.formData = new FormData();
-      this.formData.append("upload_preset", this.preset);
-      this.formData.append("file", this.file);
     },
     async handleScroll(e: any) {
       if (
@@ -467,6 +582,44 @@ export default defineComponent({
       }
       return { txt, error };
     },
+    uploadedProfile(e: any) {
+      const { txt, error }: any = this.checkFile(e);
+      if (error) {
+        alert(txt);
+        return;
+      }
+      this.pfile = e.target.files[0];
+      this.prepareProfileFormData();
+      // const reader = new FileReader();
+
+      // reader.addEventListener(
+      //   "load",
+      //   () => {
+      //     this.pDataUrl = reader.result;
+      //   },
+      //   false
+      // );
+      // reader.readAsDataURL(this.file);
+      if (this.pfile) {
+        this.loadingProfileUpload = true;
+        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+        axios({
+          url,
+          method: "POST",
+          data: this.pformData,
+          onUploadProgress: (e) => {
+            this.progress = Math.round((e.loaded * 100) / e.total);
+          },
+        })
+          .then(({ data }) => {
+            this.uploadedPUrl = data.secure_url;
+            this.saveCommunityLogo();
+          })
+          .catch((e) => {
+            this.loadingProfileUpload = false;
+          });
+      }
+    },
     uploaded(e: any) {
       const { txt, error }: any = this.checkFile(e);
       if (error) {
@@ -476,6 +629,64 @@ export default defineComponent({
       this.file = e.target.files[0];
       this.filename = e.target.files[0].name;
       this.prepareFormData();
+      const reader = new FileReader();
+
+      reader.addEventListener(
+        "load",
+        () => {
+          this.dataUrl = reader.result;
+        },
+        false
+      );
+      reader.readAsDataURL(this.file);
+      if (this.file) {
+        this.loadingCoverUpload = true;
+        const url = "https://api.cloudinary.com/v1_1/dtabnh5py/image/upload";
+        axios({
+          url,
+          method: "POST",
+          data: this.formData,
+          onUploadProgress: (e) => {
+            this.progress = Math.round((e.loaded * 100) / e.total);
+          },
+        })
+          .then(({ data }) => {
+            this.uploadedUrl = data.secure_url;
+            this.saveCommunityCover();
+          })
+          .catch((e) => {
+            this.loadingCoverUpload = false;
+          });
+      }
+    },
+
+    saveCommunityLogo() {
+      this.$apollo
+        .mutate({
+          mutation: UPDATE_LOGO,
+          variables: {
+            cover: this.uploadedPUrl,
+            input: this.community.communityId,
+          },
+        })
+        .then(async () => {
+          await this.loadCommunity();
+        })
+        .finally(() => (this.loadingProfileUpload = false));
+    },
+    saveCommunityCover() {
+      this.$apollo
+        .mutate({
+          mutation: UPDATE_COVER,
+          variables: {
+            cover: this.uploadedUrl,
+            input: this.community.communityId,
+          },
+        })
+        .then(async () => {
+          await this.loadCommunity();
+        })
+        .finally(() => (this.loadingCoverUpload = false));
     },
     cancelPost() {
       this.showFormx = false;
@@ -605,6 +816,9 @@ export default defineComponent({
 .profile-name-section {
   /* mobile */
   padding-left: 15.5%;
+}
+.loading-darken {
+  filter: brightness(0.5);
 }
 @media (min-width: 300px) {
   .profile-name-section {

@@ -1,155 +1,14 @@
 <template>
   <div class="w-full">
-    <login-popup
-      @loggedin="$store.commit('SET_LOGIN_POP', false)"
-      @close="$store.commit('SET_LOGIN_POP', false)"
-      :loginPopup="$store.state.loginPopup"
-    ></login-popup>
-    <dialog-modal :show="$store.state.showMainDialog" @close="closeDialog">
-      <div class="px-2 relative w-full">
-        <div
-          v-if="loadingPost"
-          class="h-full bg-gray-500 top-0 left-0 right-0 w-full opacity-60 absolute z-50"
-        >
-          <div class="flex flex-col mt-32 justify-center items-center">
-            <p class="text-xl font-bold text-white tracking-wider">
-              Loading...
-            </p>
-            <loader :dark="true"></loader>
-          </div>
-        </div>
-
-        <transition name="slide-fade">
-          <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96 z-0">
-            <router-link
-              to="/"
-              :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-            >
-              <p
-                class="text-4xl xl:text-5xl lg:text-5xl text-white"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                አዲስ ጨዋታ
-              </p>
-            </router-link>
-            <button
-              style="opacity: 12px"
-              @click="animateForm"
-              class="rounded-lg mt-5 w-full font-semibold bg-amber-700 text-white p-16 xl:text-2xl lg:text-2xl text-xl"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Meme / Story
-              </p>
-            </button>
-            <button
-              class="w-full bg-teal-700 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Question
-              </p>
-            </button>
-            <button
-              class="w-full bg-cyan-600 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Random
-              </p>
-            </button>
-          </div>
-        </transition>
-        <transition name="slide-form">
-          <div
-            v-if="showFormx"
-            class="w-full relative"
-            :style="{ filter: loadingPost ? 'blur(2px)' : '' }"
-            :class="{ 'opacity-70': loadingPost }"
-          >
-            <p class="text-4xl xl:text-5xl lg:text-5xl text-white">Post Here</p>
-
-            <textarea
-              class="form-control rounded-b-none block w-full h-44 resize-none border-none px-3 mt-5 text-xl py-1.5 font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
-              id="exampleFormControlTextarea1"
-              rows="3"
-              v-model="content"
-              placeholder="Your post starts here ..."
-            ></textarea>
-            <input
-              type="text"
-              name=""
-              v-model="tags"
-              placeholder="Tags (Love, Joke, Story, Meme, etc.)"
-              class="mt-2 form-control rounded-b-none block w-full resize-none border-none px-3 text-lg py-1.5 font-normal bg-white bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
-            />
-            <div
-              class="w-full rounded-b-md bg-gray-500 flex flex-row justify-between p-2 text-white"
-            >
-              <input
-                type="file"
-                @change="uploaded"
-                class="hidden"
-                ref="file"
-                accept="image/png, image/gif, image/jpeg"
-              />
-              <p>5000</p>
-              <button @click="clickFileRef">
-                <span v-if="!filename">Attach Img/Gif</span>
-                <span v-else>{{ filename }}</span>
-              </button>
-            </div>
-            <button
-              @click="post"
-              class="bg-green-700 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-            >
-              <p>Post</p>
-            </button>
-            <button
-              @click="cancelPost"
-              class="bg-red-400 rounded-lg mt-3 text-gray-100 w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-            >
-              <p>Cancel</p>
-            </button>
-          </div>
-        </transition>
-      </div>
-    </dialog-modal>
     <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
-      <div
-        v-if="$store.state.loggedIn"
-        class="w-1/5 mt-2 hidden lg:block xl:block md:block"
-      >
-        <sidebar-items></sidebar-items>
+      <div class="w-1/6 hidden lg:block xl:block md:block">
+        <CommunityCategories @selected="selectedCategory"></CommunityCategories>
       </div>
-      <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
-        <h1 class="text-gray-500 text-xl font-semibold tracking-widest">
-          Join Chewata
-        </h1>
 
-        <p class="font-normal text-gray-400 text-md pt-2">
-          Do all the things like ++ or -- rants, post your own rants, comment on
-          others' rants and just have fun.
-        </p>
-        <button
-          class="rounded-xl tracking-widest border-2 mt-2 p-2"
-          @click="$router.push('/login')"
-        >
-          Sign Up
-        </button>
-      </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
-        <div class="flex flex-row justify-between">
+        <div class="flex flex-row justify-between sm:mt-3">
           <p class="text-xl font-semibold tracking-wider text-gray-500">
-            Cheweta
+            Top Communities
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
             <button
@@ -167,14 +26,14 @@
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
           <loader></loader>
         </div>
-
-        <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
-          <post-tile
-            :compKey="post.postId"
-            :post="post"
-            @clicked="clicked(post)"
-          ></post-tile>
-          <div class="border-t border-gray-100 w-full"></div>
+        <div class="mt-4">
+          <top-communities
+            :cat="selectedCat"
+            :large="true"
+            :hideTitle="true"
+            :key="selectedCat"
+            :pageSize="30"
+          ></top-communities>
         </div>
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
@@ -187,23 +46,6 @@
         </div>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
-        <div class="flex flex-col">
-          <top-communities></top-communities>
-          <h1 class="text-gray-500 pb-3 text-xl font-normal pt-5">Top Tags</h1>
-          <div class="flex flex-row gap-2 flex-wrap flex-grow">
-            <button
-              v-for="(tg, ix) in topTags"
-              :key="ix"
-              @click="$router.push(`/tag/${tg.tagName}`)"
-            >
-              <span
-                class="hover:border-green-600 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
-              >
-                {{ tg.tagName }}
-              </span>
-            </button>
-          </div>
-        </div>
         <!-- suggested chewata -->
       </div>
     </div>
@@ -235,6 +77,7 @@ import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
 import TopCommunities from "../components/TopCommunities.vue";
+import CommunityCategories from "../components/CommunityCategories.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -251,9 +94,11 @@ export default defineComponent({
     SuggestedGames,
     SidebarItems,
     TopCommunities,
+    CommunityCategories,
   },
   data: () => ({
     tags: "",
+    selectedCat: null as any,
     topTags: [] as Array<any>,
     loadingFeed: false,
     showModal: false,
@@ -368,6 +213,9 @@ export default defineComponent({
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    selectedCategory(cat: any) {
+      this.selectedCat = cat;
+    },
     async loadTags() {
       const {
         data: { topTags },
@@ -623,7 +471,7 @@ export default defineComponent({
   transition: all 0.29s cubic-bezier(0, 0, 0.97, 1);
 }
 .slide-fade-enter-from, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+  /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(-220px);
   opacity: 0;
 }
@@ -635,7 +483,7 @@ export default defineComponent({
   transition: all 0.23s cubic-bezier(0, 0, 0.97, 1);
 }
 .slide-form-enter-from, .slide-form-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+  /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateY(220px);
   opacity: 0;
 }

@@ -14,6 +14,7 @@ import Game from "../views/Game.vue";
 import TagView from "../views/TagView.vue";
 import PathErr from "../views/PathErr.vue";
 import Profile from "../views/Profile.vue";
+import Explore from "../views/Explore.vue";
 import PublicProfile from "../views/PublicProfile.vue";
 import Notification from "../views/Notification.vue";
 import Privacy from "../views/Privacy.vue";
@@ -30,6 +31,11 @@ const routes: RouteRecordRaw[] = [
     name: "Login",
     component: Login,
     meta: { hideNav: true },
+  },
+  {
+    path: "/explore",
+    name: "Explore",
+    component: Explore,
   },
   {
     path: "/tag/:tag",

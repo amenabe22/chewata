@@ -167,6 +167,7 @@ export class PostResolver {
       .createQueryBuilder("posts")
       .leftJoinAndSelect("posts.user", "user")
       .leftJoinAndSelect("posts.tags", "tag")
+      .leftJoinAndSelect("posts.community", "community")
       .where("tag.tagName = :tag", { tag })
       .getMany();
 

@@ -434,6 +434,21 @@ export const TAG_POSTS = gql`
         cover
         likes
         comments
+        community {
+          id
+          name
+          slug
+          communityId
+          description
+          logo
+          cover
+          type
+          category {
+            id
+            name
+          }
+          createdAt
+        }
         tags {
           id
           tagName
@@ -518,6 +533,21 @@ export const COMMUNITY_POSTS = gql`
         cover
         likes
         comments
+        community {
+          id
+          name
+          slug
+          communityId
+          description
+          logo
+          cover
+          type
+          category {
+            id
+            name
+          }
+          createdAt
+        }
         tags {
           id
           tagName
@@ -586,19 +616,50 @@ export const JOIN_COMMUNITY = gql`
   }
 `;
 
-export const LEAVE_COMMUNITY = gql`mutation leaveCommunity($input: String!) {
-  leaveCommunity(input: $input)
-}
-`
+export const LEAVE_COMMUNITY = gql`
+  mutation leaveCommunity($input: String!) {
+    leaveCommunity(input: $input)
+  }
+`;
 
-export const TOP_COMMUNITIES = gql`query topCommunities($pagination: PaginationInputType!) {
-  topCommunities(pagination: $pagination) {
-    data {
-      id
-      name
-      slug
-      logo
+export const TOP_COMMUNITIES = gql`
+  query topCommunities($pagination: PaginationInputType!, $cat: String) {
+    topCommunities(pagination: $pagination, cat: $cat) {
+      data {
+        id
+        name
+        slug
+        logo
+        category {
+          id
+          name
+          catId
+          createdAt
+        }
+      }
     }
   }
+`;
+export const UPDATE_COVER = gql`
+  mutation updateCover($input: String!, $cover: String!) {
+    updateCover(input: $input, cover: $cover)
+  }
+`;
+
+export const UPDATE_LOGO = gql`
+  mutation updateLogo($input: String!, $cover: String!) {
+    updateLogo(input: $input, cover: $cover)
+  }
+`;
+
+export const UPDATE_DESC = gql`
+  mutation updateDescription($desc: String!, $community: String!) {
+    updateDescription(desc: $desc, community: $community)
+  }
+`;
+
+
+export const USER_COM_LIMIT = gql`query {
+  userCommunitiesCount
 }
 `

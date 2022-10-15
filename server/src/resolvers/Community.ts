@@ -19,29 +19,47 @@ import { AppDataSource } from "../data-source";
 import { Not } from "typeorm";
 import { Post } from "../entity/Post";
 import { paginator } from "../utils/paginator";
+import { MAX_COMMUNITIES_LIMIT } from "../constants";
 
 @Resolver(Community)
 export class CommunityResolver {
   @Query(() => CommunityPaginatedResponse, { nullable: true })
-  @UseMiddleware(isAuthed)
   async topCommunities(
-    @Ctx() { user }: MyContext,
+    @Arg("cat", { nullable: true }) cat: string,
     @Arg("pagination") pagination: PaginationInputType
   ): Promise<CommunityPaginatedResponse> {
-    const posts = await AppDataSource.manager
-      .createQueryBuilder(Post, "post")
-      .leftJoinAndSelect("post.tags", "tags")
-      .leftJoinAndSelect("post.user", "user")
-      .leftJoinAndSelect("post.community", "community")
-      .where("community.type = :type", { type: "public" })
-      .andWhere("post.community IS NOT NULL")
-      .getMany();
-    console.log(posts, "psts");
-    const arr = posts.map((c) => c.community);
+    let posts: any;
+    console.log(cat, "CAT");
+    if (cat) {
+      posts = await AppDataSource.manager
+        .createQueryBuilder(Post, "post")
+        .leftJoinAndSelect("post.tags", "tags")
+        .leftJoinAndSelect("post.user", "user")
+        .leftJoinAndSelect("post.community", "community")
+        .leftJoinAndSelect("community.category", "category")
+        .where("community.type = :type", { type: "public" })
+        .andWhere("category.catId = :catId", { catId: cat })
+        .andWhere("post.community IS NOT NULL")
+        .getMany();
+    } else {
+      posts = await AppDataSource.manager
+        .createQueryBuilder(Post, "post")
+        .leftJoinAndSelect("post.tags", "tags")
+        .leftJoinAndSelect("post.user", "user")
+        .leftJoinAndSelect("post.community", "community")
+        .leftJoinAndSelect("community.category", "community.category")
+        .where("community.type = :type", { type: "public" })
+        .andWhere("post.community IS NOT NULL")
+        .getMany();
+    }
+
+    const arr = posts.map((c: any) => c.community);
     const result = Array.from(
       arr.reduce(
         (map: any, item: any) => (map.get(item.slug).count++, map),
-        new Map(arr.map((o) => [o.slug, Object.assign({}, o, { count: 0 })]))
+        new Map(
+          arr.map((o: any) => [o.slug, Object.assign({}, o, { count: 0 })])
+        )
       ),
       ([k, o]) => o
     )
@@ -223,40 +241,77 @@ export class CommunityResolver {
     }
 
     await AppDataSource.manager.update(Community, community[0].id, {
-      name: desc,
-      slug: slugifyTitle(desc.toLowerCase()),
+      description: desc,
+    });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async updateCover(
+    @Arg("cover") cover: string,
+    @Arg("input") input: string,
+    @Ctx() { user }: MyContext
+  ): Promise<Boolean> {
+    const community = await AppDataSource.manager.find(Community, {
+      where: {
+        user: { id: user.id },
+        communityId: input,
+      },
+    });
+    if (!community.length) {
+      throw Error("invalid request");
+    }
+    await AppDataSource.manager.update(Community, community[0].id, {
+      cover: cover,
+    });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async updateLogo(
+    @Arg("cover") cover: string,
+    @Arg("input") input: string,
+    @Ctx() { user }: MyContext
+  ): Promise<Boolean> {
+    const community = await AppDataSource.manager.find(Community, {
+      where: {
+        user: { id: user.id },
+        communityId: input,
+      },
+    });
+    if (!community.length) {
+      throw Error("invalid request");
+    }
+    await AppDataSource.manager.update(Community, community[0].id, {
+      logo: cover,
     });
     return true;
   }
 
   @Query(() => [Category])
-  @UseMiddleware(isAuthed)
-  async updateCover(): Promise<Category[]> {
-    return await AppDataSource.manager.find(Category);
-  }
-
-  @Query(() => [Category])
-  @UseMiddleware(isAuthed)
-  async updateLogo(): Promise<Category[]> {
-    return await AppDataSource.manager.find(Category);
-  }
-
-  @Query(() => [Category])
-  @UseMiddleware(isAuthed)
   async categories(): Promise<Category[]> {
     return await AppDataSource.manager.find(Category);
   }
 
+  @Query(() => Boolean)
+  @UseMiddleware(isAuthed)
+  async userCommunitiesCount(@Ctx() { user }: MyContext): Promise<boolean> {
+    const userCommunities = await userCreatedCommunities(user);
+    return userCommunities.length >= MAX_COMMUNITIES_LIMIT;
+  }
   @Mutation(() => Community)
   @UseMiddleware(isAuthed)
   async addCommunity(
     @Ctx() { user }: MyContext,
     @Arg("input") input: CommunityInputType
   ): Promise<Community> {
-    const maxCommunityLimit = 10;
     const userCommunities = await userCreatedCommunities(user);
-    if (userCommunities.length >= maxCommunityLimit) {
-      throw Error(`can't create more than ${maxCommunityLimit} communities`);
+    if (userCommunities.length >= MAX_COMMUNITIES_LIMIT) {
+      throw Error(
+        `can't create more than ${MAX_COMMUNITIES_LIMIT} communities`
+      );
     }
 
     const allowedTypes = ["public", "private"];
