@@ -36,6 +36,7 @@ jobs:
           cp web/dist/index.html server/dist/templates
           touch .env
           echo 'DB_PASS="#Hallelujah"' >> .env
+          echo 'JWT="asdfasdfl2kjl1k2j31@#!@#!N@#!#!@#!@!@##IDI@#@$$‰"' >> .env'
           echo DB_NAME=chewata >> .env
           echo DB_USER=admin >> .env
           echo DB_HOST=localhost >> .env
