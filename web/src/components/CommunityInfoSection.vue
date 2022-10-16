@@ -1,11 +1,12 @@
 <template>
   <div>
+    {{ stat.stat }}
     <div class="border border-green-100">
       <!-- profile link section -->
       <div class="flex p-4 bg-green-100 flex justify-between">
         <p class="text-lg">About community</p>
         <button
-          v-if="!editMode"
+          v-if="!editMode && $store.state.loggedIn && stat.stat == 'admin'"
           class="bg-white border rounded-full"
           @click="editMode = true"
         >
@@ -22,6 +23,7 @@
         </button>
         <div class="flex gap-2" v-else>
           <button
+            v-if="$store.state.loggedIn && stat.stat == 'admin'"
             class="bg-white border rounded-full"
             @click="editMode = false"
           >
@@ -40,7 +42,11 @@
               />
             </svg>
           </button>
-          <button class="bg-white border rounded-full" @click="saveDescription">
+          <button
+            class="bg-white border rounded-full"
+            @click="saveDescription"
+            v-if="$store.state.loggedIn && stat.stat == 'admin'"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -63,7 +69,7 @@
           type="text"
           v-model="description"
           class="outline-none border px-2"
-          v-if="editMode"
+          v-if="editMode && $store.state.loggedIn && stat.stat == 'admin'"
         />
         <p v-else>{{ data.description }}</p>
         <div class="flex gap-2">
@@ -131,7 +137,7 @@ export default defineComponent({
   components: {
     UserAvatar,
   },
-  props: ["data"],
+  props: ["data", "stat"],
   data: () => ({
     rules: [
       "No US Internal News or Politics",
