@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ stat.stat }}
     <div class="border border-green-100">
       <!-- profile link section -->
       <div class="flex p-4 bg-green-100 flex justify-between">
