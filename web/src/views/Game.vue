@@ -279,7 +279,7 @@ export default defineComponent({
   metaInfo() {
     const ptitle = this.post ? this.post.content : "";
     return {
-      title: ptitle.substr(0, 15),
+      title: this.stripHtml(ptitle).substr(0, 15),
       htmlAttrs: { lang: "en", amp: true },
       meta: [{ vmid: "description", name: "description", content: "foo" }],
     };
@@ -345,8 +345,15 @@ export default defineComponent({
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
+    stripHtml(html) {
+      let tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    },
     getLogoPath(com: any) {
-      return com.logo ? com.logo : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
+      return com.logo
+        ? com.logo
+        : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
     },
     async handleScroll(e: any) {
       if (
