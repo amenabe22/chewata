@@ -125,7 +125,7 @@ export class CommunityMember {
   user: User;
 
   @Field(() => Boolean, { defaultValue: true })
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   sendNotification: boolean;
 
   @Field(() => String, { nullable: true })

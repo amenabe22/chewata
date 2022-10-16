@@ -36,10 +36,13 @@ export async function startApolloServer() {
 
   app.use("/ui", serverAdapter.getRouter());
   const excluded = [
-    "/",
+    "/*",
     "/user",
     "/post",
     "/new",
+    "/jema",
+    "/explore",
+    "/login",
     "/game/*",
     "/game",
     "/user/*",
@@ -47,20 +50,6 @@ export async function startApolloServer() {
     "/notification",
     "/privacy",
   ];
-  app.get(excluded, function (_, res) {
-    const templatePath = join(__dirname, "/templates/index.html");
-    console.log(templatePath, "path");
-    fs.readFile(templatePath, "utf-8", (err, content) => {
-      if (err) {
-        console.log("can't open file");
-      }
-      res.writeHead(200, {
-        "Content-Type": "text/html; charset=utf-8",
-      });
-      return res.end(content);
-    });
-    // res.sendFile(join());
-  });
   app.use("/", express.static(__dirname));
 
   app.get("/", function (_req, res) {
@@ -76,6 +65,7 @@ export async function startApolloServer() {
     res.sendFile(path.resolve(__dirname, "assets/", "sitemap.xml"));
   });
 
+
   // app.use("/static", express.static("static")!);
   server.applyMiddleware({
     app,
@@ -88,16 +78,33 @@ export async function startApolloServer() {
       credentials: true,
       origin: [
         "http://127.0.0.1:3000",
+        "http://192.168.1.10:3000",
         "http://127.0.0.1:4000",
         "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",
       ],
     },
   });
+  app.get(excluded, function (_, res) {
+    const templatePath = join(__dirname, "/templates/index.html");
+    console.log(templatePath, "path");
+    fs.readFile(templatePath, "utf-8", (err, content) => {
+      if (err) {
+        console.log("can't open file");
+      }
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+      return res.end(content);
+    });
+    // res.sendFile(join());
+  });
+
   app.use(
     cors({
       origin: [
         "http://127.0.0.1:3000",
+        "http://192.168.1.10:3000",
         "http://127.0.0.1:4000",
         "http://172.20.10.5:3000",
         "https://chewata-staging.netlify.app/",

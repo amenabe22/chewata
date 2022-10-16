@@ -1,6 +1,8 @@
 <template>
   <div
-    class="flex flex-row mt-4 hover:bg-gray-50 relative xl:p-2 lg:p-2 md:p-2 mb-3"
+    class="flex px-2 flex-row mt-4 hover:border-green-300 relative mb-3 rounded-lg border border-gray-100"
+    :class="{ 'hover:bg-gray-50': false }"
+    style="background: white"
   >
     <vote-clickers
       :readonly="readonly"
@@ -13,12 +15,40 @@
       color="#92daac"
     />
     <div
-      class="mx-3 pb-2 cursor-pointer w-full relative"
+      class="pb-2 cursor-pointer w-full relative mx-3"
       @click="$emit('clicked')"
     >
+      <div v-if="post.community" class="pt-2 flex pb-1">
+        <img
+          class="h-5 w-5 mt-1 rounded-full object-cover"
+          style="border-color: #e5f6ee"
+          :src="
+            post.community.logo
+              ? post.community.logo
+              : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'
+          "
+        />
+        <router-link
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+          :to="`/${post.community.slug}`"
+          >{{ post.community.name }}</router-link
+        >
+      </div>
+      <div v-else class="pt-2 flex pb-1">
+        <img
+          class="h-5 w-5 mt-1 rounded-full object-cover"
+          style="border-color: #e5f6ee"
+          src="https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png"
+        />
+        <p
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+        >
+          chewata
+        </p>
+      </div>
       <p
-        class="tracking-wide tile-txt text-lg break-words"
-        :class="{ 'py-2': post.cover, 'pt-5': !post.cover }"
+        class="tracking-wide tile-txt break-words"
+        :class="{ 'pb-2': post.cover, '': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
         }}{{ post.content.length > 600 ? "..." : "" }}
@@ -29,6 +59,7 @@
             v-if="post.cover"
             :src="post.cover"
             alt=""
+            class="rounded-lg"
             style="object-fit: contain"
           />
         </template>
@@ -45,7 +76,7 @@
             :key="ix"
           >
             <div
-              class="border-2 rounded-lg p-1 text-gray-400 border-green-100 hover:border-green-200 hover:text-green-400"
+              class="border rounded-md text-xs p-1 text-gray-400 border-green-200 hover:border-green-300"
             >
               {{ tag.tagName }}
             </div>
@@ -55,7 +86,7 @@
           <div class="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-green-400 mt-1"
+              class="h-5 w-5 text-green-400"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -66,7 +97,7 @@
                 d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
               />
             </svg>
-            <p class="text-green-400 text-lg px-1">{{ post.comments }}</p>
+            <p class="text-green-400 text-sm px-1">{{ post.comments }}</p>
           </div>
         </button>
       </div>
@@ -177,7 +208,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     tagClicked(tag: any) {
@@ -194,7 +225,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
   },
@@ -202,6 +233,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .tile-txt {
+  font-size: 16px;
   font-weight: 300;
   color: #2f2f32;
 }

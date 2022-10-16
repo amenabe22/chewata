@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main style="background: #f8fdfa">
     <metainfo>
       <template v-slot:title="{ content }">{{
         content ? `${content} | Chewata` : `Chewata`
@@ -16,7 +16,6 @@
       @close="$store.commit('SET_PROFILE_POP', false)"
       :profileClicked="$store.state.profilePopup"
     ></account-popup>
-
     <navbar
       @clickedLogin="$store.commit('SET_LOGIN_POP', true)"
       @profileClicked="$store.commit('SET_PROFILE_POP', true)"
@@ -63,7 +62,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$store.commit("SET_MAIN_POP", true);
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     cleanStates() {
@@ -95,3 +94,8 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+body {
+  background: #f8fdfa;
+}
+</style>

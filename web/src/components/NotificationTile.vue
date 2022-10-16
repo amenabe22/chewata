@@ -2,7 +2,7 @@
   <div>
     <a
       :href="item.link"
-      class="flex bg-gray-50 rounded-xl p-3 gap-3 hover:bg-green-50 cursor-pointer"
+      class="flex border border-green-200 rounded-xl p-3 gap-3 hover:bg-green-50 cursor-pointer"
     >
       <img :src="item.cover" class="w-20 object-contain rounded-xl" alt="" />
       <div class="flex flex-col">

@@ -2,12 +2,12 @@
   <div>
     <!-- profile link section -->
     <div class="w-full text-gray-500">
-      <p class="text-2xl">Profile</p>
+      <p class="text-xl">Profile</p>
       <div class="flex gap-2 pt-2">
-        <user-avatar :large="true" :img="$store.state.user.photo" />
+        <user-avatar :large="!true" :img="$store.state.user.photo" />
         <router-link to="/user">
           <div class="flex flex-col">
-            <p class="font-semibold text-lg hover:text-green-800">
+            <p class="font-semibold text-sm hover:text-green-800">
               {{ $store.state.user.fullName }}
             </p>
             <div>
@@ -32,7 +32,7 @@
             :key="ix"
           >
             <user-avatar :large="true" :img="nt.user.photo"></user-avatar>
-            <p class="text-lg w-full">{{ nt.message }}</p>
+            <p class="text-md w-full">{{ nt.message }}</p>
           </a>
         </div>
       </div>

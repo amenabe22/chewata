@@ -78,9 +78,9 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full mt-14 sm:mt-20" style="background: linear-gradient(360deg, rgb(117, 191, 159),rgb(165 222 197));">
+    <div class="h-1/2 w-full mt-14 sm:mt-20 game-content">
       <div
-      class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
+        class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
       >
         <div class="flex flex-row gap-4" v-if="post">
           <vote-clickers
@@ -97,7 +97,10 @@
           <div class="flex flex-row justify-start items-start">
             <div class="flex flex-col gap-4 w-full px-2">
               <p class="pt-5">{{ post.user.fullName }}</p>
-              <div class="prose text-white text-xl font-normal font-sans" v-html="post.content"></div>
+              <div
+                class="prose text-white text-lg font-normal font-sans"
+                v-html="post.content"
+              ></div>
               <div class="mr-3 mb-3">
                 <vue-load-image>
                   <template v-slot:image>
@@ -165,36 +168,28 @@
       <div class="w-full mt-2 hidden lg:block xl:block md:block col-span-2">
         <div class="flex flex-row" v-if="post && post.user">
           <div v-if="$store.state.loggedIn">
-            <user-avatar
-              :path="
-                $store.state.user.userId == post.user.userId
-                  ? '/user'
-                  : `/user/${post.user.userId}`
+            <avatar
+              :path="post.community ? `/${post.community.slug}` : $route.path"
+              :img="
+                post.community ? getLogoPath(post.community) : post.user.photo
               "
-              :img="post.user.photo"
               :user="post.user"
             />
           </div>
           <user-avatar
             v-else
             :path="'/'"
-            :img="post.user.photo"
+            :img="
+              post.community ? getLogoPath(post.community) : post.user.photo
+            "
             :user="post.user"
           />
           <div>
             <p
               class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
-              {{ post.user.fullName }}
+              {{ post.community ? post.community.name : post.user.fullName }}
             </p>
-            <div class="mx-2">
-              <span
-                class="px-1 rounded-md text-white text-sm"
-                style="background: #5fd49f"
-              >
-                {{ post.user.totalLikes }}
-              </span>
-            </div>
           </div>
         </div>
         <div class="pt-2 text-gray-400">
@@ -213,7 +208,7 @@
         </button>
       </div>
       <!-- comments section -->
-      <div class="w-full bg-white mb-20 col-span-7 md:col-span-6 xl:col-span-5">
+      <div class="w-full mb-20 col-span-7 md:col-span-6 xl:col-span-5">
         <div class="flex items-start justify-start" v-if="loadingComments">
           <loader></loader>
         </div>
@@ -263,6 +258,7 @@ import {
   DELETE_POST,
 } from "../queries";
 import ShareList from "../components/ShareList.vue";
+import Avatar from "../components/Avatar.vue";
 
 export default defineComponent({
   components: {
@@ -278,6 +274,7 @@ export default defineComponent({
     Head,
     "vue-load-image": VueLoadImage,
     ShareList,
+    Avatar,
   },
   metaInfo() {
     const ptitle = this.post ? this.post.content : "";
@@ -348,6 +345,9 @@ export default defineComponent({
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
+    getLogoPath(com: any) {
+      return com.logo ? com.logo : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
+    },
     async handleScroll(e: any) {
       if (
         window.scrollY + window.innerHeight >=
@@ -371,7 +371,7 @@ export default defineComponent({
         this.content = `@${this.replyTarget.user.fullName}`;
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async postComment() {
@@ -401,7 +401,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadComments() {
@@ -531,7 +531,7 @@ export default defineComponent({
           return;
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async downvoted() {
@@ -544,7 +544,7 @@ export default defineComponent({
           this.setVote(-1);
         }
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async getPostVote() {
@@ -656,6 +656,9 @@ export default defineComponent({
   font-weight: normal;
   color: #ffffff;
 }
+.game-content {
+  background: linear-gradient(360deg, rgb(117, 191, 159), rgb(165 222 197));
+}
 @media (min-width: 768px) {
   .prose ::v-deep h2 {
     padding-top: 0px;
@@ -670,17 +673,18 @@ export default defineComponent({
     margin: 0px;
     padding-bottom: 0px;
     font-weight: normal;
-    font-size: 30px;
+    font-size: 29px;
     color: #ffffff;
   }
   .prose ::v-deep p {
     padding-top: 0px;
     padding-bottom: 0px;
     margin: 0px;
-    font-size: 25px;
+    font-size: 20px;
     font-family: sans-serif;
     font-weight: normal;
     color: #ffffff;
-    line-height: 35px;
+    line-height: 28px;
   }
-}</style>
+}
+</style>

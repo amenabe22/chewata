@@ -156,7 +156,7 @@
       </div>
       <!-- comments section -->
       <div
-        class="bg-white col-span-7 lg:col-span-3 sm::col-span-4 md::col-span-4 xl:col-span-4 w-full"
+        class="col-span-7 lg:col-span-3 sm::col-span-4 md::col-span-4 xl:col-span-4 w-full"
       >
         <div class="flex flex-row pt-3">
           <button
@@ -300,7 +300,7 @@ export default defineComponent({
       if (me) {
         this.$store.commit("SET_USER", me.user);
         this.$store.commit("SET_NOTIFICATION", me.notificationsCount);
-       this.$emit("loggedin");
+        this.$emit("loggedin");
       }
     },
     submitForm() {

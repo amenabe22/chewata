@@ -9,6 +9,8 @@ import { Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
 import { Comment } from "../entity/Comment";
 import { Likes } from "../entity/Likes";
 import { Tag } from "../entity/Core";
+import { Community } from "../entity/Community";
+import { slugifyTitle } from "../utils/core";
 
 export class PostResolver {
   @Mutation(() => Boolean)
@@ -30,6 +32,28 @@ export class PostResolver {
       .createQueryBuilder("user")
       .getMany();
     return users;
+  }
+
+  @Query(() => PostsPaginatedResponse)
+  async communityPosts(
+    @Arg("title") title: string,
+    @Arg("pagination") pagination: PaginationInputType
+  ) {
+    const community = await AppDataSource.manager.find(Community, {
+      where: {
+        slug: slugifyTitle(title.toLowerCase()),
+      },
+    });
+    if (!community.length) {
+      throw Error("Invalid Request");
+    }
+    const posts = await AppDataSource.manager.find(Post, {
+      where: { community: { id: community[0].id } },
+      order: { createdAt: "DESC" },
+      relations: ["community"],
+    });
+    let paginResponse = paginator(posts, pagination.page, pagination.pageSize);
+    return paginResponse;
   }
 
   @Query(() => PostsPaginatedResponse)
@@ -72,9 +96,18 @@ export class PostResolver {
     @Arg("input") input: PostInputType,
     @Ctx() { user }: MyContext
   ) {
+    const community = await AppDataSource.manager.find(Community, {
+      where: {
+        communityId: input.community,
+      },
+    });
+    if (!community.length) {
+      throw Error("Invalid request");
+    }
     const post = AppDataSource.manager.create(Post, {
       cover: input.cover,
       content: input.content,
+      community: community[0],
       user,
     });
     await AppDataSource.manager.save(post);
@@ -134,6 +167,7 @@ export class PostResolver {
       .createQueryBuilder("posts")
       .leftJoinAndSelect("posts.user", "user")
       .leftJoinAndSelect("posts.tags", "tag")
+      .leftJoinAndSelect("posts.community", "community")
       .where("tag.tagName = :tag", { tag })
       .getMany();
 
@@ -159,6 +193,7 @@ export class PostResolver {
         .createQueryBuilder("posts")
         .leftJoinAndSelect("posts.user", "user")
         .leftJoinAndSelect("posts.tags", "tags")
+        .leftJoinAndSelect("posts.community", "community")
         .orderBy("posts.createdAt", "DESC")
         .orderBy("user.createdAt", "DESC")
         .getMany();
@@ -167,6 +202,7 @@ export class PostResolver {
         .createQueryBuilder("posts")
         .leftJoinAndSelect("posts.user", "user")
         .leftJoinAndSelect("posts.tags", "tags")
+        .leftJoinAndSelect("posts.community", "community")
         .orderBy("posts.createdAt", "DESC")
         .getMany();
     } else if (filter === "top") {
@@ -174,6 +210,7 @@ export class PostResolver {
         .createQueryBuilder("posts")
         .leftJoinAndSelect("posts.user", "user")
         .leftJoinAndSelect("posts.tags", "tags")
+        .leftJoinAndSelect("posts.community", "community")
         .orderBy("posts.likes", "DESC")
         .getMany();
     }

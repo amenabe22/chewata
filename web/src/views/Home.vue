@@ -123,7 +123,7 @@
         </transition>
       </div>
     </dialog-modal>
-    <div class="flex flex-row justify-center gap-10 mt-24">
+    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
       <div
         v-if="$store.state.loggedIn"
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -131,24 +131,24 @@
         <sidebar-items></sidebar-items>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
-        <h1 class="text-gray-500 text-2xl font-semibold tracking-widest">
+        <h1 class="text-gray-500 text-xl font-semibold tracking-widest">
           Join Chewata
         </h1>
 
-        <p class="font-normal text-gray-400 text-lg">
+        <p class="font-normal text-gray-400 text-md pt-2">
           Do all the things like ++ or -- rants, post your own rants, comment on
           others' rants and just have fun.
         </p>
         <button
           class="rounded-xl tracking-widest border-2 mt-2 p-2"
-          @click="$store.commit('SET_LOGIN_POP', true)"
+          @click="$router.push('/login')"
         >
           Sign Up
         </button>
       </div>
-      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 bg-white p-2">
+      <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-2xl font-semibold tracking-wider text-gray-500">
+          <p class="text-xl font-semibold tracking-wider text-gray-500">
             Cheweta
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
@@ -188,17 +188,16 @@
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <div class="flex flex-col">
-          <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
-            Top Tags
-          </h1>
-            <div class="flex flex-row gap-2 flex-wrap flex-grow">
+          <top-communities></top-communities>
+          <h1 class="text-gray-500 pb-3 text-xl font-normal pt-5">Top Tags</h1>
+          <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <button
               v-for="(tg, ix) in topTags"
               :key="ix"
               @click="$router.push(`/tag/${tg.tagName}`)"
             >
               <span
-                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
                 {{ tg.tagName }}
               </span>
@@ -235,6 +234,7 @@ import { messaging } from "../firebase.config";
 import { ADD_POST, GET_POSTS, TOP_TAGS } from "../queries";
 import SuggestedGames from "../components/SuggestedGames.vue";
 import SidebarItems from "../components/SidebarItems.vue";
+import TopCommunities from "../components/TopCommunities.vue";
 
 export default defineComponent({
   name: "HomePage",
@@ -250,6 +250,7 @@ export default defineComponent({
     PostTile,
     SuggestedGames,
     SidebarItems,
+    TopCommunities,
   },
   data: () => ({
     tags: "",
@@ -397,7 +398,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.$router.push("/post");
       } else {
-        this.$store.commit("SET_LOGIN_POP", true);
+        this.$router.push("/login");
       }
     },
     async loadMoreFeed() {

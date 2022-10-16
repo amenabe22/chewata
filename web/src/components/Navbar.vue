@@ -1,7 +1,7 @@
 <template>
   <nav
     class="h-16 sm:h-20 fixed w-full top-0 z-50"
-    style="box-sizing: content-box; background: #a5dec4"
+    :style="`box-sizing: content-box;background: #a5dec4`"
   >
     <div
       class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between sm:mx-10"
@@ -56,8 +56,7 @@
             <span class="text-sm">አዲስ ጨዋታ</span>
           </router-link>
           <router-link
-            v-if="false"
-            to="/post"
+            to="/jema"
             type="button"
             class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-teal-900 focus:outline-none bg-cyan-200 rounded-full border border-green-200 hover:bg-cyan-300 hover:text-cyan-700 focus:z-10 focus:ring-4 focus:ring-cyan-200 hidden"
           >
@@ -99,14 +98,19 @@
               class="inline-flex absolute sm:top-1 sm:right-1 -top-7 -right-5 justify-center items-center w-5 h-5 text-xs font-semibold text-white rounded-full border-white dark:border-gray-900"
               style="background: #307046"
             >
-              {{ $store.state.notifications }}
+              {{
+                $store.state.notifications == 0
+                  ? ""
+                  : $store.state.notifications
+              }}
             </div>
           </router-link>
         </div>
         <div v-else>
           <button
-            @click="$emit('clickedLogin')"
+            @click="$router.push('/login')"
             type="button"
+            v-if="!$route.meta.hideNav"
             class="py-2.5 mt-2 px-5 mr-2 mb-2 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-lg border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200"
           >
             Log In

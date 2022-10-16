@@ -14,6 +14,12 @@ export const GET_POSTS = gql`
         cover
         likes
         comments
+        community {
+          id
+          name
+          logo
+          slug
+        }
         tags {
           id
           tagName
@@ -39,6 +45,21 @@ export const POST = gql`
       content
       cover
       likes
+      community {
+        id
+        name
+        slug
+        communityId
+        description
+        logo
+        cover
+        type
+        category {
+          id
+          name
+        }
+        createdAt
+      }
       user {
         id
         userId
@@ -413,6 +434,21 @@ export const TAG_POSTS = gql`
         cover
         likes
         comments
+        community {
+          id
+          name
+          slug
+          communityId
+          description
+          logo
+          cover
+          type
+          category {
+            id
+            name
+          }
+          createdAt
+        }
         tags {
           id
           tagName
@@ -461,6 +497,7 @@ export const ADD_COMMUNITY = gql`
       communityId
       description
       logo
+      slug
       cover
       type
       category {
@@ -471,3 +508,158 @@ export const ADD_COMMUNITY = gql`
     }
   }
 `;
+
+export const CATEGORIES = gql`
+  query {
+    categories {
+      id
+      catId
+      name
+    }
+  }
+`;
+
+export const COMMUNITY_POSTS = gql`
+  query communityPosts($pagination: PaginationInputType!, $title: String!) {
+    communityPosts(pagination: $pagination, title: $title) {
+      page
+      per_page
+      total
+      data {
+        id
+        postId
+        slug
+        content
+        cover
+        likes
+        comments
+        community {
+          id
+          name
+          slug
+          communityId
+          description
+          logo
+          cover
+          type
+          category {
+            id
+            name
+          }
+          createdAt
+        }
+        tags {
+          id
+          tagName
+        }
+        user {
+          id
+          fullName
+          photo
+          totalLikes
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const COMMUNITY = gql`
+  query community($title: String!) {
+    community(title: $title) {
+      community {
+        id
+        name
+        slug
+        communityId
+        description
+        logo
+        cover
+        type
+        category {
+          id
+          name
+        }
+        createdAt
+      }
+      stat {
+        joined
+        stat
+      }
+    }
+  }
+`;
+
+export const USER_COMMUNITIES = gql`
+  query {
+    userCommunities {
+      id
+      name
+      slug
+      communityId
+      description
+      logo
+      cover
+      type
+      category {
+        id
+        name
+      }
+      createdAt
+    }
+  }
+`;
+
+export const JOIN_COMMUNITY = gql`
+  mutation joinCommunity($input: String!) {
+    joinCommunity(input: $input)
+  }
+`;
+
+export const LEAVE_COMMUNITY = gql`
+  mutation leaveCommunity($input: String!) {
+    leaveCommunity(input: $input)
+  }
+`;
+
+export const TOP_COMMUNITIES = gql`
+  query topCommunities($pagination: PaginationInputType!, $cat: String) {
+    topCommunities(pagination: $pagination, cat: $cat) {
+      data {
+        id
+        name
+        slug
+        logo
+        category {
+          id
+          name
+          catId
+          createdAt
+        }
+      }
+    }
+  }
+`;
+export const UPDATE_COVER = gql`
+  mutation updateCover($input: String!, $cover: String!) {
+    updateCover(input: $input, cover: $cover)
+  }
+`;
+
+export const UPDATE_LOGO = gql`
+  mutation updateLogo($input: String!, $cover: String!) {
+    updateLogo(input: $input, cover: $cover)
+  }
+`;
+
+export const UPDATE_DESC = gql`
+  mutation updateDescription($desc: String!, $community: String!) {
+    updateDescription(desc: $desc, community: $community)
+  }
+`;
+
+
+export const USER_COM_LIMIT = gql`query {
+  userCommunitiesCount
+}
+`
