@@ -91,7 +91,7 @@
     ></navbar>
 
     <div
-      class="mt-16 h-3/4 w-full relative"
+      class="mt-14 h-3/4 w-full relative"
       style="
         background: #A5DEC4
         background-position: center;

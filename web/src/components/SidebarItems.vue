@@ -2,8 +2,8 @@
   <div>
     <!-- profile link section -->
     <div class="w-full text-gray-500">
-      <p class="text-xl">Profile</p>
-      <div class="flex gap-2 pt-2">
+      <p class="text-xl font-semibold tracking-wider text-gray-500">Profile</p>
+      <div class="flex gap-2 pt-4">
         <user-avatar :large="!true" :img="$store.state.user.photo" />
         <router-link to="/user">
           <div class="flex flex-col">

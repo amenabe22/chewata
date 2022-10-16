@@ -1,12 +1,12 @@
 <template>
   <nav
-    class="h-16 sm:h-20 fixed w-full top-0 z-50"
+    class="h-14 sm:h-14 fixed w-full top-0 z-50"
     :style="`box-sizing: content-box;background: #a5dec4`"
   >
     <div
       class="flex flex-row text-center md:text-left xl:text-left lg:text-left justify-between sm:mx-10"
     >
-      <div class="flex items-center">
+      <div class="flex">
         <router-link to="/">
           <svg
             viewBox="0 0 174 82"
@@ -33,13 +33,12 @@
           </svg>
         </router-link>
       </div>
-      <div class="flex sm:pt-2">
+      <div class="flex">
         <div class="flex gap-3" v-if="$store.state.loggedIn">
-          <router-link
-            to="/post"
+          <button
             @click="$router.push('/post')"
             type="button"
-            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-full border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200 hidden"
+            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-9 text-sm font-medium text-green-900 focus:outline-none bg-green-200 rounded-full border border-green-200 hover:bg-green-300 hover:text-green-700 focus:z-10 focus:ring-4 focus:ring-green-200 hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -54,11 +53,11 @@
               />
             </svg>
             <span class="text-sm">አዲስ ጨዋታ</span>
-          </router-link>
-          <router-link
-            to="/jema"
+          </button>
+          <button
+            @click="$router.push('/jema')"
             type="button"
-            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-11 text-sm font-medium text-teal-900 focus:outline-none bg-cyan-200 rounded-full border border-green-200 hover:bg-cyan-300 hover:text-cyan-700 focus:z-10 focus:ring-4 focus:ring-cyan-200 hidden"
+            class="mt-3 sm:flex justify-center items-center gap-2 px-3 h-9 text-sm font-medium text-teal-900 focus:outline-none bg-cyan-200 rounded-full border border-green-200 hover:bg-cyan-300 hover:text-cyan-700 focus:z-10 focus:ring-4 focus:ring-cyan-200 hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -76,11 +75,11 @@
               />
             </svg>
             <span class="text-sm">ጀማ</span>
-          </router-link>
+          </button>
         </div>
 
         <div
-          class="rounded-xl mb-4 mt-2 bg-transparent"
+          class="rounded-xl mb-4 mt-1 bg-transparent"
           v-if="$store.state.loggedIn"
         >
           <router-link to="/notification" class="ont-black relative">
@@ -118,7 +117,7 @@
         </div>
         <div
           v-if="$store.state.user"
-          class="p-3 cursor-pointer"
+          class="p-2 cursor-pointer"
           @click="$emit('profileClicked')"
         >
           <img

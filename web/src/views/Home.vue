@@ -21,49 +21,32 @@
 
         <transition name="slide-fade">
           <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96 z-0">
-            <router-link
-              to="/"
+            <p class="text-5xl lg:text-5xl text-white pb-8">አዲስ</p>
+            <button
+              @click="$router.push('/post')"
+              class="border p-4 rounded-md border-green-400"
               :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
             >
               <p
-                class="text-4xl xl:text-5xl lg:text-5xl text-white"
+                class="text-3xl text-white"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                አዲስ ጨዋታ
-              </p>
-            </router-link>
-            <button
-              style="opacity: 12px"
-              @click="animateForm"
-              class="rounded-lg mt-5 w-full font-semibold bg-amber-700 text-white p-16 xl:text-2xl lg:text-2xl text-xl"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Meme / Story
+                ጨዋታ
               </p>
             </button>
+            <hr
+              class="bg-teal-400 text-teal-400 border-white my-5 mx-14 border-2"
+            />
             <button
-              class="w-full bg-teal-700 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
+              class="border py-4 px-16 rounded-md border-teal-400"
+              @click="$router.push('/jema')"
             >
               <p
+                class="text-3xl text-white"
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                Question
-              </p>
-            </button>
-            <button
-              class="w-full bg-cyan-600 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Random
+                ጀማ
               </p>
             </button>
           </div>
@@ -123,7 +106,7 @@
         </transition>
       </div>
     </dialog-modal>
-    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
+    <div class="flex flex-row justify-center gap-10 mt-14 sm:mt-16">
       <div
         v-if="$store.state.loggedIn"
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -396,7 +379,9 @@ export default defineComponent({
     },
     menuClicked() {
       if (this.$store.state.loggedIn) {
-        this.$router.push("/post");
+        this.$store.commit("SET_MAIN_POP", true);
+
+        // this.$router.push("/post");
       } else {
         this.$router.push("/login");
       }

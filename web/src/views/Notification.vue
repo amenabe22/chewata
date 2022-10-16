@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-center gap-10 pt-20">
+  <div class="flex flex-row justify-center gap-10 pt-16">
     <div
       class="w-1/5 mt-2 hidden lg:block xl:block md:block"
       v-if="$store.state.loggedIn"

@@ -78,7 +78,7 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full mt-14 sm:mt-20 game-content">
+    <div class="h-1/2 w-full mt-14 sm:mt-26 game-content">
       <div
         class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
       >

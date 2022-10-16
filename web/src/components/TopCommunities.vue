@@ -1,13 +1,14 @@
 <template>
   <div>
-    <h1
-      class="text-gray-500 pb-3 text-xl font-normal tracking-widest"
+    <p
+      class="text-xl font-semibold tracking-wider text-gray-500"
       v-if="!hideTitle"
     >
       Top Jema
-    </h1>
+    </p>
     <div
       class="flex flex-col gap-2 bg-white py-2 divide-y divide-green-200 border border-green-100"
+      :class="{ 'mt-4': !large }"
     >
       <div
         v-for="(com, ix) in communities"
@@ -16,7 +17,11 @@
         :class="{ 'p-3': large, 'p-1': !large }"
       >
         <img
-          :src="com.logo ? com.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
+          :src="
+            com.logo
+              ? com.logo
+              : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'
+          "
           class="w-8 rounded-full h-8 object-cover"
         />
         <router-link

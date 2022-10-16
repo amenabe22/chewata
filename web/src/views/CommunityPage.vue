@@ -17,7 +17,7 @@
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
-    <div class="mt-16 w-full relative backdrop-blur-sm" v-if="community">
+    <div class="mt-14 w-full relative backdrop-blur-sm" v-if="community">
       <div
         class="absolute top-0 m-3 sm:m-10 right-0"
         v-if="stat.stat == 'admin' && !community.cover"
