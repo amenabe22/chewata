@@ -34,6 +34,7 @@
             <small class="text-gray-400">Name your community</small>
           </div>
           <input
+            @input="checkDup"
             type="text"
             required
             v-model="name"
@@ -41,6 +42,9 @@
             class="block py-2.5 rounded-lg px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
             placeholder=" "
           />
+          <small class="text-red-400" v-if="dupName"
+            >Sorry {{ name }} is already taken :/</small
+          >
         </div>
         <div class="relative z-0 mb-6 w-full group">
           <div class="flex flex-col mb-3">
@@ -136,7 +140,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import DropDown from "../components/DropDown.vue";
-import { ADD_COMMUNITY, CATEGORIES, USER_COM_LIMIT } from "../queries";
+import {
+  ADD_COMMUNITY,
+  CATEGORIES,
+  DUPC_NAME,
+  USER_COM_LIMIT,
+} from "../queries";
 
 export default defineComponent({
   components: { DropDown },
@@ -144,6 +153,7 @@ export default defineComponent({
     name: "",
     public: true,
     private: false,
+    dupName: false,
     category: "",
     description: "",
     limitPassed: false,
@@ -152,6 +162,10 @@ export default defineComponent({
   }),
   methods: {
     async addCommunity() {
+      if (this.dupName) {
+        alert("please check your input");
+        return;
+      }
       const { data } = await this.$apollo.mutate({
         mutation: ADD_COMMUNITY,
         variables: {
@@ -168,6 +182,17 @@ export default defineComponent({
       else {
         alert("community not found");
       }
+    },
+    async checkDup() {
+      const {
+        data: { dupName },
+      } = await this.$apollo.query({
+        query: DUPC_NAME,
+        variables: {
+          input: this.name,
+        },
+      });
+      this.dupName = dupName;
     },
     async passedLimit() {
       const {

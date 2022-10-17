@@ -94,6 +94,16 @@ export class CommunityResolver {
 
     return response;
   }
+  @Query(() => Boolean, { nullable: true })
+  @UseMiddleware(isAuthed)
+  async dupName(@Arg("input") input: string) {
+    const communities = await AppDataSource.manager.find(Community, {
+      where: {
+        slug: slugifyTitle(input),
+      },
+    });
+    return communities.length;
+  }
 
   @Query(() => [Community], { nullable: true })
   @UseMiddleware(isAuthed)

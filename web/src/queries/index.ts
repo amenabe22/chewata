@@ -663,3 +663,8 @@ export const USER_COM_LIMIT = gql`query {
   userCommunitiesCount
 }
 `
+
+export const DUPC_NAME = gql`query dupName($input: String!) {
+  dupName(input: $input)
+}
+`

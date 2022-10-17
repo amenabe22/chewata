@@ -189,12 +189,6 @@
             </div>
           </div>
 
-          <div
-            v-if="loadingFeed"
-            class="flex justify-center items-center mt-28"
-          >
-            <loader></loader>
-          </div>
           <div v-if="posts.length">
             <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
               <post-tile
@@ -204,6 +198,12 @@
               ></post-tile>
               <div class="border-t border-gray-100 w-full"></div>
             </div>
+          </div>
+          <div
+            v-else-if="loadingFeed"
+            class="flex justify-center items-center mt-28"
+          >
+            <loader></loader>
           </div>
 
           <div v-else class="flex justify-center items-center flex-col">
@@ -252,10 +252,8 @@ import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import PostTile from "../components/PostTile.vue";
 import {
-  ADD_POST,
   COMMUNITY,
   COMMUNITY_POSTS,
-  GET_POSTS,
   JOIN_COMMUNITY,
   LEAVE_COMMUNITY,
   TOP_TAGS,
