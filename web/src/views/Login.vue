@@ -89,7 +89,7 @@ export default defineComponent({
             this.$store.commit("SET_CTK", socialMediaLoginGoogle.token);
             this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
             console.log(socialMediaLoginGoogle, "UDATA");
-            window.location.assign("/");
+            // window.location.assign("/");
           })
           .finally(() => {
             this.$store.state.loading = false;

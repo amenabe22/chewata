@@ -76,8 +76,9 @@ export class UserResolver {
     @Ctx() { res }: MyContext,
     @Arg("input") token: string
   ) {
+    console.log(token, "access token");
     const decodedToken = await auth().verifyIdToken(token);
-
+    console.log(decodedToken,"decoded")
     const socialUsr = decodedToken;
     console.log(socialUsr, "USER");
     const user = await AppDataSource.manager.findOne(User, {
