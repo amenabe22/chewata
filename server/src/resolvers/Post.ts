@@ -183,7 +183,6 @@ export class PostResolver {
   }
 
   @Query(() => PostsPaginatedResponse)
-  @UseMiddleware(isAuthed)
   async getPosts(
     @Arg("input") pagination: PaginationInputType,
     @Arg("filter", { nullable: true }) filter: String
