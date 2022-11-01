@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-white rounded-xl">
-    <ul class="w-80 divide-y divide-gray-100">
+  <div class="bg-white dark:bg-brand-dark-500 rounded-xl">
+    <ul class="w-80 divide-y divide-gray-100 dark:divide-gray-700">
       <li
-        class="py-3 sm:pb-4 text-left hover:bg-gray-50 cursor-pointer"
+        class="py-3 sm:pb-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
         v-for="(link, ix) in shareLinks"
         :key="ix"
         :class="{ 'rounded-xl': ix == 0 || ix == shareLinks.length - 1 }"
@@ -13,7 +13,7 @@
               <img class="w-7 h-7 rounded-full" :src="link.image" />
             </div>
             <div class="flex-1 min-w-0 mt-2">
-              <p class="text-lg text-gray-600 truncate">
+              <p class="text-lg text-gray-600 truncate dark:text-gray-300">
                 Share on {{ link.name }}
               </p>
             </div>

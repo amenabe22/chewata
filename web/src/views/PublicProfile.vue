@@ -6,9 +6,8 @@
     ></navbar>
 
     <div
-      class="mt-16 h-3/4 w-full"
+      class="mt-14 h-3/4 w-full relative bg-brand-300 dark:bg-brand-dark-500"
       style="
-        background: #a5dec4;
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;

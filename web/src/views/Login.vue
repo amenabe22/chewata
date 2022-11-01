@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-full sm:bg-green-50 mt-20">
+  <div class="flex flex-row h-full sm:bg-green-50 dark:bg-brand-dark-500 mt-14">
     <div class="w-full sm:block hidden">
       <img
         class="h-screen object-cover"
@@ -11,7 +11,7 @@
         class="p-4 flex flex-col gap-3 justify-between"
         @submit.prevent="saveLogin"
       >
-        <div class="w-full">
+        <div class="w-full dark:text-brand-200">
           <p class="text-2xl sm:text-3xl">Log In</p>
           <p class="py-5">
             By continuing, you agree to our User Agreement and
@@ -88,8 +88,8 @@ export default defineComponent({
             this.$store.commit("SET_LOGGEDIN", true);
             this.$store.commit("SET_CTK", socialMediaLoginGoogle.token);
             this.$store.commit("SET_USER", socialMediaLoginGoogle.user);
-            console.log(socialMediaLoginGoogle, "UDATA");
-            // window.location.assign("/");
+            // console.log(socialMediaLoginGoogle, "UDATA");
+            window.location.assign("/");
           })
           .finally(() => {
             this.$store.state.loading = false;

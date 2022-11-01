@@ -156,14 +156,16 @@
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
           <p
-            class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700"
+            class="text-xl bg-green-50 p-2 font-semibold tracking-wider text-green-700 dark:bg-brand-dark-500 dark:text-green-200"
           >
             #{{ $route.params.tag }}
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
             <button
-              :class="{ 'font-bold text-green-600': it.selected }"
-              class="hover:text-green-500"
+              :class="{
+                'font-bold text-green-600 dark:text-green-600': it.selected,
+              }"
+              class="hover:text-green-600 dark:text-gray-300"
               v-for="(it, ix) in filterTypes"
               :key="ix"
               @click="feedFilterSelected(it)"
@@ -197,13 +199,15 @@
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <div class="flex flex-col">
-          <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
+          <h1
+            class="text-gray-500 pb-3 text-xl font-normal pt-5 dark:text-gray-200"
+          >
             Top Tags
           </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <div v-for="(tg, ix) in topTags" :key="ix" @click="tagSelected(tg)">
               <span
-                class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 dark:border-gray-500 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
                 {{ tg.tagName }}
               </span>

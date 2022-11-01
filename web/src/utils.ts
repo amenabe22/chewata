@@ -12,6 +12,13 @@ export const authguard = (to: any, form: any, next: any) => {
   next();
 };
 
+export const setTheme = (mode: string) => {
+  if (mode == "dark") {
+    document.querySelector("html").classList.add("dark");
+  } else {
+    document.querySelector("html").classList.remove("dark");
+  }
+};
 export const parseDate = (timestamp: any) => {
   return new Date(timestamp).toLocaleDateString();
 };

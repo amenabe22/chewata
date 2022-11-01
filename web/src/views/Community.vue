@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row mt-14 h-full bg-green-50">
+  <div class="flex flex-row mt-14 h-full bg-green-50 dark:bg-brand-dark-500">
     <div class="w-full sm:block hidden">
       <img
         class="h-screen object-cover"
@@ -7,7 +7,10 @@
       />
     </div>
     <div class="mt-3 w-full">
-      <div v-if="limitPassed" class="p-4 text-gray-700 flex flex-col gap-4">
+      <div
+        v-if="limitPassed"
+        class="p-4 text-gray-700 dark:text-gray-200 flex flex-col gap-4"
+      >
         <p class="text-2xl sm:text-4xl font-semibold">Community Limit Passed</p>
         <p class="sm:text-2xl text-xl">
           You have created more than the allowed amount of communities
@@ -23,7 +26,7 @@
         </div>
       </div>
       <form
-        class="p-4 flex flex-col gap-3"
+        class="p-4 flex flex-col gap-3 dark:text-gray-200"
         @submit.prevent="addCommunity"
         v-else
       >
@@ -39,7 +42,7 @@
             required
             v-model="name"
             name="floating_email"
-            class="block py-2.5 rounded-lg px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
+            class="block py-2.5 rounded-lg dark:bg-gray-600 dark:text-gray-200 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
             placeholder=" "
           />
           <small class="text-red-400" v-if="dupName"
@@ -58,7 +61,7 @@
               required
               id="countries"
               v-model="category"
-              class="bg-gray-50 border-0 border-b-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 outline-none"
+              class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 border-0 border-b-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 outline-none"
             >
               <option
                 v-for="(cat, ix) in categories"
@@ -82,7 +85,7 @@
             id="message"
             rows="4"
             v-model="description"
-            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border-0 border-b-2 outline-none border-gray-300 focus:ring-green-500 focus:border-green-500"
+            class="block p-2.5 w-full text-sm text-gray-900 dark:text-gray-200 dark:bg-gray-600 bg-gray-50 rounded-lg border-0 border-b-2 outline-none border-gray-300 focus:ring-green-500 focus:border-green-500"
           ></textarea>
         </div>
         <div class="grid md:grid-cols-2 md:gap-6 z-0">
@@ -101,7 +104,7 @@
                 />
                 <label
                   for="country-option-1"
-                  class="block ml-2 text-sm font-medium text-gray-900 outline-none"
+                  class="block ml-2 text-sm font-medium text-gray-900 outline-none dark:text-gray-200"
                   >Public
                 </label>
               </div>

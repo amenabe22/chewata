@@ -38,6 +38,7 @@
     "prerender-spa-plugin": "^3.4.0",
     "quill": "^1.3.7",
     "rxjs": "^6.6.7",
+    "tailwindcss-dark-mode": "^1.1.7",
     "undefined": "github:vueup/vue-quill",
     "vite-plugin-prerender": "^1.0.8",
     "vue": "^3.2.25",

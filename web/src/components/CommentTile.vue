@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row mt-4 gap-3 hover:bg-gray-50 p-2">
+    <div class="flex flex-row mt-4 gap-3 hover:bg-gray-50 dark:hover:bg-brand-light-600 p-2 cursor-pointer">
       <vote-clickers
         :voted="voteData.voted"
         @upvoted="upvoted"
@@ -32,7 +32,7 @@
           <div></div>
           <div v-if="comment.user">
             <p
-              class="text-sm text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
+              class="text-sm text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans dark:text-gray-200"
             >
               {{ comment.user.fullName }}
             </p>
@@ -47,7 +47,7 @@
           </div>
         </div>
         <p
-          class="pt-2 tracking-wide tile-txt text-lg"
+          class="pt-2 tracking-wide tile-txt text-lg dark:text-gray-300"
           v-text="comment.message"
         ></p>
         <div v-if="$store.state.user">
@@ -88,7 +88,7 @@
       alt=""
       style="object-fit: contain"
     />
-    <hr class="mt-2" />
+    <div class="border-t dark:border-gray-700"></div>
   </div>
 </template>
 <script lang="ts">
@@ -215,6 +215,5 @@ export default defineComponent({
 <style lang="scss" scoped>
 .tile-txt {
   font-weight: 300;
-  color: #2f2f32;
 }
 </style>

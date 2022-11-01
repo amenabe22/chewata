@@ -114,7 +114,9 @@
         <sidebar-items></sidebar-items>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
-        <h1 class="text-gray-500 text-xl font-semibold tracking-widest">
+        <h1
+          class="text-gray-500 text-xl font-semibold tracking-widest dark:text-gray-300"
+        >
           Join Chewata
         </h1>
 
@@ -123,7 +125,7 @@
           others' rants and just have fun.
         </p>
         <button
-          class="rounded-xl tracking-widest border-2 mt-2 p-2"
+          class="rounded-xl tracking-widest border-2 mt-2 p-2 dark:text-gray-300"
           @click="$router.push('/login')"
         >
           Sign Up
@@ -131,13 +133,17 @@
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-xl font-semibold tracking-wider text-gray-500">
+          <p
+            class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
+          >
             Cheweta
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
             <button
-              :class="{ 'font-bold text-green-600': it.selected }"
-              class="hover:text-green-600"
+              :class="{
+                'font-bold text-green-600 dark:text-green-600': it.selected,
+              }"
+              class="hover:text-green-600 dark:text-gray-300"
               v-for="(it, ix) in filterTypes"
               :key="ix"
               @click="feedFilterSelected(it)"
@@ -157,7 +163,9 @@
             :post="post"
             @clicked="clicked(post)"
           ></post-tile>
-          <div class="border-t border-gray-100 w-full"></div>
+          <div
+            class="border-t border-gray-100 w-full dark:border-gray-700"
+          ></div>
         </div>
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
@@ -172,7 +180,11 @@
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <div class="flex flex-col">
           <top-communities></top-communities>
-          <h1 class="text-gray-500 pb-3 text-xl font-normal pt-5">Top Tags</h1>
+          <h1
+            class="text-gray-500 pb-3 text-xl font-normal pt-5 dark:text-gray-200"
+          >
+            Top Tags
+          </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <button
               v-for="(tg, ix) in topTags"
@@ -180,7 +192,7 @@
               @click="$router.push(`/tag/${tg.tagName}`)"
             >
               <span
-                class="hover:border-green-600 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 dark:border-gray-500 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
                 {{ tg.tagName }}
               </span>

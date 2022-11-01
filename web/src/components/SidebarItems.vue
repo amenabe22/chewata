@@ -2,18 +2,23 @@
   <div>
     <!-- profile link section -->
     <div class="w-full text-gray-500">
-      <p class="text-xl font-semibold tracking-wider text-gray-500">Profile</p>
+      <p
+        class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
+      >
+        Profile
+      </p>
       <div class="flex gap-2 pt-4">
         <user-avatar :large="!true" :img="$store.state.user.photo" />
         <router-link to="/user">
           <div class="flex flex-col">
-            <p class="font-semibold text-sm hover:text-green-800">
+            <p
+              class="font-semibold text-md hover:text-green-800 dark:text-gray-300"
+            >
               {{ $store.state.user.fullName }}
             </p>
             <div>
               <span
-                class="px-1 rounded-md text-white"
-                style="background: #5fd49f"
+                class="px-1 rounded-md text-white bg-green-400 dark:text-gray-700 dark:bg-green-300"
                 >{{ $store.state.user.totalLikes }}</span
               >
             </div>
@@ -23,8 +28,10 @@
     </div>
     <div class="flex flex-col pt-10">
       <div class="text-gray-500">
-        <p class="text-2xl">Notifs</p>
-        <div class="pt-5 flex flex-col divide-y gap-3">
+        <p class="text-2xl dark:text-gray-300">Notifs</p>
+        <div
+          class="pt-5 flex flex-col divide-y gap-3 dark:divide-gray-600 dark:text-gray-300"
+        >
           <a
             :href="nt.link"
             class="flex pt-2 gap-3"

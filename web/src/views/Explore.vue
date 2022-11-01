@@ -7,7 +7,9 @@
 
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between sm:mt-3">
-          <p class="text-xl font-semibold tracking-wider text-gray-500">
+          <p
+            class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
+          >
             Top Communities
           </p>
         </div>

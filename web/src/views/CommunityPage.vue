@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full" style="background: #f8fdfa">
+  <div class="w-full bg-brand-100 dark:bg-brand-dark-900">
     <dialog-modal
       :persistent="!true"
       @close="showBannerEditor = false"
@@ -97,22 +97,17 @@
           </button>
         </div>
       </div>
-      <div
-        v-else
-        class="h-20 w-full"
-        style="background: rgb(229, 246, 238)"
-      ></div>
+      <div v-else class="h-20 w-full bg-brand-200 dark:bg-brand-dark-500"></div>
       <!-- {{ community }} dud -->
 
       <div class="relative">
         <!--  community header section -->
         <div
-          class="flex justify-start h-16 sm:pt-4 end-items profile-name-section"
-          style="background: #e5f6ee"
+          class="flex justify-start h-16 sm:pt-4 end-items profile-name-section bg-brand-200 dark:bg-brand-dark-500"
         >
           <div class="flex px-2" v-if="stat">
             <p
-              class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap"
+              class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap dark:text-gray-300"
             >
               {{ community.name }}
             </p>
@@ -196,7 +191,9 @@
                 :post="post"
                 @clicked="clicked(post)"
               ></post-tile>
-              <div class="border-t border-gray-100 w-full"></div>
+              <div
+                class="border-t border-gray-100 dark:border-gray-700 w-full"
+              ></div>
             </div>
           </div>
           <div

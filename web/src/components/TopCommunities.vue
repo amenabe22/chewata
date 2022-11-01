@@ -1,20 +1,20 @@
 <template>
   <div>
     <p
-      class="text-xl font-semibold tracking-wider text-gray-500"
+      class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
       v-if="!hideTitle"
     >
       Top Jema
     </p>
     <div
-      class="flex flex-col gap-2 bg-white py-2 divide-y divide-green-200 border border-green-100"
+      class="flex flex-col gap-2 bg-white dark:bg-brand-dark-500 dark:border-gray-700 dark:divide-gray-700 py-2 divide-y divide-green-200 border border-green-100"
       :class="{ 'mt-4': !large }"
     >
       <div
         v-for="(com, ix) in communities"
         :key="ix"
         class="flex gap-2 items-center"
-        :class="{ 'p-3': large, 'p-1': !large }"
+        :class="{ 'p-3': large, 'py-1 px-2': !large }"
       >
         <img
           :src="
@@ -26,7 +26,7 @@
         />
         <router-link
           :to="`/${com.slug}`"
-          class="text-sm font-semibold text-green-800"
+          class="text-sm font-semibold text-green-800 dark:text-gray-300"
           >{{ com.name }}</router-link
         >
       </div>
@@ -34,7 +34,7 @@
     <button
       v-if="!large"
       @click="$router.push('/explore')"
-      class="w-full flex gap-1 border-green-300 border justify-center items-center text-md py-1 bg-green-100 hover:bg-green-200 h-full"
+      class="w-full flex gap-1 border-green-300 border justify-center items-center text-md py-1 bg-green-100 hover:bg-green-200 h-full dark:bg-brand-dark-500"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@
         />
       </svg>
 
-      <p class="text-green-700">Explore More</p>
+      <p class="text-green-700 dark:text-gray-300">Explore More</p>
     </button>
   </div>
 </template>
