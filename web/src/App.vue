@@ -1,5 +1,8 @@
 <template>
-  <main style="background: #f8fdfa">
+  <div
+    class="bg-brand-100 dark:bg-brand-dark-900"
+    :class="{ dark: $store.state.darkMode }"
+  >
     <metainfo>
       <template v-slot:title="{ content }">{{
         content ? `${content} | Chewata` : `Chewata`
@@ -21,7 +24,7 @@
       @profileClicked="$store.commit('SET_PROFILE_POP', true)"
     ></navbar>
     <router-view />
-  </main>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -31,10 +34,34 @@ import AccountPopup from "./components/AccountPopup.vue";
 import { Head } from "@vueuse/head";
 import { getAuth, signOut } from "@firebase/auth";
 import { LOGOUT, NOTIFICATION_LISTENER } from "./queries";
-import { store } from "./store";
 
 export default defineComponent({
   components: { LoginPopup, Navbar, AccountPopup, Head },
+  mounted() {
+    let bg = "#f8fdfa";
+    const current = this.$store.state.darkMode;
+    if (current == true) {
+      bg = "#383952";
+      document.querySelector("html").classList.add("dark");
+    }
+    document.body.style.setProperty("--global-bg", bg);
+    document.body.style.setProperty(
+      "--toolbar-item-bg",
+      this.$store.state.darkMode ? "#54556e" : "white"
+    );
+    document.body.style.setProperty(
+      "--toolbar-item-stroke",
+      this.$store.state.darkMode ? "white" : "#54556e"
+    );
+    document.body.style.setProperty(
+      "--toolbar-item-bg-hover",
+      this.$store.state.darkMode ? "#17a34a" : "#a5dec5"
+    );
+    document.body.style.setProperty(
+      "--toolbar-select-hover",
+      this.$store.state.darkMode ? "#444459" : "#eee"
+    );
+  },
   apollo: {
     $subscribe: {
       notificationListener: {
@@ -94,8 +121,8 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style lang="scss">
 body {
-  background: #f8fdfa;
+  background: var(--global-bg);
 }
 </style>

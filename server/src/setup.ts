@@ -65,6 +65,9 @@ export async function startApolloServer() {
     res.sendFile(path.resolve(__dirname, "assets/", "sitemap.xml"));
   });
 
+  app.get("/ads.txt", (_req, res) => {
+    res.sendFile(path.resolve(__dirname, "assets/", "ads.txt"));
+  });
 
   // app.use("/static", express.static("static")!);
   server.applyMiddleware({

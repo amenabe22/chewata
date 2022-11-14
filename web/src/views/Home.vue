@@ -21,49 +21,32 @@
 
         <transition name="slide-fade">
           <div v-if="!showForm" class="lg:w-96 xl:w-96 md:lg:w-96 z-0">
-            <router-link
-              to="/"
+            <p class="text-5xl lg:text-5xl text-white pb-8">አዲስ</p>
+            <button
+              @click="$router.push('/post')"
+              class="border p-4 rounded-md border-green-400"
               :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
             >
               <p
-                class="text-4xl xl:text-5xl lg:text-5xl text-white"
+                class="text-3xl text-white"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                አዲስ ጨዋታ
-              </p>
-            </router-link>
-            <button
-              style="opacity: 12px"
-              @click="animateForm"
-              class="rounded-lg mt-5 w-full font-semibold bg-amber-700 text-white p-16 xl:text-2xl lg:text-2xl text-xl"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Meme / Story
+                ጨዋታ
               </p>
             </button>
+            <hr
+              class="bg-teal-400 text-teal-400 border-white my-5 mx-14 border-2"
+            />
             <button
-              class="w-full bg-teal-700 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
+              class="border py-4 px-16 rounded-md border-teal-400"
+              @click="$router.push('/jema')"
             >
               <p
+                class="text-3xl text-white"
                 :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
                 :class="{ 'opacity-40': loadingPost }"
               >
-                Question
-              </p>
-            </button>
-            <button
-              class="w-full bg-cyan-600 rounded-lg mt-3 font-normal text-white px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
-              @click="animateForm"
-            >
-              <p
-                :style="{ filter: loadingPost ? 'blur(8px)' : '' }"
-                :class="{ 'opacity-40': loadingPost }"
-              >
-                Random
+                ጀማ
               </p>
             </button>
           </div>
@@ -123,7 +106,7 @@
         </transition>
       </div>
     </dialog-modal>
-    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
+    <div class="flex flex-row justify-center gap-10 mt-14 sm:mt-16">
       <div
         v-if="$store.state.loggedIn"
         class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -131,7 +114,9 @@
         <sidebar-items></sidebar-items>
       </div>
       <div class="w-1/6 mt-2 hidden lg:block xl:block md:block" v-else>
-        <h1 class="text-gray-500 text-xl font-semibold tracking-widest">
+        <h1
+          class="text-gray-500 text-xl font-semibold tracking-widest dark:text-gray-300"
+        >
           Join Chewata
         </h1>
 
@@ -140,7 +125,7 @@
           others' rants and just have fun.
         </p>
         <button
-          class="rounded-xl tracking-widest border-2 mt-2 p-2"
+          class="rounded-xl tracking-widest border-2 mt-2 p-2 dark:text-gray-300"
           @click="$router.push('/login')"
         >
           Sign Up
@@ -148,13 +133,17 @@
       </div>
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between">
-          <p class="text-xl font-semibold tracking-wider text-gray-500">
+          <p
+            class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
+          >
             Cheweta
           </p>
           <div class="flex gap-3 text-gray-500 text-lg font-light">
             <button
-              :class="{ 'font-bold text-green-600': it.selected }"
-              class="hover:text-green-600"
+              :class="{
+                'font-bold text-green-600 dark:text-green-600': it.selected,
+              }"
+              class="hover:text-green-600 dark:text-gray-300"
               v-for="(it, ix) in filterTypes"
               :key="ix"
               @click="feedFilterSelected(it)"
@@ -174,7 +163,9 @@
             :post="post"
             @clicked="clicked(post)"
           ></post-tile>
-          <div class="border-t border-gray-100 w-full"></div>
+          <div
+            class="border-t border-gray-100 w-full dark:border-gray-700"
+          ></div>
         </div>
         <div v-if="loadComplete" class="text-center pb-32 pt-10">
           <p class="text-lg text-gray-400 font-semibold">No More Posts</p>
@@ -189,7 +180,11 @@
       <div class="w-1/6 mt-2 hidden lg:block xl:block">
         <div class="flex flex-col">
           <top-communities></top-communities>
-          <h1 class="text-gray-500 pb-3 text-xl font-normal pt-5">Top Tags</h1>
+          <h1
+            class="text-gray-500 pb-3 text-xl font-normal pt-5 dark:text-gray-200"
+          >
+            Top Tags
+          </h1>
           <div class="flex flex-row gap-2 flex-wrap flex-grow">
             <button
               v-for="(tg, ix) in topTags"
@@ -197,7 +192,7 @@
               @click="$router.push(`/tag/${tg.tagName}`)"
             >
               <span
-                class="hover:border-green-600 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+                class="hover:border-green-600 dark:border-gray-500 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
               >
                 {{ tg.tagName }}
               </span>
@@ -396,7 +391,9 @@ export default defineComponent({
     },
     menuClicked() {
       if (this.$store.state.loggedIn) {
-        this.$router.push("/post");
+        this.$store.commit("SET_MAIN_POP", true);
+
+        // this.$router.push("/post");
       } else {
         this.$router.push("/login");
       }

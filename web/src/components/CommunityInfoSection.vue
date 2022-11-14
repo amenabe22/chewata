@@ -1,11 +1,13 @@
 <template>
   <div>
-    <div class="border border-green-100">
+    <div
+      class="border border-green-100 dark:border-brand-dark-500 dark:bg-brand-dark-900"
+    >
       <!-- profile link section -->
-      <div class="flex p-4 bg-green-100 flex justify-between">
-        <p class="text-lg">About community</p>
+      <div class="p-4 bg-green-100 dark:bg-brand-dark-500 flex justify-between">
+        <p class="text-lg dark:text-gray-300">About community</p>
         <button
-          v-if="!editMode"
+          v-if="!editMode && $store.state.loggedIn && stat.stat == 'admin'"
           class="bg-white border rounded-full"
           @click="editMode = true"
         >
@@ -22,6 +24,7 @@
         </button>
         <div class="flex gap-2" v-else>
           <button
+            v-if="$store.state.loggedIn && stat.stat == 'admin'"
             class="bg-white border rounded-full"
             @click="editMode = false"
           >
@@ -40,7 +43,11 @@
               />
             </svg>
           </button>
-          <button class="bg-white border rounded-full" @click="saveDescription">
+          <button
+            class="bg-white border rounded-full"
+            @click="saveDescription"
+            v-if="$store.state.loggedIn && stat.stat == 'admin'"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -62,10 +69,10 @@
         <textarea
           type="text"
           v-model="description"
-          class="outline-none border px-2"
-          v-if="editMode"
+          class="outline-none border px-2 dark:bg-gray-600 dark:text-gray-200"
+          v-if="editMode && $store.state.loggedIn && stat.stat == 'admin'"
         />
-        <p v-else>{{ data.description }}</p>
+        <p v-else class="dark:text-gray-300">{{ data.description }}</p>
         <div class="flex gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,15 +89,17 @@
             />
           </svg>
 
-          <p class="text-gray-400">
+          <p class="text-gray-400 dark:text-gray-300">
             Created at {{ parseDate(data.createdAt) }}
           </p>
         </div>
       </div>
       <hr class="w-full" />
-      <div class="p-4 flex flex-col gap-3">
+      <div class="p-4 flex flex-col gap-3 dark:text-gray-300">
         <p>Members</p>
-        <div class="flex text-gray-800 font-bold text-3xl"><p>-</p></div>
+        <div class="flex text-gray-800 dark:text-gray-300 font-bold text-3xl">
+          <p>-</p>
+        </div>
       </div>
       <hr class="w-full" />
       <div class="flex mx-3">
@@ -109,7 +118,7 @@
         <p class="text-lg">Community Rules</p>
       </div>
       <div class="p-4 flex flex-col gap-3 text-gray-700">
-        <div class="divide-y flex flex-col">
+        <div class="divide-y flex flex-col dark:divide-gray-700">
           <div class="py-3 text-sm flex" v-for="(rule, ix) in rules" :key="ix">
             <span class="px-1">{{ ix + 1 }}. </span>
             <p>
@@ -131,7 +140,7 @@ export default defineComponent({
   components: {
     UserAvatar,
   },
-  props: ["data"],
+  props: ["data", "stat"],
   data: () => ({
     rules: [
       "No US Internal News or Politics",

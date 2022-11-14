@@ -6,8 +6,11 @@ import { MyContext } from "../types";
 import { AppDataSource } from "../data-source";
 
 export const isAuthed: MiddlewareFn<MyContext> = async ({ context }, next) => {
-  const token = context.req.cookies["JWT"];
-  // check if auth header is set
+  // check if auth header is set check for jwt in both header and cookie
+  const cookieToken = context.req.cookies["JWT"];
+  const headerToken = context.req.headers["authorization"];
+  const token = cookieToken ?? headerToken;
+
   if (!token) {
     throw new Error("Not Authenticated");
   }

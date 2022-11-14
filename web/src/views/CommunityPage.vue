@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full" style="background: #f8fdfa">
+  <div class="w-full bg-brand-100 dark:bg-brand-dark-900">
     <dialog-modal
       :persistent="!true"
       @close="showBannerEditor = false"
@@ -17,7 +17,7 @@
       @close="$store.commit('SET_LOGIN_POP', false)"
       :loginPopup="$store.state.loginPopup"
     ></login-popup>
-    <div class="mt-16 w-full relative backdrop-blur-sm" v-if="community">
+    <div class="mt-14 w-full relative backdrop-blur-sm" v-if="community">
       <div
         class="absolute top-0 m-3 sm:m-10 right-0"
         v-if="stat.stat == 'admin' && !community.cover"
@@ -97,22 +97,17 @@
           </button>
         </div>
       </div>
-      <div
-        v-else
-        class="h-20 w-full"
-        style="background: rgb(229, 246, 238)"
-      ></div>
+      <div v-else class="h-20 w-full bg-brand-200 dark:bg-brand-dark-500"></div>
       <!-- {{ community }} dud -->
 
       <div class="relative">
         <!--  community header section -->
         <div
-          class="flex justify-start h-16 sm:pt-4 end-items profile-name-section"
-          style="background: #e5f6ee"
+          class="flex justify-start h-16 sm:pt-4 end-items profile-name-section bg-brand-200 dark:bg-brand-dark-500"
         >
           <div class="flex px-2" v-if="stat">
             <p
-              class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap"
+              class="text-lg font-sans text-gray-700 sm:text-2xl font-bold sm:px-0 sm:pt-0 pt-4 whitespace-nowrap dark:text-gray-300"
             >
               {{ community.name }}
             </p>
@@ -141,7 +136,11 @@
           <img
             class="h-20 w-20 rounded-full object-cover border-4"
             style="border-color: #e5f6ee"
-            :src="community.logo ? community.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
+            :src="
+              community.logo
+                ? community.logo
+                : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'
+            "
           />
           <button
             v-if="stat.stat == 'admin'"
@@ -185,12 +184,6 @@
             </div>
           </div>
 
-          <div
-            v-if="loadingFeed"
-            class="flex justify-center items-center mt-28"
-          >
-            <loader></loader>
-          </div>
           <div v-if="posts.length">
             <div v-for="(post, ix) in posts" :key="ix" class="mt-4">
               <post-tile
@@ -198,8 +191,16 @@
                 :post="post"
                 @clicked="clicked(post)"
               ></post-tile>
-              <div class="border-t border-gray-100 w-full"></div>
+              <div
+                class="border-t border-gray-100 dark:border-gray-700 w-full"
+              ></div>
             </div>
+          </div>
+          <div
+            v-else-if="loadingFeed"
+            class="flex justify-center items-center mt-28"
+          >
+            <loader></loader>
           </div>
 
           <div v-else class="flex justify-center items-center flex-col">
@@ -219,6 +220,7 @@
           <CommunityInfoSection
             @updatedDesc="loadCommunity"
             :data="community"
+            :stat="stat"
           ></CommunityInfoSection>
           <!-- suggested chewata -->
         </div>
@@ -247,10 +249,8 @@ import AccountPopup from "../components/AccountPopup.vue";
 import InfiniteScroll from "infinite-loading-vue3";
 import PostTile from "../components/PostTile.vue";
 import {
-  ADD_POST,
   COMMUNITY,
   COMMUNITY_POSTS,
-  GET_POSTS,
   JOIN_COMMUNITY,
   LEAVE_COMMUNITY,
   TOP_TAGS,

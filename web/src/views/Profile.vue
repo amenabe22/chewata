@@ -26,7 +26,7 @@
                 @input="checkDuplicate"
                 placeholder="Your Name"
                 id="large-input"
-                class="block outline-none p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-md focus:ring-blue-500 focus:border-blue-500"
+                class="block outline-none dark:text-gray-200 dark:bg-brand-dark-500 p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-md focus:ring-blue-500 focus:border-blue-500"
               />
               <small
                 v-if="dupError"
@@ -51,7 +51,7 @@
                 v-model="bio"
                 id="message"
                 rows="7"
-                class="block outline-none p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                class="block dark:text-gray-200 dark:bg-brand-dark-500 outline-none p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Bio..."
               ></textarea>
             </div>
@@ -91,9 +91,8 @@
     ></navbar>
 
     <div
-      class="mt-16 h-3/4 w-full relative"
+      class="mt-14 h-3/4 w-full relative bg-brand-300 dark:bg-brand-dark-500"
       style="
-        background: #A5DEC4
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;

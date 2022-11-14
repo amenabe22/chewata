@@ -4,7 +4,7 @@
       <div class="relative mt-1">
         <ListboxButton
           v-if="selected"
-          class="relative w-full cursor-default border border-gray-300 rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+          class="relative w-full cursor-default border border-gray-300 rounded-md dark:bg-brand-dark-500 dark:text-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
         >
           <span class="block truncate">{{ selected.name }}</span>
           <span
@@ -23,7 +23,7 @@
           leave-to-class="opacity-0"
         >
           <ListboxOptions
-            class="absolute mt-1 cursor-pointer max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+            class="absolute mt-1 cursor-pointer max-h-60 w-full overflow-auto rounded-md dark:bg-brand-dark-500 bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             <ListboxOption
               v-slot="{ active, selected }"
@@ -36,13 +36,17 @@
                 @click="$emit('selected', comm)"
                 class="cursor-pointer"
                 :class="[
-                  active ? 'bg-green-100 text-green-900' : 'text-gray-900',
+                  active ? 'bg-green-100 dark:bg-gray-600 dark:text-brand-200 text-green-900' : 'text-gray-900 dark:text-brand-200',
                   'relative select-none py-2 px-2 pr-4',
                 ]"
               >
                 <div class="flex justify-start gap-3">
                   <img
-                    :src="comm.logo ? comm.logo : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'"
+                    :src="
+                      comm.logo
+                        ? comm.logo
+                        : 'https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png'
+                    "
                     alt=""
                     class="w-7 h-7 rounded-full"
                   />

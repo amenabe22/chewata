@@ -1,8 +1,7 @@
 <template>
   <div
-    class="flex px-2 flex-row mt-4 hover:border-green-300 relative mb-3 rounded-lg border border-gray-100"
+    class="flex px-2 flex-row mt-4 hover:border-green-300 relative mb-3 rounded-lg border border-gray-100 bg-white dark:bg-brand-dark-500 dark:border-none"
     :class="{ 'hover:bg-gray-50': false }"
-    style="background: white"
   >
     <vote-clickers
       :readonly="readonly"
@@ -29,7 +28,7 @@
           "
         />
         <router-link
-          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1 dark:text-gray-200"
           :to="`/${post.community.slug}`"
           >{{ post.community.name }}</router-link
         >
@@ -41,13 +40,13 @@
           src="https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png"
         />
         <p
-          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1"
+          class="text-green-600 hover:underline px-1 text-sm font-semibold pt-1 dark:text-gray-200"
         >
           chewata
         </p>
       </div>
       <p
-        class="tracking-wide tile-txt break-words"
+        class="tracking-wide tile-txt break-words dark:text-gray-300"
         :class="{ 'pb-2': post.cover, '': !post.cover }"
       >
         {{ stripHtml(post.content).substring(0, 600)
@@ -76,7 +75,7 @@
             :key="ix"
           >
             <div
-              class="border rounded-md text-xs p-1 text-gray-400 border-green-200 hover:border-green-300"
+              class="border rounded-md text-xs p-1 text-gray-400 border-green-200 hover:border-green-300 dark:border-gray-400 dark:text-gray-300 dark:hover:border-green-600"
             >
               {{ tag.tagName }}
             </div>

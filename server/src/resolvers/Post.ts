@@ -10,9 +10,38 @@ import { Comment } from "../entity/Comment";
 import { Likes } from "../entity/Likes";
 import { Tag } from "../entity/Core";
 import { Community } from "../entity/Community";
-import { slugifyTitle } from "../utils/core";
+import { slugifyTitle, stripHtml } from "../utils/core";
+import fetch from "node-fetch";
 
 export class PostResolver {
+  @Mutation(() => String)
+  async shareOnChannel(@Arg("post") post: string) {
+    let url = "";
+    const max = 240;
+    const channel = "@chewata_fun";
+    const token = "5626180772:AAEG6AMeoKJFFJLLLaO99og3cVIE1zOGySQ";
+    const postObj = await AppDataSource.manager.find(Post, {
+      where: { postId: post },
+    });
+    if (!postObj.length) {
+      throw Error("post not found");
+    }
+    const postItem = postObj[0];
+    const content = stripHtml(postItem.content, true).substring(0, max);
+    const link = JSON.stringify({
+      inline_keyboard: [
+        [{ text: '👀', url: `http://chewata.fun/game/${postItem.postId}` }],
+      ],
+    });
+    if (postItem.cover) {
+      url = `https://api.telegram.org/bot${token}/sendPhoto?chat_id=${channel}&caption=${content}&photo=${postItem.cover}&reply_markup=${link}`;
+    } else {
+      url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${channel}&reply_markup=${link}&text=${content}`;
+    }
+    const response = await fetch(url);
+    return JSON.stringify(response);
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuthed)
   async deletePost(@Arg("post") post: string, @Ctx() { user }: MyContext) {

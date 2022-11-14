@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
+  <div class="flex flex-row justify-center gap-10 mt-14 sm:mt-16">
     <div
       v-if="$store.state.loggedIn"
       class="w-1/5 mt-2 hidden lg:block xl:block md:block"
@@ -30,13 +30,15 @@
     <!-- suggested section -->
     <div class="w-1/6 mt-2 hidden lg:block xl:block">
       <div class="flex flex-col">
-        <h1 class="text-gray-500 pb-3 text-2xl font-normal tracking-widest">
+        <h1
+          class="text-gray-500 pb-3 text-2xl font-normal tracking-widest dark:text-gray-300"
+        >
           Top Tags
         </h1>
         <div class="flex flex-row gap-2 flex-wrap flex-grow">
           <div v-for="(tg, ix) in topTags" :key="ix" @click="tagSelected(tg)">
             <div
-              class="hover:border-green-600 text-gray-400 text-center text-sm hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
+              class="hover:border-green-600 dark:border-gray-500 border-gray-200 text-gray-400 text-center text-sm border hover:text-green-600 cursor-pointer duration-100 transition ease-in-out delay-75 chip-items"
             >
               {{ tg.tagName }}
             </div>

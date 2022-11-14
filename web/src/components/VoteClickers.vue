@@ -32,7 +32,11 @@
     </div>
     <p
       class="text-center text-lg"
-      :class="{ 'text-white': dark, 'text-gray-600': !dark, 'py-1': large }"
+      :class="{
+        'text-gray-300': $store.state.darkMode,
+        'text-gray-600': !$store.state.darkMode,
+        'py-1': large,
+      }"
     >
       {{ count }}
     </p>
@@ -73,6 +77,6 @@ import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
   setup() {},
-  props: ["count", "vote", "voted", "large", "color", "dark", "readonly"],
+  props: ["count", "vote", "voted", "large", "color", "readonly"],
 });
 </script>

@@ -45,7 +45,7 @@
               :class="{ 'opacity-70': loadingPost }"
             >
               <textarea
-                class="form-control p-3 rounded-b-none block h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
+                class="form-control p-3 rounded-b-none dark:bg-gray-600 dark:text-gray-200 block h-44 resize-none border-none mt-5 text-xl font-normal bg-white bg-clip-padding rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-gray-50 focus:border-blue-600 focus:outline-none"
                 id="exampleFormControlTextarea1"
                 rows="3"
                 v-model="content"
@@ -69,7 +69,7 @@
               </div>
               <button
                 @click="postComment()"
-                class="bg-green-600 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
+                class="bg-green-600 dark:bg-green-900 rounded-lg mt-3 font-black text-white w-full px-20 py-4 lg:py-2 xl:py-2 text-xl xl:text-2xl lg:text-2xl"
               >
                 <p>Post</p>
               </button>
@@ -78,7 +78,14 @@
         </div>
       </div>
     </dialog-modal>
-    <div class="h-1/2 w-full mt-14 sm:mt-20 game-content">
+    <div
+      class="h-1/2 w-full mt-14 sm:mt-26 game-content dark:bg-brand-dark-500"
+      :style="{
+        '--post-bg': $store.state.darkMode
+          ? ''
+          : 'linear-gradient(360deg, rgb(117, 191, 159), rgb(165 222 197))',
+      }"
+    >
       <div
         class="text-white p-2 relative font-semibold xl:text-4xl lg:text-4xl md:text-3xl text-2xl xl:tracking-wider lg:tracking-wider md:tracking-wider tracking-normal font-sans flex xl:mx-52 md:mx-10"
       >
@@ -186,14 +193,16 @@
           />
           <div>
             <p
-              class="text-xl text-gray-500 px-2 pt-1 font-semibold tracking-wider font-sans"
+              class="text-xl text-gray-500 dark:text-gray-300 px-2 pt-1 font-semibold tracking-wider font-sans"
             >
               {{ post.community ? post.community.name : post.user.fullName }}
             </p>
           </div>
         </div>
-        <div class="pt-2 text-gray-400">
-          <p class="text-xl font-semibold text-gray-500">Welcome To Chewata</p>
+        <div class="pt-2 text-gray-400 dark:text-gray-300">
+          <p class="text-xl font-semibold dark:text-gray-300 text-gray-500">
+            Welcome To Chewata
+          </p>
           <p class="pr-12">
             Start commenting and upvoting posts and express yourself!
           </p>
@@ -213,7 +222,7 @@
           <loader></loader>
         </div>
         <p
-          class="text-xl pt-5 font-semibold tracking-wider text-gray-400"
+          class="text-xl pt-5 font-semibold tracking-wider text-gray-400 dark:text-gray-300"
           v-else
         >
           Comments
@@ -279,7 +288,7 @@ export default defineComponent({
   metaInfo() {
     const ptitle = this.post ? this.post.content : "";
     return {
-      title: ptitle.substr(0, 15),
+      title: this.stripHtml(ptitle).substr(0, 15),
       htmlAttrs: { lang: "en", amp: true },
       meta: [{ vmid: "description", name: "description", content: "foo" }],
     };
@@ -345,8 +354,15 @@ export default defineComponent({
     voteData: { vote: null, voted: null } as any,
   }),
   methods: {
+    stripHtml(html) {
+      let tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    },
     getLogoPath(com: any) {
-      return com.logo ? com.logo : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
+      return com.logo
+        ? com.logo
+        : "https://res.cloudinary.com/dtabnh5py/image/upload/v1665875009/favicon_z0elvl.png";
     },
     async handleScroll(e: any) {
       if (
@@ -368,7 +384,7 @@ export default defineComponent({
       if (this.$store.state.loggedIn) {
         this.showCommentForm = true;
         this.replyTarget = com;
-        this.content = `@${this.replyTarget.user.fullName}`;
+        this.content = `@${this.replyTarget.user.fullName} `;
         this.showCommentForm = true;
       } else {
         this.$router.push("/login");
@@ -657,7 +673,7 @@ export default defineComponent({
   color: #ffffff;
 }
 .game-content {
-  background: linear-gradient(360deg, rgb(117, 191, 159), rgb(165 222 197));
+  background: var(--post-bg);
 }
 @media (min-width: 768px) {
   .prose ::v-deep h2 {

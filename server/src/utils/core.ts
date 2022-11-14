@@ -7,6 +7,7 @@ import { coreBullQ } from "../queue";
 import axios from "axios";
 import { Community } from "../entity/Community";
 import slugify from "slugify";
+import { convert } from "html-to-text";
 
 export const sendPushNotification = async (
   target: string,
@@ -175,4 +176,14 @@ export const slugifyTitle = (title: string) => {
     replacement: "_",
     remove: /[*+~.()'"!:@]/g,
   });
+};
+
+export const stripHtml = (html: string, enc = false) => {
+  const text = convert(html, {
+    wordwrap: 130,
+  });
+  if (enc) {
+    return encodeURIComponent(text);
+  }
+  return text;
 };

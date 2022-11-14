@@ -1,26 +1,17 @@
 <template>
   <div class="w-full">
-    <div class="flex flex-row justify-center gap-10 mt-16 sm:mt-20">
+    <div class="flex flex-row justify-center gap-10 mt-14 sm:mt-26">
       <div class="w-1/6 hidden lg:block xl:block md:block">
         <CommunityCategories @selected="selectedCategory"></CommunityCategories>
       </div>
 
       <div class="w-full md:w-2/3 lg:w-2/5 xl:w-2/5 p-2">
         <div class="flex flex-row justify-between sm:mt-3">
-          <p class="text-xl font-semibold tracking-wider text-gray-500">
+          <p
+            class="text-xl font-semibold tracking-wider text-gray-500 dark:text-gray-300"
+          >
             Top Communities
           </p>
-          <div class="flex gap-3 text-gray-500 text-lg font-light">
-            <button
-              :class="{ 'font-bold text-green-600': it.selected }"
-              class="hover:text-green-600"
-              v-for="(it, ix) in filterTypes"
-              :key="ix"
-              @click="feedFilterSelected(it)"
-            >
-              {{ it.label }}
-            </button>
-          </div>
         </div>
 
         <div v-if="loadingFeed" class="flex justify-center items-center mt-28">
@@ -127,11 +118,6 @@ export default defineComponent({
       page: 1,
       pageSize: 25,
     },
-    filterTypes: [
-      { label: "Algo", value: null, selected: true },
-      { label: "Recent", value: "recent", selected: false },
-      { label: "Top", value: "top", selected: false },
-    ],
     posts: [] as Array<any>,
     lastSnapshot: null as any,
   }),
